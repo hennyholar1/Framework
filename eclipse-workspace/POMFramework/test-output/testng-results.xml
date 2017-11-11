@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" ignored="0" total="1" passed="1">
+  <reporter-output>
+    <line>
+      <![CDATA[Navigating to: http://automationpractice.com/index.php]]>
+    </line>
+    <line>
+      <![CDATA[Selecting value from days drop down list]]>
+    </line>
+    <line>
+      <![CDATA[Value is selected from days drop down list]]>
+    </line>
+    <line>
+      <![CDATA[Selecting value from months drop down list]]>
+    </line>
+    <line>
+      <![CDATA[Value is selected from months drop down list]]>
+    </line>
+    <line>
+      <![CDATA[Selecting value from years drop down list]]>
+    </line>
+    <line>
+      <![CDATA[Value is selected from years drop down list]]>
+    </line>
+    <line>
+      <![CDATA[Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_09_09_40.html]]>
+    </line>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="24750" started-at="2017-11-11T15:09:40Z" finished-at="2017-11-11T15:10:05Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="24750" started-at="2017-11-11T15:09:40Z" finished-at="2017-11-11T15:10:05Z">
+      <class name="com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials">
+        <test-method status="PASS" signature="init()[pri:0, instance:com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials@369f73a2]" name="init" is-config="true" duration-ms="637" started-at="2017-11-11T09:09:40Z" finished-at="2017-11-11T09:09:41Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- init -->
+        <test-method status="PASS" signature="beforeMethod(java.lang.reflect.Method)[pri:0, instance:com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials@369f73a2]" name="beforeMethod" is-config="true" duration-ms="23" started-at="2017-11-11T09:09:41Z" finished-at="2017-11-11T09:09:41Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials.LoginWithInvalidCredentials()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeMethod -->
+        <test-method status="PASS" signature="startTest()[pri:0, instance:com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials@369f73a2]" name="startTest" is-config="true" duration-ms="7159" started-at="2017-11-11T09:09:41Z" finished-at="2017-11-11T09:09:48Z">
+          <reporter-output>
+            <line>
+              <![CDATA[Navigating to: http://automationpractice.com/index.php]]>
+            </line>
+          </reporter-output>
+        </test-method> <!-- startTest -->
+        <test-method status="PASS" signature="LoginWithInvalidCredentials()[pri:2, instance:com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials@369f73a2]" name="LoginWithInvalidCredentials" duration-ms="6228" started-at="2017-11-11T09:09:48Z" finished-at="2017-11-11T09:09:54Z">
+          <reporter-output>
+            <line>
+              <![CDATA[Selecting value from days drop down list]]>
+            </line>
+            <line>
+              <![CDATA[Value is selected from days drop down list]]>
+            </line>
+            <line>
+              <![CDATA[Selecting value from months drop down list]]>
+            </line>
+            <line>
+              <![CDATA[Value is selected from months drop down list]]>
+            </line>
+            <line>
+              <![CDATA[Selecting value from years drop down list]]>
+            </line>
+            <line>
+              <![CDATA[Value is selected from years drop down list]]>
+            </line>
+          </reporter-output>
+        </test-method> <!-- LoginWithInvalidCredentials -->
+        <test-method status="PASS" signature="captureStatus(org.testng.ITestResult)[pri:0, instance:com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials@369f73a2]" name="captureStatus" is-config="true" duration-ms="3" started-at="2017-11-11T09:09:54Z" finished-at="2017-11-11T09:09:54Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[[TestResult name=LoginWithInvalidCredentials status=SUCCESS method=TC001_VerifyLoginWithInvalidCredentials.LoginWithInvalidCredentials()[pri:2, instance:com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials@369f73a2] output=Selecting value from days drop down list]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- captureStatus -->
+        <test-method status="PASS" signature="endTest()[pri:0, instance:com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials@369f73a2]" name="endTest" is-config="true" duration-ms="10678" started-at="2017-11-11T09:09:54Z" finished-at="2017-11-11T09:10:05Z">
+          <reporter-output>
+            <line>
+              <![CDATA[Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_09_09_40.html]]>
+            </line>
+          </reporter-output>
+        </test-method> <!-- endTest -->
+      </class> <!-- com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

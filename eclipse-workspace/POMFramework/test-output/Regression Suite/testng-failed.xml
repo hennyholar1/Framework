@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="1" guice-stage="DEVELOPMENT" name="Failed suite [Regression Suite]" parallel="classes">
+  <listeners>
+    <listener class-name="com.test.automation.POMFramework.utilities.RetryListener"/>
+  </listeners>
+  <test name="TC002_SignUpAccount(failed)" parallel="classes">
+    <classes>
+      <class name="com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials">
+        <methods>
+          <include name="init"/>
+          <include name="tearDown"/>
+          <include name="beforeMethod"/>
+          <include name="verifyLoginWithInvalidCredentials"/>
+          <include name="endTest"/>
+          <include name="captureStatus"/>
+        </methods>
+      </class> <!-- com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials -->
+    </classes>
+  </test> <!-- TC002_SignUpAccount(failed) -->
+</suite> <!-- Failed suite [Regression Suite] -->
