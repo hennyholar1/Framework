@@ -11,8 +11,8 @@ import org.testng.annotations.Test;
 import com.test.automation.POMFramework.testBase.TestBase;
 import com.test.automation.POMFramework.uiPageActions.HomePage;
 
-public class TC001_VerifyLoginWithInvalidCredentials //extends TestBase{
-	{
+public class TC001_VerifyLoginWithInvalidCredentials extends TestBase{
+	
 	public static final Logger log = Logger.getLogger(TC001_VerifyLoginWithInvalidCredentials.class.getName());
 	HomePage homepage;
 	
@@ -54,10 +54,7 @@ public class TC001_VerifyLoginWithInvalidCredentials //extends TestBase{
 	@Test
 	public void testGit() {
 		System.out.println("Test 1");
-		System.out.println("This is another local change");
 	}
-	
-	
 //	@AfterMethod(alwaysRun=true)
 	public void tearDown() {
 		closeBrowser();	
