@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Regression Suite" preserve-order="true" parallel="classes" thread-count="1"> 
+
+<listeners>
+<!-- packagename.customerlistner_classname  -->
+<!-- listener class-name="POMFramework.testng.xml"></listener -->
+<listener class-name="com.test.automation.POMFramework.utilities.RetryListener"></listener>	<!-- Failed test(s) to be retried -->
+</listeners>
+
+<test name="TC002_SignUpAccount">
+<classes>
+<class name="com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials"></class>
+</classes>
+</test>
+</suite>

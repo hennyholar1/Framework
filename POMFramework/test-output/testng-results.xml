@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" ignored="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="57" started-at="2017-11-11T20:08:21Z" finished-at="2017-11-11T20:08:21Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="57" started-at="2017-11-11T20:08:21Z" finished-at="2017-11-11T20:08:21Z">
+      <class name="com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials">
+        <test-method status="PASS" signature="testGit()[pri:0, instance:com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials@2038ae61]" name="testGit" duration-ms="20" started-at="2017-11-11T14:08:21Z" finished-at="2017-11-11T14:08:21Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGit -->
+      </class> <!-- com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

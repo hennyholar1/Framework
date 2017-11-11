@@ -1,0 +1,111 @@
+2017-11-08 22:10:41 INFO  TestBase:296 - Navigating to: http://automationpractice.com/index.php
+2017-11-08 22:10:44 INFO  TC001_VerifyLoginWithInvalidCredentials:34 - ==Starting Test ==
+2017-11-08 22:10:44 INFO  TestBase:296 - Entering data in :search
+2017-11-08 22:10:45 INFO  TC001_VerifyLoginWithInvalidCredentials:40 - == Finished verifyLoginWithInvalidCredentials Test ==
+2017-11-08 22:10:55 INFO  TestBase:296 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\CurrentExecutionReport_08_Nov_2017_10_10_36.html
+2017-11-08 22:18:14 INFO  TestBase:296 - Navigating to: http://automationpractice.com/index.php
+2017-11-08 22:18:19 INFO  TC001_VerifyLoginWithInvalidCredentials:34 - ==Starting Test ==
+2017-11-08 22:18:19 INFO  TestBase:296 - Entering data in :search
+2017-11-08 22:18:19 INFO  TC001_VerifyLoginWithInvalidCredentials:40 - == Finished verifyLoginWithInvalidCredentials Test ==
+2017-11-08 22:18:29 INFO  TestBase:296 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_08_Nov_2017_10_18_09.html
+2017-11-08 23:21:51 INFO  TestBase:299 - Navigating to: http://automationpractice.com/index.php
+2017-11-08 23:21:55 INFO  TC001_VerifyLoginWithInvalidCredentials:35 - ==Starting Test ==
+2017-11-08 23:21:55 INFO  TestBase:299 - Entering data in :search
+2017-11-08 23:21:55 INFO  TC001_VerifyLoginWithInvalidCredentials:41 - == Finished verifyLoginWithInvalidCredentials Test ==
+2017-11-08 23:22:05 INFO  TestBase:299 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_08_Nov_2017_11_21_47.html
+2017-11-08 23:28:24 INFO  TestBase:299 - Navigating to: http://automationpractice.com/index.php
+2017-11-08 23:28:27 INFO  TC001_VerifyLoginWithInvalidCredentials:35 - ==Starting Test ==
+2017-11-08 23:28:27 INFO  TestBase:299 - Entering data in :search
+2017-11-08 23:28:28 INFO  TC001_VerifyLoginWithInvalidCredentials:41 - == Finished verifyLoginWithInvalidCredentials Test ==
+2017-11-08 23:28:37 INFO  TestBase:299 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_08_Nov_2017_11_28_20.html
+2017-11-09 00:04:09 INFO  TestBase:300 - Navigating to: http://automationpractice.com/index.php
+2017-11-09 00:04:12 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2017-11-09 00:04:13 INFO  HomePage:167 - Clicking on [[ChromeDriver: chrome on XP (adbb4a51b29786acf7011710da1b9e2d)] -> xpath: .//*[@id='header']/div[2]/div/div/nav/div[1]/a]
+2017-11-09 00:04:13 INFO  HomePage:172 - Clearing textbox
+2017-11-09 00:04:13 INFO  HomePage:176 - Entering the email address for create account field
+2017-11-09 00:04:14 INFO  HomePage:181 - Submitting the email address to be used for account creation
+2017-11-09 00:04:15 INFO  TestBase:300 - Selecting value from days drop down list
+2017-11-09 00:04:16 INFO  TC001_VerifyLoginWithInvalidCredentials:49 - == Finished verifyLoginWithInvalidCredentials Test ==
+2017-11-09 00:04:25 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_09_Nov_2017_12_04_04.html
+2017-11-09 00:06:56 INFO  TestBase:300 - Navigating to: http://automationpractice.com/index.php
+2017-11-09 00:07:00 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2017-11-09 00:07:01 INFO  HomePage:167 - Clicking on [[ChromeDriver: chrome on XP (53f080245f87d7e2fe35d430328f5e4c)] -> xpath: .//*[@id='header']/div[2]/div/div/nav/div[1]/a]
+2017-11-09 00:07:01 INFO  HomePage:172 - Clearing textbox
+2017-11-09 00:07:01 INFO  HomePage:176 - Entering the email address for create account field
+2017-11-09 00:07:02 INFO  HomePage:181 - Submitting the email address to be used for account creation
+2017-11-09 00:07:03 INFO  TestBase:300 - Selecting value from days drop down list
+2017-11-09 00:07:04 INFO  TestBase:300 - Selecting value from months drop down list
+2017-11-09 00:07:04 INFO  TestBase:300 - Selecting value from years drop down list
+2017-11-09 00:07:06 INFO  TC001_VerifyLoginWithInvalidCredentials:51 - == Finished verifyLoginWithInvalidCredentials Test ==
+2017-11-09 00:07:15 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_09_Nov_2017_12_06_52.html
+2017-11-11 08:37:24 INFO  TestBase:300 - Navigating to: http://automationpractice.com/index.php
+2017-11-11 08:37:29 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2017-11-11 08:37:30 INFO  HomePage:167 - Clicking on [[ChromeDriver: chrome on XP (0132bd667c83c0ad652c2fb9ecdc62cf)] -> xpath: .//*[@id='header']/div[2]/div/div/nav/div[1]/a]
+2017-11-11 08:37:30 INFO  HomePage:172 - Clearing textbox
+2017-11-11 08:37:30 INFO  HomePage:176 - Entering the email address for create account field
+2017-11-11 08:37:30 INFO  HomePage:181 - Submitting the email address to be used for account creation
+2017-11-11 08:37:32 INFO  TestBase:300 - Selecting value from days drop down list
+2017-11-11 08:37:43 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_08_37_16.html
+2017-11-11 08:38:08 INFO  TestBase:300 - Navigating to: http://automationpractice.com/index.php
+2017-11-11 08:38:12 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2017-11-11 08:38:14 INFO  HomePage:167 - Clicking on [[ChromeDriver: chrome on XP (f1f3ab159ee2759a15b8012b9a3313dd)] -> xpath: .//*[@id='header']/div[2]/div/div/nav/div[1]/a]
+2017-11-11 08:38:14 INFO  HomePage:172 - Clearing textbox
+2017-11-11 08:38:14 INFO  HomePage:176 - Entering the email address for create account field
+2017-11-11 08:38:14 INFO  HomePage:181 - Submitting the email address to be used for account creation
+2017-11-11 08:38:15 INFO  TestBase:300 - Selecting value from days drop down list
+2017-11-11 08:38:26 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_08_38_04.html
+2017-11-11 08:42:29 INFO  TestBase:300 - Navigating to: http://automationpractice.com/index.php
+2017-11-11 08:42:32 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2017-11-11 08:42:34 INFO  HomePage:167 - Clicking on [[ChromeDriver: chrome on XP (1c95929b534df162f48b254738586b75)] -> xpath: .//*[@id='header']/div[2]/div/div/nav/div[1]/a]
+2017-11-11 08:42:34 INFO  HomePage:172 - Clearing textbox
+2017-11-11 08:42:34 INFO  HomePage:176 - Entering the email address for create account field
+2017-11-11 08:42:34 INFO  HomePage:181 - Submitting the email address to be used for account creation
+2017-11-11 08:42:36 INFO  TestBase:300 - Selecting value from days drop down list
+2017-11-11 08:42:51 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_08_42_25.html
+2017-11-11 08:46:06 INFO  TestBase:300 - Navigating to: http://automationpractice.com/index.php
+2017-11-11 08:46:10 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2017-11-11 08:46:12 INFO  HomePage:167 - Clicking on [[ChromeDriver: chrome on XP (12336c92a413ce73070d6f2afa7981a4)] -> xpath: .//*[@id='header']/div[2]/div/div/nav/div[1]/a]
+2017-11-11 08:46:12 INFO  HomePage:172 - Clearing textbox
+2017-11-11 08:46:12 INFO  HomePage:176 - Entering the email address for create account field
+2017-11-11 08:46:12 INFO  HomePage:181 - Submitting the email address to be used for account creation
+2017-11-11 08:46:14 INFO  TestBase:300 - Selecting value from days drop down list
+2017-11-11 08:46:24 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_08_46_02.html
+2017-11-11 08:52:22 INFO  TestBase:300 - Navigating to: http://automationpractice.com/index.php
+2017-11-11 08:52:26 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2017-11-11 08:52:27 INFO  HomePage:167 - Clicking on [[ChromeDriver: chrome on XP (84a7a68103ba9f816592c2190976f08a)] -> xpath: .//*[@id='header']/div[2]/div/div/nav/div[1]/a]
+2017-11-11 08:52:27 INFO  HomePage:172 - Clearing textbox
+2017-11-11 08:52:27 INFO  HomePage:176 - Entering the email address for create account field
+2017-11-11 08:52:27 INFO  HomePage:181 - Submitting the email address to be used for account creation
+2017-11-11 08:52:29 INFO  TestBase:300 - Selecting value from days drop down list
+2017-11-11 08:52:39 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_08_52_18.html
+2017-11-11 09:07:27 INFO  TestBase:300 - Navigating to: http://automationpractice.com/index.php
+2017-11-11 09:07:31 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2017-11-11 09:07:32 INFO  HomePage:167 - Clicking on [[ChromeDriver: chrome on XP (dddae21ebeb0f08f25084647fda34cd9)] -> xpath: .//*[@id='header']/div[2]/div/div/nav/div[1]/a]
+2017-11-11 09:07:32 INFO  HomePage:172 - Clearing textbox
+2017-11-11 09:07:32 INFO  HomePage:176 - Entering the email address for create account field
+2017-11-11 09:07:33 INFO  HomePage:181 - Submitting the email address to be used for account creation
+2017-11-11 09:07:34 INFO  TestBase:300 - Selecting value from days drop down list
+2017-11-11 09:07:45 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_09_07_23.html
+2017-11-11 09:08:46 INFO  TestBase:300 - Navigating to: http://automationpractice.com/index.php
+2017-11-11 09:08:50 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2017-11-11 09:08:52 INFO  HomePage:167 - Clicking on [[ChromeDriver: chrome on XP (0a8d10bfa4c277d5bf5a60c14f696f7b)] -> xpath: .//*[@id='header']/div[2]/div/div/nav/div[1]/a]
+2017-11-11 09:08:52 INFO  HomePage:172 - Clearing textbox
+2017-11-11 09:08:52 INFO  HomePage:176 - Entering the email address for create account field
+2017-11-11 09:08:52 INFO  HomePage:181 - Submitting the email address to be used for account creation
+2017-11-11 09:08:53 INFO  TestBase:300 - Selecting value from days drop down list
+2017-11-11 09:09:04 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_09_08_42.html
+2017-11-11 09:09:44 INFO  TestBase:300 - Navigating to: http://automationpractice.com/index.php
+2017-11-11 09:09:48 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2017-11-11 09:09:49 INFO  HomePage:167 - Clicking on [[ChromeDriver: chrome on XP (324694fed28268fa76dc259927f4653a)] -> xpath: .//*[@id='header']/div[2]/div/div/nav/div[1]/a]
+2017-11-11 09:09:49 INFO  HomePage:172 - Clearing textbox
+2017-11-11 09:09:49 INFO  HomePage:176 - Entering the email address for create account field
+2017-11-11 09:09:50 INFO  HomePage:181 - Submitting the email address to be used for account creation
+2017-11-11 09:09:51 INFO  TestBase:300 - Selecting value from days drop down list
+2017-11-11 09:09:52 INFO  TestBase:300 - Value is selected from days drop down list
+2017-11-11 09:09:52 INFO  TestBase:300 - Selecting value from months drop down list
+2017-11-11 09:09:53 INFO  TestBase:300 - Value is selected from months drop down list
+2017-11-11 09:09:53 INFO  TestBase:300 - Selecting value from years drop down list
+2017-11-11 09:09:54 INFO  TestBase:300 - Value is selected from years drop down list
+2017-11-11 09:09:54 INFO  TC001_VerifyLoginWithInvalidCredentials:51 - == Finished verifyLoginWithInvalidCredentials Test ==
+2017-11-11 09:10:04 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_09_09_40.html
+2017-11-11 14:06:16 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_02_06_03.html
