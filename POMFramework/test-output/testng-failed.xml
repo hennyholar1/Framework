@@ -3,16 +3,17 @@
 <suite guice-stage="DEVELOPMENT" name="Failed suite [Default suite]">
   <test name="Default test(failed)">
     <classes>
-      <class name="com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials">
+      <class name="com.test.automation.POMFramework.homepage.TC001_SimpleLogInTest">
         <methods>
+          <include name="tearDown"/>
           <include name="init"/>
           <include name="beforeMethod"/>
+          <include name="verifyLoginWithValidCredentials"/>
           <include name="startTest"/>
+          <include name="getStatus"/>
           <include name="endTest"/>
-          <include name="LoginWithInvalidCredentials"/>
-          <include name="captureStatus"/>
         </methods>
-      </class> <!-- com.test.automation.POMFramework.homepage.TC001_VerifyLoginWithInvalidCredentials -->
+      </class> <!-- com.test.automation.POMFramework.homepage.TC001_SimpleLogInTest -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

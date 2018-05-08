@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+
 import com.test.automation.POMFramework.testBase.TestBase;
 
 /**
@@ -190,4 +192,52 @@ public class GenericHelper extends TestBase{
 				 break;	 }	 }	}
 	
 
+	// ... Running a bat file using Selenium and double click function .... //
+	// FindBy (By.xpath("element locator (.bat file location path)"))
+	// WebElement element;
+    
+    
+    
+    // ... { Mouse effect and select class } ...
+    // Locate the element using POM
+    
+    public void mouseOver(WebElement element) {
+        Actions action = new Actions(driver);
+        // action.moveToElement(element).build().perform();
+        action.moveToElement(element).perform();
+    }
+    
+    // Locate the element without POM
+    public void mouseOver(String element) {
+        Actions action = new Actions(driver);
+        log("doing mouse over on :" + element);
+        // action.moveToElement(getElement(element)).build().perform();
+        action.moveToElement(getElement(element)).perform();
+    }
+    
+    
+    
+    // Double click using POM
+	public void doubleClick(WebElement element) {
+		Actions action = new Actions(driver);
+		action.moveToElement(element).doubleClick().build().perform();
+	}
+
+	// Double click Without POM
+	public void doubleClick(String element) {
+		Actions action = new Actions(driver);
+		action.moveToElement(getElement(element)).doubleClick().build().perform();
+	}
+
+	// Double click using POM
+	public void rightClick(WebElement element) {
+		Actions action = new Actions(driver);
+		action.contextClick(element).perform();
+	}
+
+	// Double click using POM
+	public void rightClick(String element) {
+		Actions action = new Actions(driver);
+		action.contextClick(getElement(element)).perform();
+	}
 }

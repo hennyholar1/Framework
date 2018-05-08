@@ -3,6 +3,7 @@
  */
 package com.test.automation.POMFramework.utilities;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import com.test.automation.POMFramework.testBase.TestBase;
 
@@ -65,5 +66,10 @@ public class AssertionTestScript extends TestBase{
 			
 			return flag;
 		}
+	}
+	
+	public static boolean isElementPresentQuick(By locator) {
+		boolean flag = driver.findElements(locator).size() >= 1;
+		return flag;
 	}
 }

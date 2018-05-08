@@ -109,3 +109,56 @@
 2017-11-11 09:09:54 INFO  TC001_VerifyLoginWithInvalidCredentials:51 - == Finished verifyLoginWithInvalidCredentials Test ==
 2017-11-11 09:10:04 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_09_09_40.html
 2017-11-11 14:06:16 INFO  TestBase:300 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_11_Nov_2017_02_06_03.html
+2018-04-20 00:56:59 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 00:57:09 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 00:57:10 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 00:57:14 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 00:57:29 INFO  TestBase:327 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_20_Apr_2018_12_56_56.html
+2018-04-20 01:18:18 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 01:18:28 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 01:18:28 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 01:18:33 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 01:18:44 INFO  TestBase:327 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_20_Apr_2018_01_18_16.html
+2018-04-20 01:22:08 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 01:22:18 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 01:22:18 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 01:22:23 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 01:22:34 INFO  TestBase:327 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_20_Apr_2018_01_22_06.html
+2018-04-20 01:25:30 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 01:25:40 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 01:25:40 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 01:25:45 INFO  TC002_SignUpAccount:27 - === Creating instance of Homepage
+2018-04-20 01:25:55 INFO  TestBase:327 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_20_Apr_2018_01_25_28.html
+2018-04-20 01:40:38 INFO  TestBase:327 - Navigating to: http://opensource.demo.orangehrmlive.com/
+2018-04-20 01:40:42 INFO  TestBase:327 - Navigating to: http://opensource.demo.orangehrmlive.com/
+2018-04-20 01:40:47 INFO  TestBase:327 - Navigating to: http://opensource.demo.orangehrmlive.com/
+2018-04-20 01:40:54 INFO  TestBase:327 - Navigating to: http://opensource.demo.orangehrmlive.com/
+2018-04-20 01:41:00 INFO  TestBase:327 - Navigating to: http://opensource.demo.orangehrmlive.com/
+2018-04-20 01:41:03 INFO  TC002_SignUpAccount:33 - === Creating instance of Homepage
+2018-04-20 01:41:13 INFO  TestBase:327 - Navigating to: http://opensource.demo.orangehrmlive.com/
+2018-04-20 01:41:19 INFO  TestBase:327 - Navigating to: http://opensource.demo.orangehrmlive.com/
+2018-04-20 01:41:25 INFO  TestBase:327 - Navigating to: http://opensource.demo.orangehrmlive.com/
+2018-04-20 01:41:29 INFO  TC002_SignUpAccount:33 - === Creating instance of Homepage
+2018-04-20 01:41:37 INFO  TestBase:327 - Navigating to: http://opensource.demo.orangehrmlive.com/
+2018-04-20 01:41:40 INFO  TC002_SignUpAccount:33 - === Creating instance of Homepage
+2018-04-20 01:41:48 INFO  TestBase:327 - Navigating to: http://opensource.demo.orangehrmlive.com/
+2018-04-20 01:41:51 INFO  TC002_SignUpAccount:33 - === Creating instance of Homepage
+2018-04-20 01:42:06 INFO  TestBase:327 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_20_Apr_2018_01_40_33.html
+2018-04-20 01:46:16 INFO  TC002_SignUpAccount:30 - === Creating instance of Homepage
+2018-04-20 01:46:26 INFO  TC002_SignUpAccount:30 - === Creating instance of Homepage
+2018-04-20 01:46:27 INFO  TC002_SignUpAccount:30 - === Creating instance of Homepage
+2018-04-20 01:46:31 INFO  TC002_SignUpAccount:30 - === Creating instance of Homepage
+2018-04-20 01:46:42 INFO  TestBase:327 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_20_Apr_2018_01_46_15.html
+2018-04-21 17:57:00 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2018-04-21 17:57:13 INFO  TestBase:334 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_21_Apr_2018_05_56_59.html
+2018-04-21 17:58:14 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2018-04-21 17:58:26 INFO  TestBase:334 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_21_Apr_2018_05_58_13.html
+2018-04-21 18:10:15 INFO  TC001_VerifyLoginWithInvalidCredentials:36 - ==Starting Test ==
+2018-04-21 18:10:26 INFO  TestBase:334 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_21_Apr_2018_06_10_14.html
+2018-04-22 09:27:02 INFO  TC001_VerifyLoginWithInvalidCredentials:37 - ==Starting Test ==
+2018-04-22 09:27:22 INFO  TestBase:378 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_22_Apr_2018_09_27_01.html
+2018-04-22 09:27:24 INFO  TestBase:378 - waiting for all elements to be present..
+2018-04-23 07:04:25 INFO  TestBase:382 - Navigating to: http://automationpractice.com/index.php
+2018-04-23 07:04:29 INFO  TestBase:382 - waiting for all elements to be present..
+2018-04-23 07:04:38 INFO  TestBase:382 - Navigating to: C:\Users\Da Novenos\eclipse-workspace\POMFramework\test-output\ExtentHtmlReport\AutomationTestReport_23_Apr_2018_07_04_18.html
+2018-04-23 07:04:40 INFO  TestBase:382 - waiting for all elements to be present..

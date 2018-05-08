@@ -13,40 +13,63 @@ import com.test.automation.POMFramework.testBase.TestBase;
 
 public class DropDownHelper extends TestBase{
 	
-	private WebDriver driver;
+//	private static WebDriver driver;
 	public static final Logger log = Logger.getLogger(DropDownHelper.class.getName());
 
+	
 	public DropDownHelper(WebDriver driver) {
-		this.driver = driver;
-		log("DropDownHelper : " + this.driver.hashCode());	}
+		TestBase.driver = driver;
+		log("DropDownHelper : " + TestBase.driver.hashCode());	}
 
 	
-	public void SelectUsingVisibleValue(WebElement element,String visibleValue) {
-		
-		Select select = new Select(element);	
-		select.selectByVisibleText(visibleValue);	
-		log.info("Locator : " + element + " Value : " + visibleValue);	}
+	// ... Select Class .../
+	public static Select selectClassAction(WebElement element) {
+		return new Select(element);
+	}
 
+	// Select class with POM
+	public static void selectByIndex(WebElement element, int index) {
+		log.info("Selecting item from " + element + " drop down list");
+		selectClassAction(element).selectByIndex(index);
+		/*
+		 * List<WebElement> select_list = select.getOptions(); for (WebElement
+		 * total_element : select_list) // Iterating through the drop-down list/elements
+		 * { String selectedItemNames = total_element.getText(); }
+		 */
+	}
+
+	public static void selectByValue(WebElement element, String value) {
+		log.info("Selecting item from " + element + " drop down list");
+		selectClassAction(element).selectByValue(value);
+	}
+
+	public static void selectByVisibleText(WebElement element, String text) {
+		log.info("Selecting item from " + element + " drop down list");
+		selectClassAction(element).selectByVisibleText(text);
+	}
+
+	// Deselect class with POM
+	public static void deselectAll(WebElement element) {
+		log.info("Deselecting item from " + element + " drop down list");
+		selectClassAction(element).deselectAll();
+	}
+
+	public static void deselectByIndex(WebElement element, int index) {
+		log.info("Selecting item from " + element + " drop down list");
+		selectClassAction(element).deselectByIndex(index);
+	}
+
+	public static void deselectByValue(WebElement element, String value) {
+		log.info("Selecting item from " + element + " drop down list");
+		selectClassAction(element).deselectByValue(value);
+	}
+
+	public static void deselectByVisibleText(WebElement element, String text) {
+		log.info("Selecting item from " + element + " drop down list");
+		selectClassAction(element).deselectByVisibleText(text);
+	}
 	
-	public String getSelectedValue(WebElement element) {	
-		String value = new Select(element).getFirstSelectedOption().getText();
-		log.info("WebELement : " + element + " Value : "+ value);
-		return value;	}
-	
-	
-	public void SelectUsingIndex(WebElement element,int index) {	
-		Select select = new Select(element);
-		select.selectByIndex(index);
-		log.info("Locator : " + element + " Value : " + index);	}
-	
-	
-	public void SelectUsingVisibleText(WebElement element,String text) {
-		Select select = new Select(element);
-		select.selectByVisibleText(text);
-		log.info("Locator : " + element + " Value : " + text);	}
-	
-	
-	public List<String> getAllDropDownValues(WebElement locator) {
+	public static List<String> getAllDropDownValues(WebElement locator) {
 		Select select = new Select(locator);	
 		List<WebElement> elementList = select.getOptions();	
 		List<String> valueList = new LinkedList<String>();	
@@ -55,7 +78,8 @@ public class DropDownHelper extends TestBase{
 		return valueList;	}
 	
 
-	public void selectDropdowData(String dropDownElement, String value) {
+	// Select class for drop-down values using xPath
+	public static void selectDropdownData(String dropDownElement, String value) {
 		log("Selecting value from " + dropDownElement + " drop down list");
 		List<WebElement> elements = driver.findElements(By.xpath("//*[@id='"+dropDownElement+"']/option"));
 		Iterator<WebElement> itr = elements.iterator();
@@ -69,8 +93,8 @@ public class DropDownHelper extends TestBase{
 				break;
 			}	}	}
 	
-
-	public void selectDropdowValue(String dropDownElement, String value) {
+	// Select class for drop-down values using CSS
+	public static void selectDropdownValue(String dropDownElement, String value) {
 		log("Selecting value from " + dropDownElement + " drop down list");
 		List<WebElement> elements = driver.findElements(By.cssSelector("*[id~='"+dropDownElement+"']>option"));	// ~ is used as "contains" in CSS
 		Iterator<WebElement> itr = elements.iterator();
@@ -84,6 +108,7 @@ public class DropDownHelper extends TestBase{
 				break;
 			}	}	}
 	
-}
+	
+	}
 
 

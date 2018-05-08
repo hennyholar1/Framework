@@ -77,7 +77,7 @@ public class AlertHelper {
 	}
 	
 	
-	public void acceptPrompt(String text) {
+	public void setValueForAlertPrompt(String text) {
 		
 		if (!isAlertPresent())
 			

@@ -5,14 +5,23 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
+import org.apache.log4j.Logger;
+
+
 
 public class ConfigReader {
 
+    public static final Logger log = Logger.getLogger(ConfigReader.class.getName());
 	Properties prop;
+    
+    String configFilePath = "/src/main/java/com/test/automation/POMFramework/configResources/config.properties";
 	
+    // Class constructor
 	public ConfigReader() {
 		try {
-		File src = new File (System.getProperty("user.dir") + "/src/main/java/com/test/automation/POMFramework/configResources/config.properties");
+            // making use of testbase getResource method
+        log.info ("Loading configuration properties file ...");
+		File src = new File (com.test.automation.POMFramework.testBase.TestBase.getResourcePath(configFilePath));
 		FileInputStream fis = new FileInputStream(src);
 		prop = new Properties();
 		prop.load(fis);
@@ -20,6 +29,7 @@ public class ConfigReader {
 		catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+        log.info ("Loading configuration properties file completed!");
 	}
 	
 	//	To retrieve data from the properties file one-by-one

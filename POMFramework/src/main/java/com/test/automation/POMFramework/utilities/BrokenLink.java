@@ -19,7 +19,7 @@ public class BrokenLink extends TestBase{
 	
 	@BeforeTest
 	public void launchApplication() {
-		super.setUp();
+		super.launchApplication();
 
 	
 	}
@@ -53,7 +53,7 @@ public class BrokenLink extends TestBase{
 			
 			if(http_connect_url.getResponseCode()==200) {
 				
-				 System.out.println(url_Link+" - "+http_connect_url.getResponseMessage());
+				 System.out.println(url_Link+" - "+http_connect_url.getResponseMessage() + " -" + driver.getTitle());
 				 
             }
           if(http_connect_url.getResponseCode()==HttpURLConnection.HTTP_NOT_FOUND)  

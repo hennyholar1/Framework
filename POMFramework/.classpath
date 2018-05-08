@@ -37,5 +37,6 @@
 	<classpathentry kind="lib" path="C:/Selenium/extentreports-java-3.0.7/extentreports-java-3.0.7/lib/jsoup-1.9.2.jar"/>
 	<classpathentry kind="lib" path="C:/Selenium/extentreports-java-3.0.7/extentreports-java-3.0.7/lib/mongodb-driver-3.3.0.jar"/>
 	<classpathentry kind="lib" path="C:/Selenium/extentreports-java-3.0.7/extentreports-java-3.0.7/lib/mongodb-driver-core-3.3.0.jar"/>
+	<classpathentry kind="con" path="org.testng.TESTNG_CONTAINER"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

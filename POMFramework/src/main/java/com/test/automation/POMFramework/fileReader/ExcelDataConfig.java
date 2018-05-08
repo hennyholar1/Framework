@@ -1,4 +1,5 @@
 package com.test.automation.POMFramework.fileReader;
+
 import java.io.File;
 import java.io.FileInputStream;
 //import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -23,9 +24,9 @@ public class ExcelDataConfig {
 			System.out.println(e.getMessage());
 		}	
 	}
-	
-	public String getData(String excelSheetIndex, int rows, int cols) {
-		sheetIndex = wb.getSheet(excelSheetIndex);
+//	selecting a particular cell value in a spreadsheet	
+	public String getData(String excelSheet, int rows, int cols) {
+		sheetIndex = wb.getSheet(excelSheet);
 		row = sheetIndex.getLastRowNum();
 		row = (row + 1);
 		col = sheetIndex.getRow(0).getPhysicalNumberOfCells();
@@ -35,20 +36,4 @@ public class ExcelDataConfig {
 		return data;
 	}
 	
-	/*
-	public int getExcelSheetIndexForRow(int excelSheetIndex){
-		 row = wb.getSheetAt(excelSheetIndex).getLastRowNum();
-		 row = (row + 1);
-		return row;
-	}
-	
-	
-// Try and understand Bhanu excel reader Data Driven style for row & Column	
-	public int getExcelSheetIndexForColumn(){
-//		Row row = sheet.getRow(rowNum).getLastCellNum();
-//		 col = sheetIndex.getRow(0).getLastCellNum();
-//		int col = sheetIndex.getRow(0).getPhysicalNumberOfCells(); another way of getting last column in a 
-		return (col+1);
-	}
-	*/
 }
