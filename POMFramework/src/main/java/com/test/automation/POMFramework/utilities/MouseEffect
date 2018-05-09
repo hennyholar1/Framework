@@ -1,63 +1,94 @@
 
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
-
-import com.test.automation.POMFramework.testBase.TestBase;
+import testBase.TestBase;
 
 /**
  * @author Da Novenos
  *
  */
-public class MouseHelper extends TestBase{
-	
 
 
-	// ... Running a bat file using Selenium and double click function .... //
-	// FindBy (By.xpath("element locator (.bat file location path)"))
-	// WebElement element;
-    
-    
-    
-    // ... { Mouse effect and select class } ...
-    // Locate the element using POM
-    
-    public void mouseOver(WebElement element) {
-        Actions action = new Actions(driver);
-        // action.moveToElement(element).build().perform();
-        action.moveToElement(element).perform();
-    }
-    
-    // Locate the element without POM
-    public void mouseOver(String element) {
-        Actions action = new Actions(driver);
-        log("doing mouse over on :" + element);
-        // action.moveToElement(getElement(element)).build().perform();
-        action.moveToElement(getElement(element)).perform();
-    }
-    
-    
-    
-    // Double click using POM
-	public void doubleClick(WebElement element) {
-		Actions action = new Actions(driver);
-		action.moveToElement(element).doubleClick().build().perform();
+public class MouseHelper {
+
+	/**
+	 * ... To run a bat file using Selenium and double click function ....
+	 * 
+	 * FindBy (By.xpath("element locator (.bat file location path)")) WebElement
+	 * LocatedElement;
+	 */
+
+	TestBase tBase = new TestBase();
+	public static WebDriver driver;
+
+	// ... { Mouse effect } ...
+	public Actions mouseEffect() {
+		return new Actions(driver);
 	}
 
-	// Double click Without POM
+	public void mouseOver(WebElement element) {
+
+		TestBase.log("doing mouse over on : " + element);
+		mouseEffect().moveToElement(element).build().perform();
+		// mouseEffect().moveToElement(element).perform();
+	}
+
+	// Locate the element (non POM)
+	public void mouseOver(String element) {
+
+		TestBase.log("doing mouse over on : " + element);
+		mouseEffect().moveToElement(tBase.getElement(element)).build().perform();
+		// mouseEffect().moveToElement(tBase.getElement(element)).perform();
+	}
+
+	// Double click using POM
+	public void doubleClick(WebElement element) {
+
+		TestBase.log("Double clicking on : " + element);
+		mouseEffect().moveToElement(element).doubleClick().build().perform();
+	}
+
+	// Double click (non POM)
+
 	public void doubleClick(String element) {
+
+		TestBase.log("Double clicking on : " + element);
 		Actions action = new Actions(driver);
-		action.moveToElement(getElement(element)).doubleClick().build().perform();
+		action.moveToElement(tBase.getElement(element)).doubleClick().build().perform();
 	}
 
 	// Right click using POM
 	public void rightClick(WebElement element) {
-		Actions action = new Actions(driver);
-		action.contextClick(element).perform();
+
+		TestBase.log("Right clicking on :" + element);
+		// mouseEffect().contextClick(element).perform();
+		mouseEffect().contextClick(element).build().perform();
 	}
 
 	// Right click (non POM)
 	public void rightClick(String element) {
-		Actions action = new Actions(driver);
-		action.contextClick(getElement(element)).perform();
+
+		TestBase.log("Right clicking on :" + element);
+		// mouseEffect().contextClick(tBase.getElement(element)).perform();
+		mouseEffect().contextClick(tBase.getElement(element)).build().perform();
+	}
+
+	// Drag And Drop (non POM)
+	public void dragAndDrop(String from, String to) {
+
+		TestBase.log("Drag and dropping element from one place to another");
+		Action dragAndDrop = mouseEffect().clickAndHold(tBase.getElement(from)).moveToElement(tBase.getElement(to))
+				.release(tBase.getElement(to)).build();
+		dragAndDrop.perform();
+	}
+
+	// Drag And Drop (non POM)
+	public void dragAndDrop(WebElement from, WebElement to) {
+
+		TestBase.log("Drag and dropping element from one place to another");
+		Action dragAndDrop = mouseEffect().clickAndHold(from).moveToElement(to).release(to).build();
+		dragAndDrop.perform();
 	}
 }
