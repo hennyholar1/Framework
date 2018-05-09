@@ -95,7 +95,7 @@ public class TestBase {
 		}
 
 		else if (ITestResult.FAILURE == result.getStatus()) {
-			SendEmails.sendSimleEmail();
+			SendEmails.sendEmai(useFileData("htmlReportPath"), "emailaddress goes here");
 			try { // adding screenshots upon ItestResult failed status
 				String outcome = takeScreenShot((result.getName()));
 				testInfo.addScreenCaptureFromPath(outcome); // ExtentTest with snapshot
@@ -156,6 +156,7 @@ public class TestBase {
 				+ "'> <span class='label info'> Download Video</span></a>");
 		extent.flush();
 		// closeBrowser();
+		SendEmails.sendEmai(useFileData("htmlReportPath"), "emailaddress goes here");
 		Thread.sleep(4000);
 		launchHtmlReport();
 	}
