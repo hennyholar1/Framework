@@ -79,7 +79,7 @@ public class TestBase {
 	public void getStatus(ITestResult result) {
 
 		if (ITestResult.SUCCESS == result.getStatus()) {
-			testInfo.pass(result.getName() + " Passed");
+ 			testInfo.pass(result.getName() + " Passed");
 			testInfo.log(Status.PASS, result.getName() + " test passed");
 		} else if (ITestResult.STARTED == result.getStatus()) {
 			testInfo.log(Status.INFO, result.getName() + " test started");
@@ -123,11 +123,10 @@ public class TestBase {
 		extent.setSystemInfo("OS", "Windows-10");
 		extent.attachReporter(htmlReporter);
 
-		// ..... Effect of appending time to the generated report .....
+		// ..... Effect of appending time to the generated report ....new File
 		htmlReporter = new ExtentHtmlReporter((useFileData("htmlReportPath") + "_" + timeFormat + ".html"));
 		htmlReporter.loadXMLConfig((useFileData("extent_config_xml")));
-		htmlReporter.config().setTheme(Theme.DARK); // Theme background - dark,
-													// standard
+		htmlReporter.config().setTheme(Theme.DARK); // Theme background - dark, // standard
 		htmlReporter.config().setReportName("Automation Test Report");
 		htmlReporter.config().setDocumentTitle("Test Execution - ExtentReports");
 		// allows appending test information to an existing report.
