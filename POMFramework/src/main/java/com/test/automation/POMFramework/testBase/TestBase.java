@@ -87,10 +87,10 @@ public class TestBase {
 			testInfo.log(Status.SKIP,
 					result.getName() + " test is skipped and the reason is:- " + result.getThrowable());
 		} else if (ITestResult.FAILURE == result.getStatus()) {
-			try { // ...... adding screenshots upon ItestResult failed status ......
+			try { // ...... adding screenshots upon ItestResult failed status ......new File
 				String outcome = takeScreenShotOnFailure((result.getName()));
 			// 	ExtentTest with snapshot
-				testInfo.addScreenCaptureFromPath(outcome); 
+ 				testInfo.addScreenCaptureFromPath(outcome); 
 				testInfo.fail((result.getName() + " Failed"),
 						MediaEntityBuilder.createScreenCaptureFromPath(outcome).build()); 
 				// Appends snapshot in the log report
@@ -98,7 +98,7 @@ public class TestBase {
 
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
-			}
+ 			}
 		}
 
 	}
@@ -111,7 +111,7 @@ public class TestBase {
 		 * try { recorder = new ATUTestRecorder(videoFolder, TestVideoRecord,
 		 * false); recorder.start();
 		 * 
-		 * } catch (ATUTestRecorderException e) { e.printStackTrace(); }
+ 		 * } catch (ATUTestRecorderException e) { e.printStackTrace(); }
 		 */
 		
 		if (extent == null)
@@ -124,8 +124,8 @@ public class TestBase {
 		extent.attachReporter(htmlReporter);
 
 		// ..... Effect of appending time to the generated report .....
-		htmlReporter = new ExtentHtmlReporter(new File(useFileData("htmlReportPath") + "_" + timeFormat + ".html"));
-		htmlReporter.loadXMLConfig(new File(useFileData("extent_config_xml")));
+		htmlReporter = new ExtentHtmlReporter((useFileData("htmlReportPath") + "_" + timeFormat + ".html"));
+		htmlReporter.loadXMLConfig((useFileData("extent_config_xml")));
 		htmlReporter.config().setTheme(Theme.DARK); // Theme background - dark,
 													// standard
 		htmlReporter.config().setReportName("Automation Test Report");
