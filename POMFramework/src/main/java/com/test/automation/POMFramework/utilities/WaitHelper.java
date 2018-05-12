@@ -1,4 +1,4 @@
-package utilities;
+package com.test.automation.POMFramework.utilities;
 
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
@@ -13,8 +13,7 @@ import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.google.common.base.Function;
-
-import testBase.TestBase;
+import com.test.automation.POMFramework.testBase.TestBase;
 
 public class WaitHelper {
 
@@ -40,6 +39,8 @@ public class WaitHelper {
 	public void waitForElement(WebElement element){
 		
 		TestBase.log("waiting for element..");
+		wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(element));
 		wait.until(ExpectedConditions.elementToBeClickable(element));
 		TestBase.log("element is present...");
 	}
@@ -50,17 +51,11 @@ public class WaitHelper {
 		TestBase.log("wait for element presence..");
 		wait = new WebDriverWait(driver, timeOutInSeconds);
 		wait.until(ExpectedConditions.visibilityOf(element));
+		wait.until(ExpectedConditions.elementToBeClickable(element));
 		TestBase.log("element is present...");
 	}
 	
-	public WebElement waitForElementToBeClickable(WebDriver driver, long time, WebElement element) {
-
-		TestBase.log("waiting for element to be present..");
-		WebDriverWait wait = new WebDriverWait(driver, time);
-		return wait.until(ExpectedConditions.elementToBeClickable(element));
-	}
-	
-		
+			
 	public void fluentWait(WebElement element) {
 
 		TestBase.log("waiting for element to be present..");
@@ -104,3 +99,4 @@ public class WaitHelper {
 
 
 }
+
