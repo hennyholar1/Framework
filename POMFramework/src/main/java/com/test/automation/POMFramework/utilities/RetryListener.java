@@ -14,8 +14,7 @@ public class RetryListener implements IAnnotationTransformer{
 		IRetryAnalyzer retry = testAnnotation.getRetryAnalyzer();
 
 		if (retry == null)	{
-			testAnnotation.setRetryAnalyzer(Retry.class);
+			testAnnotation.setRetryAnalyzer(RetryHelper.class);
 		}
 	}
-
 }
