@@ -14,3 +14,5 @@ public class ResourceHelper {
 	public static InputStream getResoucePathInputStream(String path) throws FileNotFoundException {
 	
 		return new FileInputStream(ResourceHelper.getResourcePath(path));
+	}
+}
