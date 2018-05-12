@@ -1,6 +1,5 @@
 package com.test.automation.POMFramework.utilities;
 
-
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -8,20 +7,16 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
 import com.test.automation.POMFramework.testBase.TestBase;
 
 public class BrokenLink extends TestBase{
 
 //	ChromeOptions option = new ChromeOptions();
-	
 //	public static WebDriver driver;
 	
 	@BeforeTest
 	public void launchApplication() {
 		super.launchApplication();
-
-	
 	}
 	
 	@Test
@@ -35,8 +30,7 @@ public class BrokenLink extends TestBase{
 			
 			String url = ele.getAttribute("href");
 			
-			verifyActiveLink(url);
-			
+			verifyActiveLink(url);	
 		}
 	}
 	
@@ -53,9 +47,9 @@ public class BrokenLink extends TestBase{
 			
 			if(http_connect_url.getResponseCode()==200) {
 				
-				 System.out.println(url_Link+" - "+http_connect_url.getResponseMessage() + " -" + driver.getTitle());
-				 
+				 System.out.println(url_Link+" - "+http_connect_url.getResponseMessage() + " -" + driver.getTitle());		 
             }
+			
           if(http_connect_url.getResponseCode()==HttpURLConnection.HTTP_NOT_FOUND)  
         	  
            {
