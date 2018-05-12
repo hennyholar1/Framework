@@ -3,7 +3,7 @@ package com.test.automation.POMFramework.utilities;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 
-public class Retry implements IRetryAnalyzer {
+public class RetryHelper implements IRetryAnalyzer {
 	private int retryCount = 0;
 	private int maxRetryCount = 2;
 	
@@ -30,4 +30,3 @@ public class Retry implements IRetryAnalyzer {
 	}	
 	
 }
-
