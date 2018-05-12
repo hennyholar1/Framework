@@ -265,6 +265,4 @@ public class CommonHelper {
 				 }	 
 			 }	
 		 }
-
-
 }
