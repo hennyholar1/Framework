@@ -3,7 +3,6 @@ package com.test.automation.POMFramework.utilities;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -91,7 +90,9 @@ public class DropDownHelper extends TestBase{
 				clickElement.click();
 		log("Value is selected from " + dropDownElement + " drop down list");
 				break;
-			}	}	}
+			}	
+		}	
+	}
 	
 	// Select class for drop-down values using CSS
 	public static void selectDropdownValue(String dropDownElement, String value) {
@@ -106,9 +107,8 @@ public class DropDownHelper extends TestBase{
 				clickElement.click();
 		log("Value is selected from " + dropDownElement + " drop down list");
 				break;
-			}	}	}
-	
-	
+			}	
+		}	
 	}
 
-
+}
