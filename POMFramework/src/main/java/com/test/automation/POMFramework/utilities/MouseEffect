@@ -1,9 +1,10 @@
+package com.test.automation.POMFramework.utilities;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
-import testBase.TestBase;
+import com.test.automation.POMFramework.testBase.TestBase;
 
 /**
  * @author Da Novenos
