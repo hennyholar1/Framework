@@ -1,4 +1,4 @@
-package utilities;
+package com.test.automation.POMFramework.utilities;
 
 import java.util.List;
 import org.openqa.selenium.By;
