@@ -100,7 +100,6 @@ public class TestBase {
 				System.out.println(e.getMessage());
  			}
 		}
-
 	}
 
 	@BeforeTest(alwaysRun = true)
@@ -114,27 +113,11 @@ public class TestBase {
  		 * } catch (ATUTestRecorderException e) { e.printStackTrace(); }
 		 */
 		
-		if (extent == null)
-			extent = new ExtentReports();
-		// .... Additional information that makes our report looks nice ....
-		extent.setSystemInfo("Host Name", "Novenos IT Solutions Inc.");
-		extent.setSystemInfo("Environment", "QA/Automation Testing");
-		extent.setSystemInfo("Version", "V-1.0.0");
-		extent.setSystemInfo("OS", "Windows-10");
-		extent.attachReporter(htmlReporter);
-
-		// ..... Effect of appending time to the generated report ....new File
-		htmlReporter = new ExtentHtmlReporter((useFileData("htmlReportPath") + "_" + timeFormat + ".html"));
-		htmlReporter.loadXMLConfig((useFileData("extent_config_xml")));
-		htmlReporter.config().setTheme(Theme.DARK); // Theme background - dark, // standard
-		htmlReporter.config().setReportName("Automation Test Report");
-		htmlReporter.config().setDocumentTitle("Test Execution - ExtentReports");
-		// allows appending test information to an existing report.
-		htmlReporter.setAppendExisting(true); 
-		// chart location - top, bottom
-		htmlReporter.config().setTestViewChartLocation(ChartLocation.TOP); 		
-		// set timeStamp format
-		htmlReporter.config().setTimeStampFormat("mm/dd/yyyy hh:mm:ss a"); 
+		// Extent Report
+		GetExtent();
+		
+		// loading log file
+		PropertyConfigurator.configure(useFileData("logFile"));
 		}
 
 	@AfterTest(alwaysRun = true)
@@ -153,6 +136,33 @@ public class TestBase {
 		launchHtmlReport();
 	}
 
+	public  ExtentReports GetExtent(){
+		if (extent != null)
+                return extent; //avoid creating new instance of html file
+            extent = new ExtentReports();
+    	// Additional information that makes our report looks nice
+		extent.setSystemInfo("Host Name", "Novenos IT Solutions Inc.");
+		extent.setSystemInfo("Environment", "QA/Automation Testing");
+		extent.setSystemInfo("Version", "V-1.0.0");
+		extent.setSystemInfo("OS", "Windows-10");
+		extent.attachReporter(getHtmlReporter());
+		return extent;
+	}
+	
+	private ExtentHtmlReporter getHtmlReporter() {
+		
+		htmlReporter = new ExtentHtmlReporter(useFileData("htmlReport") + "_" + timeFormat + ".html"); 
+		htmlReporter.loadXMLConfig(new File(useFileData("extent_config_xml")));
+        htmlReporter.config().setChartVisibilityOnOpen(true);
+		htmlReporter.config().setTheme(Theme.DARK); // Theme background - dark, standard
+		htmlReporter.config().setReportName("Automation Test Report");
+		htmlReporter.setAppendExisting(true); // allows appending test information to an existing report.
+		htmlReporter.config().setTestViewChartLocation(ChartLocation.TOP); // chart location - top, bottom
+		htmlReporter.config().setTimeStampFormat("mm/dd/yyyy hh:mm:ss a"); // set timeStamp format
+        htmlReporter.config().setDocumentTitle("Demo automation report");
+        return htmlReporter;
+	}
+	
 	// To insert properties file value
 	public static String useFileData(String configFileData) {
 
