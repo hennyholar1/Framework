@@ -1,6 +1,5 @@
 package com.test.automation.POMFramework.fileReader;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Properties;
@@ -13,16 +12,14 @@ public class ConfigReader {
 
     public static final Logger log = Logger.getLogger(ConfigReader.class.getName());
 	Properties prop;
-    
-    String configFilePath = "/src/main/java/com/test/automation/POMFramework/configResources/config.properties";
+	FileInputStream fis = null;
+    String configFilePath;
 	
     // Class constructor
 	public ConfigReader() {
 		try {
-            // making use of testbase getResource method
         log.info ("Loading configuration properties file ...");
-		File src = new File (com.test.automation.POMFramework.testBase.TestBase.getResourcePath(configFilePath));
-		FileInputStream fis = new FileInputStream(src);
+		fis = new FileInputStream(configFilePath);
 		prop = new Properties();
 		prop.load(fis);
 		}
