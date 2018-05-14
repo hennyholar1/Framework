@@ -15,7 +15,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -55,8 +54,8 @@ public class TestBase {
 
 	public static ExtentHtmlReporter htmlReporter;
 	public static ExtentTest testInfo;
+	public static ExtentReports extent;
 //	public static ATUTestRecorder recorder;
-	public ExtentReports extent;
 	public static ITestResult result;
 	static Calendar calendar = Calendar.getInstance();
 	public static String videoFolder = (System.getProperty("user.dir") + "/test-output/TestExecutionVideos");
@@ -118,7 +117,7 @@ public class TestBase {
 		GetExtent();
 		
 		//	report = new ExtentReports("C:/frbstldev/TestWorkspace/atmTestSuite/test-output/ExtentReport/"+"TestResult_"+out_filename);
-		// loading log file
+		//  loading log file
 		//	PropertyConfigurator.configure(useFileData("logFile"));	
 	}
 
@@ -128,14 +127,14 @@ public class TestBase {
 		//SendEmails.sendEmai(useFileData("failedTestScreenShotPath") + "/failedTestScreenshots/" 
 		//			+ result + "_" + timeFormat + ".png", "Britt.Scott@stls.frb.org");
 		
-		// SendEmails.sendEmai(useFileData("htmlReportPath") + "_" + timeFormat + ".html", "Britt.Scott@stls.frb.org");
+		// SendEmails.sendEmai(useFileData("htmlReportPath") + "TestReport_" + timeFormat + ".html"), 
+		// "Britt.Scott@stls.frb.org");
 		// recorder.stop();
 		// testInfo.log(Status.INFO, "<a href='" + videoFolder + "/" + TestVideoRecord + ".mov"
 		// + "'> <span class='label info'> Download Video</span></a>");
 		extent.flush();
-		// closeBrowser();
 		Thread.sleep(4000);
-		launchTestResult();
+		// launchTestResult();
 	}
 	
 	public  ExtentReports GetExtent(){
@@ -155,7 +154,7 @@ public class TestBase {
 	
 	private ExtentHtmlReporter getHtmlReporter() {	
 
-		htmlReporter = new ExtentHtmlReporter(useFileData("htmlReport") + "_" + timeFormat + ".html"); 
+		htmlReporter = new ExtentHtmlReporter(useFileData("htmlReportPath") + "TestReport_" + timeFormat + ".html"); 
 		htmlReporter.loadXMLConfig(new File(useFileData("extent_config_xml")));
         htmlReporter.config().setChartVisibilityOnOpen(true);
 		htmlReporter.config().setTheme(Theme.DARK); // Theme background - dark, standard
@@ -385,9 +384,15 @@ public class TestBase {
 
 		log("Launching browser...");
 		selectBrowser(useFileData("browser"));
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	//	Path top the Extent HTML Report which would be launched upon completion of test
-		getUrl(useFileData("htmlReportPath" + "_" + timeFormat + ".html"));
-	//	getUrl("www." + useFileData("htmlReportPath" + "_" + timeFormat + ".html"));	
+		System.out.println(useFileData("htmlReportPath") + "TestReport_" + timeFormat + ".html");
+		getUrl(useFileData("htmlReportPath") + "TestReport_" + timeFormat + ".html");
+	//	getUrl("www." + useFileData(("htmlReportPath") + "TestReport_" + timeFormat + ".html");	
 		loadPage(10);
 		log("Page loaded!");
 	}
@@ -516,7 +521,13 @@ public class TestBase {
 
 		return driver.findElement(By.xpath("//*[contains(text(),'" + data + "')]"));
 	}
+	
+	// Generic method using POM with Page factory
+		public static WebElement getElement(WebElement data) {
 
+			return  data;
+		}
+		
 	// Generic CSS locator for Link
 		public static WebElement getElementByLink(String data) {
 			// I need to make this method work by updating the syntax
