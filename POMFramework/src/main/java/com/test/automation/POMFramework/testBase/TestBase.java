@@ -1,6 +1,7 @@
 package com.test.automation.POMFramework.testBase;
 
-// Selenium online help community  ==> http://selenium.10932.n7.nabble.com/Selenium-Users-f8051.html  
+// Selenium online help community  ==> http://selenium.10932.n7.nabble.com/Selenium-Users-f8051.html 
+
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -79,7 +81,7 @@ public class TestBase {
 	public void getStatus(ITestResult result) {
 
 		if (ITestResult.SUCCESS == result.getStatus()) {
- 			testInfo.pass(result.getName() + " Passed");
+			testInfo.pass(result.getName() + " Passed");
 			testInfo.log(Status.PASS, result.getName() + " test passed");
 		} else if (ITestResult.STARTED == result.getStatus()) {
 			testInfo.log(Status.INFO, result.getName() + " test started");
@@ -87,10 +89,10 @@ public class TestBase {
 			testInfo.log(Status.SKIP,
 					result.getName() + " test is skipped and the reason is:- " + result.getThrowable());
 		} else if (ITestResult.FAILURE == result.getStatus()) {
-			try { // ...... adding screenshots upon ItestResult failed status ......new File
+			try { // ...... adding screenshots upon ItestResult failed status ......
 				String outcome = takeScreenShotOnFailure((result.getName()));
 			// 	ExtentTest with snapshot
- 				testInfo.addScreenCaptureFromPath(outcome); 
+				testInfo.addScreenCaptureFromPath(outcome); 
 				testInfo.fail((result.getName() + " Failed"),
 						MediaEntityBuilder.createScreenCaptureFromPath(outcome).build()); 
 				// Appends snapshot in the log report
@@ -98,8 +100,9 @@ public class TestBase {
 
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
- 			}
+			}
 		}
+
 	}
 
 	@BeforeTest(alwaysRun = true)
@@ -107,18 +110,17 @@ public class TestBase {
 
 		// config = ConfigGenerator.getInstance();
 		/*
-		 * try { recorder = new ATUTestRecorder(videoFolder, TestVideoRecord,
-		 * false); recorder.start();
-		 * 
- 		 * } catch (ATUTestRecorderException e) { e.printStackTrace(); }
+		 * try { 
+		 * 	recorder = new ATUTestRecorder(videoFolder, TestVideoRecord, false); recorder.start();
+		 * } catch (ATUTestRecorderException e) { e.printStackTrace(); }
 		 */
 		
-		// Extent Report
 		GetExtent();
 		
+		//	report = new ExtentReports("C:/frbstldev/TestWorkspace/atmTestSuite/test-output/ExtentReport/"+"TestResult_"+out_filename);
 		// loading log file
-		PropertyConfigurator.configure(useFileData("logFile"));
-		}
+		//	PropertyConfigurator.configure(useFileData("logFile"));	
+	}
 
 	@AfterTest(alwaysRun = true)
 	public void endTest() throws Exception {
@@ -133,10 +135,11 @@ public class TestBase {
 		extent.flush();
 		// closeBrowser();
 		Thread.sleep(4000);
-		launchHtmlReport();
+		launchTestResult();
 	}
-
+	
 	public  ExtentReports GetExtent(){
+
 		if (extent != null)
                 return extent; //avoid creating new instance of html file
             extent = new ExtentReports();
@@ -148,9 +151,10 @@ public class TestBase {
 		extent.attachReporter(getHtmlReporter());
 		return extent;
 	}
+
 	
-	private ExtentHtmlReporter getHtmlReporter() {
-		
+	private ExtentHtmlReporter getHtmlReporter() {	
+
 		htmlReporter = new ExtentHtmlReporter(useFileData("htmlReport") + "_" + timeFormat + ".html"); 
 		htmlReporter.loadXMLConfig(new File(useFileData("extent_config_xml")));
         htmlReporter.config().setChartVisibilityOnOpen(true);
@@ -162,11 +166,10 @@ public class TestBase {
         htmlReporter.config().setDocumentTitle("Demo automation report");
         return htmlReporter;
 	}
-	
-	// To insert properties file value
-	public static String useFileData(String configFileData) {
 
-	//	new ConfigurationDataSource();
+	// Initializing and insert config.properties file with its value(s) at run time.
+	public static String useFileData(String configFileData) {
+		
 		// return ConfigGenerator.configDataHolder.get(configFileData);
 		return ConfigurationDataSource.OR.getProperty(configFileData);
 	}
@@ -220,14 +223,20 @@ public class TestBase {
 					e.printStackTrace();
 				}
 
-				System.setProperty(useFileData("chromeDriver"), useFileData("winChromeDriverPath"));
+				System.setProperty(useFileData("chromeDriver"), useFileData("winChromeDriverPath"));				
 				ChromeOptions options = new ChromeOptions();
 				options.setBinary(useFileData("winChromeDriverBinaryPath"));
-				options.addArguments("disable-infobars");
+			//	driver = new ChromeDriver(options);
+			/*	options.addArguments("disable-infobars");
 				options.addArguments("--disable-extensions");
 				options.addArguments("--start-maximized");	
-				/** To launch headless browser */
+				/** To launch headless browser *
 				// options.addArguments("headless"); 
+				
+				*/
+
+				DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+				capabilities.setCapability(ChromeOptions.CAPABILITY, options); 
 
 				log("Launching " + browserType + " browser");
 				driver = new ChromeDriver(options);
@@ -244,7 +253,7 @@ public class TestBase {
 					e.printStackTrace();
 				}
 
-				System.setProperty(useFileData("ie"), useFileData("winInternetExplorerDriverPath"));
+				System.setProperty(useFileData("ieDriver"), useFileData("winInternetExplorerDriverPath"));
 				DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
 				capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,
 						true);
@@ -267,7 +276,7 @@ public class TestBase {
 						e.printStackTrace();
 					}
 
-					System.setProperty(useFileData("ie"), useFileData("macInternetExplorerDriverPath"));
+					System.setProperty(useFileData("ieDriver"), useFileData("macInternetExplorerDriverPath"));
 					DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
 					capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,
 							true);
@@ -372,12 +381,13 @@ public class TestBase {
 		log("Page loaded!");
 	}
 
-	public void launchHtmlReport() {
+	public void launchTestResult() {
 
 		log("Launching browser...");
 		selectBrowser(useFileData("browser"));
 	//	Path top the Extent HTML Report which would be launched upon completion of test
 		getUrl(useFileData("htmlReportPath" + "_" + timeFormat + ".html"));
+	//	getUrl("www." + useFileData("htmlReportPath" + "_" + timeFormat + ".html"));	
 		loadPage(10);
 		log("Page loaded!");
 	}
@@ -430,20 +440,9 @@ public class TestBase {
 		Reporter.log(result);
 	}
 
-	public static void getApplicationTitle() {
-
-		driver.getTitle();
-	}
-
-	public static String getElementAttribute(String element, String htmlAttribute) {
-
-		log("Getting attribute of " + element);
-		return getElement(element).getAttribute(htmlAttribute);
-	}
-
 	public static Set<String> getWindowHandles() {
 
-		return driver.getWindowHandles();
+	return driver.getWindowHandles();
 	}
 
 	public static void SwitchToWindow(int index) {
@@ -497,6 +496,16 @@ public class TestBase {
 		driver.switchTo().defaultContent();
 	}
 
+	public static void getApplicationTitle() {
+
+		driver.getTitle();
+	}
+
+	public static String getElementAttribute(String element, String htmlAttribute) {
+
+		log("Getting attribute of " + element);
+		return getElement(element).getAttribute(htmlAttribute);
+	}
 	
 	public static WebElement locateElement(WebElement locator) {
 		return wait.until(ExpectedConditions.elementToBeClickable(locator));
@@ -511,7 +520,7 @@ public class TestBase {
 	// Generic CSS locator for Link
 		public static WebElement getElementByLink(String data) {
 			// I need to make this method work by updating the syntax
-		return driver.findElement(By.cssSelector("a[link*='"+ data + "']"));
+		return driver.findElement(By.cssSelector("a[href*='"+ data + "']"));
 		}
 		
 	// Generic elements locator using CSS NB: We can also us xPath
