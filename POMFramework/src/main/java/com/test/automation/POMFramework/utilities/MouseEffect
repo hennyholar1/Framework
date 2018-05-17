@@ -1,16 +1,11 @@
 package com.test.automation.POMFramework.utilities;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
-import com.test.automation.POMFramework.testBase.TestBase;
-
-/**
- * @author Da Novenos
- *
- */
-
+import testBase.TestBase;
 
 public class MouseHelper {
 
@@ -92,4 +87,13 @@ public class MouseHelper {
 		Action dragAndDrop = mouseEffect().clickAndHold(from).moveToElement(to).release(to).build();
 		dragAndDrop.perform();
 	}
+	
+	public void clickEscapeKey() {
+		mouseEffect().sendKeys(Keys.ESCAPE).perform();
+    }
+
+    
+    public void clickTabKey() {
+    	mouseEffect().sendKeys(Keys.TAB).perform();
+}
 }
