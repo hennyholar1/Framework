@@ -3,6 +3,7 @@ package com.test.automation.POMFramework.testBase;
 // Selenium online help community  ==> http://selenium.10932.n7.nabble.com/Selenium-Users-f8051.html 
 
 
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -30,32 +31,43 @@ import org.openqa.selenium.support.ui.Wait;
 import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
-import com.aventstack.extentreports.ExtentReports;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.MediaEntityBuilder;
-import com.aventstack.extentreports.Status;
-import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
-import com.aventstack.extentreports.reporter.configuration.ChartLocation;
-import com.aventstack.extentreports.reporter.configuration.Theme;
+import org.testng.annotations.BeforeSuite;
+
 import resources.ConfigurationDataSource;
+//import com.relevantcodes.extentreports.ExtentReports;
+//import com.relevantcodes.extentreports.ExtentTest;
+//import com.relevantcodes.extentreports.LogStatus;
+//import resources.ConfigurationDataSource;
 import resources.LogHelper;
 import resources.ReadDataFromExcelSheet;
-import resources.ResourceHelper;
+import utilities.ResourceHelper;
 import utilities.WaitHelper;
 
+ // Extents Report 3.0.6 version imports
+	import com.aventstack.extentreports.ExtentReports;
+	import com.aventstack.extentreports.ExtentTest;
+	import com.aventstack.extentreports.MediaEntityBuilder;
+	import com.aventstack.extentreports.Status;
+	import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
+	import com.aventstack.extentreports.reporter.configuration.*;
+	
+ 
 /**
  * @author Olu Eniola
  */
 
 public class TestBase {
 
+//	public static ATUTestRecorder recorder;
 	public static ExtentHtmlReporter htmlReporter;
 	public static ExtentTest testInfo;
 	public static ExtentReports extent;
-//	public static ATUTestRecorder recorder;
+//	ConfigGenerator config;
+
+//	protected static  ExtentReports extent;
+//	protected static ExtentTest testInfo;
 	public static ITestResult result;
 	static Calendar calendar = Calendar.getInstance();
 	public static String videoFolder = (System.getProperty("user.dir") + "/test-output/TestExecutionVideos");
@@ -65,20 +77,25 @@ public class TestBase {
 	public static WebDriver driver;
 	public static Wait<WebDriver> wait;
 	ReadDataFromExcelSheet excel;
-//	ConfigGenerator config;
-	
+	String testReport = "TestReport_" + timeFormat + ".html";
+
 	public static Logger log = LogHelper.getLogger(TestBase.class);
 
 	@BeforeMethod
 	public void beforeMethod(Method result) {
 
+	/**	Extent 3.0 version */
 		testInfo = extent.createTest(result.getName(), "is being executed").assignAuthor("Oludare Eniola");
-		testInfo.log(Status.INFO, result.getName() + " test Started");
+		testInfo.log(Status.INFO, result.getName() + " test Started"); 
+		
+//		testInfo = extent.startTest(result.getName());
+//		testInfo.log(LogStatus.INFO, result.getName() + " test Started");
 	}
 
 	@AfterMethod()
-	public void getStatus(ITestResult result) {
+	public void afterMethod(ITestResult result) {
 
+		/** Extent 3.0 version */
 		if (ITestResult.SUCCESS == result.getStatus()) {
 			testInfo.pass(result.getName() + " Passed");
 			testInfo.log(Status.PASS, result.getName() + " test passed");
@@ -88,60 +105,95 @@ public class TestBase {
 			testInfo.log(Status.SKIP,
 					result.getName() + " test is skipped and the reason is:- " + result.getThrowable());
 		} else if (ITestResult.FAILURE == result.getStatus()) {
-			try { // ...... adding screenshots upon ItestResult failed status ......
+			try { 
 				String outcome = takeScreenShotOnFailure((result.getName()));
-			// 	ExtentTest with snapshot
 				testInfo.addScreenCaptureFromPath(outcome); 
 				testInfo.fail((result.getName() + " Failed"),
 						MediaEntityBuilder.createScreenCaptureFromPath(outcome).build()); 
 				// Appends snapshot in the log report
 				testInfo.log(Status.ERROR, result.getName() + " test failed" + result.getThrowable());
-
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
-		}
-
+		} 
+		
+		
+		/** Extent 2.0 version 
+			
+	        if (result.getStatus() == ITestResult.FAILURE) {
+	        	try { 			
+					String screenshot = takeScreenShotOnFailure((result.getName()));	
+					testInfo.log(LogStatus.INFO, (result.getName() + " Failed " + testInfo.addScreenCapture(screenshot)));
+					testInfo.log(LogStatus.FAIL, result.getName() + " test failed" + result.getThrowable());
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+	        } else if (result.getStatus() == ITestResult.SKIP) {
+	        	testInfo.log(LogStatus.SKIP, result.getName() + " test is skipped and the reason is:- " + result.getThrowable());
+	        } else {
+	        	testInfo.log(LogStatus.PASS, "Test passed");
+	        }
+			extent.endTest(testInfo);
+			extent.flush();
+			*/
 	}
 
-	@BeforeTest(alwaysRun = true)
+	@BeforeSuite(alwaysRun = true)
 	public void init() {
 
-		// config = ConfigGenerator.getInstance();
-		/*
-		 * try { 
+	//	extent = getReporter(useFileData("htmlReportPath") + testReport);
+		
+		/**
+		 * // config = ConfigGenerator.getInstance(); // to create load config.properties file
+		 * try { // video recording
 		 * 	recorder = new ATUTestRecorder(videoFolder, TestVideoRecord, false); recorder.start();
-		 * } catch (ATUTestRecorderException e) { e.printStackTrace(); }
+		 * } catch (ATUTestRecorderException e) { e.printStackTrace(); }			
+	//	 	For Extent 3.0 version
+		//	GetExtent();
+		 * //	PropertyConfigurator.configure(useFileData("logFile"));	
 		 */
-		
 		GetExtent();
-		
-		//	report = new ExtentReports("C:/frbstldev/TestWorkspace/atmTestSuite/test-output/ExtentReport/"+"TestResult_"+out_filename);
-		//  loading log file
-		//	PropertyConfigurator.configure(useFileData("logFile"));	
 	}
+	
 
-	@AfterTest(alwaysRun = true)
+
+
+	@AfterSuite(alwaysRun = true)
 	public void endTest() throws Exception {
 
 		//SendEmails.sendEmai(useFileData("failedTestScreenShotPath") + "/failedTestScreenshots/" 
 		//			+ result + "_" + timeFormat + ".png", "Britt.Scott@stls.frb.org");
 		
-		// SendEmails.sendEmai(useFileData("htmlReportPath") + "TestReport_" + timeFormat + ".html"), 
+		// SendEmails.sendEmai(useFileData("htmlReportPath") + testReport), 
 		// "Britt.Scott@stls.frb.org");
 		// recorder.stop();
 		// testInfo.log(Status.INFO, "<a href='" + videoFolder + "/" + TestVideoRecord + ".mov"
 		// + "'> <span class='label info'> Download Video</span></a>");
+		
+	
+		/** For extent 2.0 ver to close*/
+	//       extent.close();
 		extent.flush();
 		Thread.sleep(4000);
-		// launchTestResult();
+		launchTestResult();
 	}
 	
+	/** Extent 2.0 version	 
+	 public synchronized static ExtentReports getReporter(String filePath) {
+	        if (extent == null) {
+	            extent = new ExtentReports(filePath, true);	         
+	            extent.addSystemInfo("Host Name", "Olu").addSystemInfo("Environment", "QA-Demo");
+	        }
+	        return extent;
+	    } 
+
+	 Extent 3.0 */
 	public  ExtentReports GetExtent(){
 
+		//avoid creating new instance of html file
 		if (extent != null)
-                return extent; //avoid creating new instance of html file
-            extent = new ExtentReports();
+                return extent; 
+           extent = new ExtentReports();
     	// Additional information that makes our report looks nice
 		extent.setSystemInfo("Host Name", "Novenos IT Solutions Inc.");
 		extent.setSystemInfo("Environment", "QA/Automation Testing");
@@ -150,12 +202,11 @@ public class TestBase {
 		extent.attachReporter(getHtmlReporter());
 		return extent;
 	}
-
 	
 	private ExtentHtmlReporter getHtmlReporter() {	
 
-		htmlReporter = new ExtentHtmlReporter(useFileData("htmlReportPath") + "TestReport_" + timeFormat + ".html"); 
-		htmlReporter.loadXMLConfig(new File(useFileData("extent_config_xml")));
+		htmlReporter = new ExtentHtmlReporter(useFileData("htmlReportPath") + testReport); 
+	//	htmlReporter.loadXMLConfig(new File(useFileData("extent_config_xml")));
         htmlReporter.config().setChartVisibilityOnOpen(true);
 		htmlReporter.config().setTheme(Theme.DARK); // Theme background - dark, standard
 		htmlReporter.config().setReportName("Automation Test Report");
@@ -164,7 +215,7 @@ public class TestBase {
 		htmlReporter.config().setTimeStampFormat("mm/dd/yyyy hh:mm:ss a"); // set timeStamp format
         htmlReporter.config().setDocumentTitle("Demo automation report");
         return htmlReporter;
-	}
+	}/**	*/
 
 	// Initializing and insert config.properties file with its value(s) at run time.
 	public static String useFileData(String configFileData) {
@@ -189,8 +240,7 @@ public class TestBase {
 
 	public Object[][] getExcelData(String excelName, String excelSheetName, String testName) {
 
-		// The argument supplied here is the path to the package that contains
-		// all forms of data/files
+		// The argument supplied here is the path to the package that contains all forms of data/files
 		String excelLocation = ResourceHelper.getResourcePath("testDataFilePath") + excelName;
 		excel = new ReadDataFromExcelSheet();
 		return excel.getExcelDataBasedOnStartingPoint(excelLocation, excelSheetName, testName);
@@ -215,28 +265,23 @@ public class TestBase {
 		if (System.getProperty("os.name").contains("Windows")) {
 			if (browserType.equalsIgnoreCase("chrome")) {
 				System.out.println(browserType);
-
 				try {
 					Runtime.getRuntime().exec("taskkill /F /IM chrome.exe");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-
 				System.setProperty(useFileData("chromeDriver"), useFileData("winChromeDriverPath"));				
 				ChromeOptions options = new ChromeOptions();
 				options.setBinary(useFileData("winChromeDriverBinaryPath"));
 			//	driver = new ChromeDriver(options);
-			/*	options.addArguments("disable-infobars");
+			/**	options.addArguments("disable-infobars");
 				options.addArguments("--disable-extensions");
 				options.addArguments("--start-maximized");	
 				/** To launch headless browser *
-				// options.addArguments("headless"); 
-				
+				// options.addArguments("headless"); 	
 				*/
-
 				DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 				capabilities.setCapability(ChromeOptions.CAPABILITY, options); 
-
 				log("Launching " + browserType + " browser");
 				driver = new ChromeDriver(options);
 				driver.manage().deleteAllCookies();
@@ -245,36 +290,29 @@ public class TestBase {
 
 			else if (browserType.equalsIgnoreCase("InternetExplorer")) {
 				System.out.println(browserType);
-
 				try {
 					Runtime.getRuntime().exec("taskkill /F /IM iexplore.exe");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-
 				System.setProperty(useFileData("ieDriver"), useFileData("winInternetExplorerDriverPath"));
 				DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
-				capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,
-						true);
+				capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,	true);
 				capabilities.setCapability("requireWindowFocus", true);
 				capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-
 				log("Launching " + browserType + " browser");
 				driver = new InternetExplorerDriver(capabilities);
 				driver.manage().deleteAllCookies();
 				maximizeWindow();
 			}
 			
-
 			else if (System.getProperty("os.name").contains("Mac")) {
-
 				if (browserType.equalsIgnoreCase("InternetExplorer")) {
 					try {
 						Runtime.getRuntime().exec("taskkill /F /IM iexplore.exe");
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-
 					System.setProperty(useFileData("ieDriver"), useFileData("macInternetExplorerDriverPath"));
 					DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
 					capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,
@@ -288,13 +326,11 @@ public class TestBase {
 					maximizeWindow();
 					
 				} else if (browserType.equalsIgnoreCase("chrome")) {
-
 					try {
 						Runtime.getRuntime().exec("taskkill /F /IM iexplore");
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-
 					ChromeOptions options = new ChromeOptions();
 					options.addArguments("disable-infobars");
 					options.addArguments("--disable-extensions");
@@ -318,35 +354,27 @@ public class TestBase {
 			result = "blank";
 		File destFile = null;
 		File source = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-
 		destFile = new File(useFileData("failedTestScreenShotPath") + "/failedTestScreenshots/" 
 					+ result + "_" + timeFormat + ".png");
-
 		try {
-
 			FileUtils.copyFile(source, destFile);
 			System.out.println("Screenshot taken");
 			// This will help us to link the screen shot in testNG report
 			Reporter.log("<a href='" + destFile.getAbsolutePath() + "'> <img src='" + destFile.getAbsolutePath()
 					+ "' height='100' width='100'/> </a>");
-
 		} catch (IOException e) {
-
 			System.out.println("Exception while taking screenshot: " + e.getMessage());
 		}
-
 		return destFile.toString();
 	}
 
-	public String takeScreenShotOnSuccess(String result) {
+	public String takeScreenShot(String result) {
 
 		if (result == "")
 			result = "blank";
 		File destFile = null;
 		File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-
 		try {
-
 			String reportDirectory = new File(System.getProperty("user.dir")).getAbsolutePath()
 					+ useFileData("screenShotPath");
 			destFile = new File((String) reportDirectory + "/" + result + "_" + timeFormat + ".png");
@@ -354,11 +382,9 @@ public class TestBase {
 			System.out.println("Screenshot taken");
 			Reporter.log("<a href='" + destFile.getAbsolutePath() + "'> <img src='" + destFile.getAbsolutePath()
 					+ "' height='100' width='100'/> </a>");
-
 		} catch (IOException e) {
 			System.out.println("Exception while taking screenshot" + e.getMessage());
 		}
-
 		return destFile.toString();
 	}
 
@@ -384,15 +410,8 @@ public class TestBase {
 
 		log("Launching browser...");
 		selectBrowser(useFileData("browser"));
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	//	Path top the Extent HTML Report which would be launched upon completion of test
-		System.out.println(useFileData("htmlReportPath") + "TestReport_" + timeFormat + ".html");
-		getUrl(useFileData("htmlReportPath") + "TestReport_" + timeFormat + ".html");
-	//	getUrl("www." + useFileData(("htmlReportPath") + "TestReport_" + timeFormat + ".html");	
+		getUrl(useFileData("htmlReportPath") + testReport);
+	//	getUrl("www." + useFileData(("htmlReportPath") + testReport);	
 		loadPage(10);
 		log("Page loaded!");
 	}
@@ -443,6 +462,8 @@ public class TestBase {
 
 		log.info(result);
 		Reporter.log(result);
+		testInfo.log(Status.INFO, result);
+	//	testInfo.log(LogStatus.INFO, result);
 	}
 
 	public static Set<String> getWindowHandles() {
@@ -523,25 +544,35 @@ public class TestBase {
 	}
 	
 	// Generic method using POM with Page factory
-		public static WebElement getElement(WebElement data) {
+		public static WebElement getElement(WebElement locator) {
 
-			return  data;
+			return  locator;
 		}
 		
 	// Generic CSS locator for Link
 		public static WebElement getElementByLink(String data) {
-			// I need to make this method work by updating the syntax
+			
 		return driver.findElement(By.cssSelector("a[href*='"+ data + "']"));
 		}
 		
+		// Generic CSS locator for image
+		public static WebElement getElementByImage(String element){
+			
+			return driver.findElement(By.cssSelector("img[src*='"+ element +"'']"));
+		}
+		
 	// Generic elements locator using CSS NB: We can also us xPath
-	public static List<WebElement> getElements(String elements) {
+/*	public static List<WebElement> getElements(String elements) {
 
 		log("Locating web element " + elements);
 		return driver.findElements(By.cssSelector("[id*='" + elements + "']"));
 	//	return driver.findElements(By.cssSelector("*[id~='" + elements + "']"));	
-	}
+	}*/
 
+	public static List<WebElement> getElements(String locator) {
+		log("Locating web elements " + locator);
+		return  driver.findElements(By.xpath("//*[contains(text(),'" + locator + "')]"));
+	}
 	// Generic CSS element locator method
 	public static WebElement getElementByName(String element) {
 
@@ -580,29 +611,37 @@ public class TestBase {
 		log("Clicking on expanded menu " + element);
 	}
 
-	public static void clickOrSelectElement(WebElement element) {
-
+	public static void click(WebElement element) {
+		
 		log("Clicking on " + element);
-		element.click();
+		if (element!=null)
+		try
+			{
+		//		 element.isDisplayed();
+				 element.click();
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	// For generic Element (non POM)
-	public static void clickOrSelectElement(String element) {
+	public static void click(String element) {
 
 		log("Clicking on " + element);
 		getElement(element).click();
 	}
 
 	public static void setValueFor(WebElement element, String value) {
-
-		log("Clicking on " + element);
+		 wait.until(ExpectedConditions.visibilityOf(element));
+		log("Entering value in " + element + " field");
 		element.sendKeys(value);
 	}
 
 	// Generic text/input-box (non POM)
 	public static void setValueFor(String textboxName, String value) {
 
-		log("Entering data in :" + textboxName);
+		log("Entering value in " + textboxName + " field");
 		getElement(textboxName).sendKeys(value);
 	}
 
@@ -619,11 +658,12 @@ public class TestBase {
 		getElement(textbox).clear();
 	}
 
+	
 	// Review this bootstrap method later
 	public static void bootStrapWithSimilarLocatorsWithoutFrame(WebElement bootStrapElement,
 			String bootStrapSubElements, String itemToClick) {
 
-		clickOrSelectElement(bootStrapElement);
+		click(bootStrapElement);
 		List<WebElement> elementList = getElements(bootStrapSubElements);
 
 		for (WebElement ele : elementList) {
@@ -639,7 +679,7 @@ public class TestBase {
 	public static void bootStrapWithSimilarLocatorsWithinSameFrame(WebElement bootStrapElement,
 			String bootStrapSubElements, String itemToClick, String frameName) {
 
-		clickOrSelectElement(bootStrapElement);
+		click(bootStrapElement);
 		switchToFrame(frameName);
 		List<WebElement> elementList = getElements(bootStrapSubElements);
 
@@ -656,7 +696,7 @@ public class TestBase {
 
 	public static WebElement bootStrapItemWithDistinctLocator(WebElement bootStrapElement, String element) {
 
-		clickOrSelectElement(bootStrapElement);
+		click(bootStrapElement);
 		return getElement(element);
 	}
 
