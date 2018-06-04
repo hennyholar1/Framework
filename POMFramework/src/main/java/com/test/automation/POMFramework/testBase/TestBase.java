@@ -1,8 +1,5 @@
 package com.test.automation.POMFramework.testBase;
-
 // Selenium online help community  ==> http://selenium.10932.n7.nabble.com/Selenium-Users-f8051.html 
-
-
 
 import java.io.File;
 import java.io.IOException;
@@ -10,12 +7,13 @@ import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.log4j.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -45,15 +43,14 @@ import resources.ReadDataFromExcelSheet;
 import utilities.ResourceHelper;
 import utilities.WaitHelper;
 
- // Extents Report 3.0.6 version imports
-	import com.aventstack.extentreports.ExtentReports;
-	import com.aventstack.extentreports.ExtentTest;
-	import com.aventstack.extentreports.MediaEntityBuilder;
-	import com.aventstack.extentreports.Status;
-	import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
-	import com.aventstack.extentreports.reporter.configuration.*;
-	
- 
+// Extents Report 3.0.6 version imports
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
+import com.aventstack.extentreports.reporter.configuration.*;
+
 /**
  * @author Olu Eniola
  */
@@ -144,59 +141,58 @@ public class TestBase {
 	//	extent = getReporter(useFileData("htmlReportPath") + testReport);
 		
 		/**
-		 * // config = ConfigGenerator.getInstance(); // to create load config.properties file
+		 * // config = ConfigGenerator.getInstance(); // to create & load config.properties file in another way
+		 * 
+		 * //	 	For Video recording of test execution
+		 * 
 		 * try { // video recording
 		 * 	recorder = new ATUTestRecorder(videoFolder, TestVideoRecord, false); recorder.start();
 		 * } catch (ATUTestRecorderException e) { e.printStackTrace(); }			
-	//	 	For Extent 3.0 version
-		//	GetExtent();
-		 * //	PropertyConfigurator.configure(useFileData("logFile"));	
-		 */
+		 *  */
+		
 		GetExtent();
 	}
 	
 
-
-
 	@AfterSuite(alwaysRun = true)
 	public void endTest() throws Exception {
 
-		//SendEmails.sendEmai(useFileData("failedTestScreenShotPath") + "/failedTestScreenshots/" 
-		//			+ result + "_" + timeFormat + ".png", "Britt.Scott@stls.frb.org");
+	/**	 	To send automatic email for test report and failed tests.
+	 * //SendEmails.sendEmai(useFileData("failedTestScreenShotPath") + "/failedTestScreenshots/" 
+		//			+ result + "_" + timeFormat + ".png", "Scott.Britt@stls.frb.org");
 		
 		// SendEmails.sendEmai(useFileData("htmlReportPath") + testReport), 
-		// "Britt.Scott@stls.frb.org");
-		// recorder.stop();
+		// "Scott.Britt@stls.frb.org");
+		// recorder.stop();	// ** Stop Video Recording **
 		// testInfo.log(Status.INFO, "<a href='" + videoFolder + "/" + TestVideoRecord + ".mov"
 		// + "'> <span class='label info'> Download Video</span></a>");
 		
-	
-		/** For extent 2.0 ver to close*/
-	//       extent.close();
+	//  extent.close();	// * For extent 2.0 ver to close*/
+		/** Extent 2.0 version	 
+		 public synchronized static ExtentReports getReporter(String filePath) {
+		        if (extent == null) {
+		            extent = new ExtentReports(filePath, true);	         
+		            extent.addSystemInfo("Host Name", "Olu").addSystemInfo("Environment", "QA-Demo");
+		        }
+		        return extent;
+		    } */
+		
 		extent.flush();
 		Thread.sleep(4000);
 		launchTestResult();
 	}
 	
-	/** Extent 2.0 version	 
-	 public synchronized static ExtentReports getReporter(String filePath) {
-	        if (extent == null) {
-	            extent = new ExtentReports(filePath, true);	         
-	            extent.addSystemInfo("Host Name", "Olu").addSystemInfo("Environment", "QA-Demo");
-	        }
-	        return extent;
-	    } 
 
-	 Extent 3.0 */
+	//	Extent 3.0 Version
 	public  ExtentReports GetExtent(){
 
-		//avoid creating new instance of html file
+	//	To avoid creating new instance of html file
 		if (extent != null)
                 return extent; 
            extent = new ExtentReports();
-    	// Additional information that makes our report looks nice
+    //	Additional information that makes our report looks nice
 		extent.setSystemInfo("Host Name", "Novenos IT Solutions Inc.");
-		extent.setSystemInfo("Environment", "QA/Automation Testing");
+		extent.setSystemInfo("Environment", "FRB CARS Team");
 		extent.setSystemInfo("Version", "V-1.0.0");
 		extent.setSystemInfo("OS", "Windows-10");
 		extent.attachReporter(getHtmlReporter());
@@ -220,7 +216,7 @@ public class TestBase {
 	// Initializing and insert config.properties file with its value(s) at run time.
 	public static String useFileData(String configFileData) {
 		
-		// return ConfigGenerator.configDataHolder.get(configFileData);
+	//	return ConfigGenerator.configDataHolder.get(configFileData);
 		return ConfigurationDataSource.OR.getProperty(configFileData);
 	}
 
@@ -231,9 +227,9 @@ public class TestBase {
 		return excel.getDataFromSpreadSheet(excelSheetName, workbookName);
 	}
 
-	public String[][] getSpreadSheetData(String excelFileName, String excelSheetName, String FirstColumnText) {
+	public String[][] getSpreadSheetData(String workBookName, String excelSheetName, String FirstColumnText) {
 
-		String excellocation = ResourceHelper.getResourcePath("testDataFilePath") + excelFileName;
+		String excellocation = ResourceHelper.getResourcePath("testDataFilePath") + workBookName;
 		excel = new ReadDataFromExcelSheet();
 		return excel.getSpreadsheetData(excellocation, excelSheetName, FirstColumnText);
 	}
@@ -273,13 +269,11 @@ public class TestBase {
 				System.setProperty(useFileData("chromeDriver"), useFileData("winChromeDriverPath"));				
 				ChromeOptions options = new ChromeOptions();
 				options.setBinary(useFileData("winChromeDriverBinaryPath"));
-			//	driver = new ChromeDriver(options);
-			/**	options.addArguments("disable-infobars");
+				options.addArguments("disable-infobars");
 				options.addArguments("--disable-extensions");
 				options.addArguments("--start-maximized");	
-				/** To launch headless browser *
+				/** To launch headless browser *		*/
 				// options.addArguments("headless"); 	
-				*/
 				DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 				capabilities.setCapability(ChromeOptions.CAPABILITY, options); 
 				log("Launching " + browserType + " browser");
@@ -299,7 +293,7 @@ public class TestBase {
 				DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
 				capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,	true);
 				capabilities.setCapability("requireWindowFocus", true);
-				capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+				//capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
 				log("Launching " + browserType + " browser");
 				driver = new InternetExplorerDriver(capabilities);
 				driver.manage().deleteAllCookies();
@@ -335,7 +329,7 @@ public class TestBase {
 					options.addArguments("disable-infobars");
 					options.addArguments("--disable-extensions");
 					options.addArguments("--start-maximized");
-					// To launch headless chrome browser
+					/** To launch headless browser *		*/
 					// options.addArguments("headless"); 
 
 					log("Launching " + browserType + " browser");
@@ -458,12 +452,82 @@ public class TestBase {
 		driver.navigate().refresh();
 	}
 
-	public static void log(String result) {
+	public static void changeLogLevel(Level level) {
+	    Enumeration<?> loggers = LogManager.getCurrentLoggers();
+	    while(loggers.hasMoreElements()) {
+	        Logger logger = (Logger) loggers.nextElement();
+	        logger.setLevel(level);
+	    }
+	}
+	
+	public enum logLevel {
+		INFO, TRACE, DEBUG, WARN, ERROR, FATAL, OFF
+	}
 
-		log.info(result);
-		Reporter.log(result);
-		testInfo.log(Status.INFO, result);
-	//	testInfo.log(LogStatus.INFO, result);
+	public static void log(logLevel logValue, String comment){ 
+		
+	switch (logValue) { 
+	
+	case INFO:
+		log.info(comment);
+		break;
+
+	case TRACE:
+		log.trace(comment);
+		break;
+		
+	case DEBUG:
+		log.debug(comment);
+		break;
+		
+	case WARN:
+		 log.warn(comment);
+		break;
+		
+	case ERROR:
+		 log.error(comment);
+		break;
+		
+	case FATAL:
+		log.fatal(comment);
+		break;
+		
+	default:
+			log.notifyAll();
+		break;
+	}
+	
+	}
+	
+	public static void log(String comment, Level LevelDotLoglevelInUpperCase){
+	
+		changeLogLevel(LevelDotLoglevelInUpperCase);	
+		log.info(comment);	
+		log.trace(comment);		
+		log.debug(comment);	
+		log.warn(comment);
+		log.error(comment);
+		log.fatal(comment);	
+		testInfo.log(Status.INFO, comment);
+	//	testInfo.log(LogStatus.INFO, comment);	// Log output info for extent report 2.0 version
+	}
+	
+	
+	public static void log(String comment) {
+
+		log.info(comment);
+		testInfo.log(Status.INFO, comment);
+	//	testInfo.log(LogStatus.INFO, comment);	// Log output info for extent report 2.0 version
+	}
+	
+	public static void logDebug(String comment) {
+
+		log.debug(comment);
+	}
+	
+	public static void logTrace(String comment) {
+
+		log.trace(comment);
 	}
 
 	public static Set<String> getWindowHandles() {
@@ -530,35 +594,33 @@ public class TestBase {
 	public static String getElementAttribute(String element, String htmlAttribute) {
 
 		log("Getting attribute of " + element);
-		return getElement(element).getAttribute(htmlAttribute);
+		return getWebElement(element).getAttribute(htmlAttribute);
 	}
 	
-	public static WebElement locateElement(WebElement locator) {
-		return wait.until(ExpectedConditions.elementToBeClickable(locator));
+	public static WebElement getWebElement(WebElement locator) {
+		return wait.until(ExpectedConditions.visibilityOf(locator));
 	}
 	
 	// Generic xPath locator NB: We can also us CSS
-	public static WebElement getElement(String data) {
+	public static WebElement getWebElement(String data) {
 
-		return driver.findElement(By.xpath("//*[contains(text(),'" + data + "')]"));
+		return wait.until(ExpectedConditions
+				.visibilityOf(driver.findElement(By.xpath("//*[contains(text(),'" + data + "')]"))));
 	}
 	
-	// Generic method using POM with Page factory
-		public static WebElement getElement(WebElement locator) {
-
-			return  locator;
-		}
 		
 	// Generic CSS locator for Link
-		public static WebElement getElementByLink(String data) {
+		public static WebElement getWebElementByLink(String data) {
 			
-		return driver.findElement(By.cssSelector("a[href*='"+ data + "']"));
+		return wait.until(ExpectedConditions
+				.visibilityOf(driver.findElement(By.cssSelector("a[href*='"+ data + "']"))));
 		}
 		
 		// Generic CSS locator for image
-		public static WebElement getElementByImage(String element){
+		public static WebElement getWebElementByImage(String element){
 			
-			return driver.findElement(By.cssSelector("img[src*='"+ element +"'']"));
+			return wait.until(ExpectedConditions
+					.visibilityOf(driver.findElement(By.cssSelector("img[src*='"+ element +"'']"))));
 		}
 		
 	// Generic elements locator using CSS NB: We can also us xPath
@@ -569,26 +631,26 @@ public class TestBase {
 	//	return driver.findElements(By.cssSelector("*[id~='" + elements + "']"));	
 	}*/
 
-	public static List<WebElement> getElements(String locator) {
+	public static List<WebElement> getWebElements(String locator) {
 		log("Locating web elements " + locator);
 		return  driver.findElements(By.xpath("//*[contains(text(),'" + locator + "')]"));
 	}
 	// Generic CSS element locator method
-	public static WebElement getElementByName(String element) {
+	public static WebElement getWebElementByName(String element) {
 
 		log("Locating web element " + element);
 		return driver.findElement(By.cssSelector("[name*='" + element + "']"));
 	}
 
 	// Generic CSS element locator method
-	public static WebElement getElementByClass(String element) {
+	public static WebElement getWebElementByClass(String element) {
 
 		log("Locating web element " + element);
 		return driver.findElement(By.cssSelector("[class*='" + element + "']"));
 	}
 
 	// Generic CSS element locator method
-	public static WebElement getElementById(String element) {
+	public static WebElement getWebElementById(String element) {
 
 		log("Locating web element " + element);
 		return driver.findElement(By.cssSelector("[id*='" + element + "']"));
@@ -611,14 +673,16 @@ public class TestBase {
 		log("Clicking on expanded menu " + element);
 	}
 
-	public static void click(WebElement element) {
+	public static void clickOnWebElement(WebElement element) {
 		
 		log("Clicking on " + element);
 		if (element!=null)
 		try
 			{
-		//		 element.isDisplayed();
-				 element.click();
+	//	element.isDisplayed();
+	//	element.click();
+		wait.until(ExpectedConditions.elementToBeClickable(element)).click();
+			
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
@@ -626,36 +690,48 @@ public class TestBase {
 	}
 
 	// For generic Element (non POM)
-	public static void click(String element) {
+	public static void clickOnWebElement(String element) {
 
 		log("Clicking on " + element);
-		getElement(element).click();
+		getWebElement(element).click();
 	}
 
-	public static void setValueFor(WebElement element, String value) {
+	public static void setValue(WebElement element, String value) {
+		if (element!=null)
+			try
+		{
 		 wait.until(ExpectedConditions.visibilityOf(element));
 		log("Entering value in " + element + " field");
 		element.sendKeys(value);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	// Generic text/input-box (non POM)
-	public static void setValueFor(String textboxName, String value) {
+	public static void setValue(String textboxName, String value) {
 
 		log("Entering value in " + textboxName + " field");
-		getElement(textboxName).sendKeys(value);
+		getWebElement(textboxName).sendKeys(value);
 	}
 
 	public static void clearTextArea(WebElement textbox) {
-
-		log("Clearing on " + textbox);
+		if (textbox!=null)
+			try
+		{
 		textbox.clear();
+	}
+	catch(Exception ex) {
+		ex.printStackTrace();
+	}
 	}
 
 	// Generic text area (non POM)
 	public static void clearTextArea(String textbox) {
 
 		log("Clearing on " + textbox);
-		getElement(textbox).clear();
+		getWebElement(textbox).clear();
 	}
 
 	
@@ -663,8 +739,8 @@ public class TestBase {
 	public static void bootStrapWithSimilarLocatorsWithoutFrame(WebElement bootStrapElement,
 			String bootStrapSubElements, String itemToClick) {
 
-		click(bootStrapElement);
-		List<WebElement> elementList = getElements(bootStrapSubElements);
+		getWebElement(bootStrapElement);
+		List<WebElement> elementList = getWebElements(bootStrapSubElements);
 
 		for (WebElement ele : elementList) {
 			String dd_value = ele.getAttribute("innerHTML");
@@ -679,9 +755,9 @@ public class TestBase {
 	public static void bootStrapWithSimilarLocatorsWithinSameFrame(WebElement bootStrapElement,
 			String bootStrapSubElements, String itemToClick, String frameName) {
 
-		click(bootStrapElement);
+		clickOnWebElement(bootStrapElement);
 		switchToFrame(frameName);
-		List<WebElement> elementList = getElements(bootStrapSubElements);
+		List<WebElement> elementList = getWebElements(bootStrapSubElements);
 
 		for (WebElement ele : elementList) {
 			String dd_value = ele.getAttribute("innerHTML");
@@ -696,8 +772,8 @@ public class TestBase {
 
 	public static WebElement bootStrapItemWithDistinctLocator(WebElement bootStrapElement, String element) {
 
-		click(bootStrapElement);
-		return getElement(element);
+		clickOnWebElement(bootStrapElement);
+		return getWebElement(element);
 	}
 
 }
