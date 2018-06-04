@@ -1,0 +1,33 @@
+package resources;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
+import utilities.ResourceHelper;
+
+// import org.apache.log4j.Logger;
+// import org.apache.log4j.PropertyConfigurator;
+
+public class LogHelper {
+	
+	private static boolean root = false;
+	
+	static String log4jPropertyfileLocation = "\\src\\main\\resources\\configurationResources\\log4j.properties";
+
+	public static Logger getLogger(Class<?> clas){
+
+		if (root) {
+
+			return Logger.getLogger(clas);
+		}
+		
+		// ... loading log file ...
+		PropertyConfigurator.configure(ResourceHelper.getResourcePath(log4jPropertyfileLocation));
+
+		root = true;
+
+		return LogHelper.getLogger(clas);
+
+	}
+
+}
