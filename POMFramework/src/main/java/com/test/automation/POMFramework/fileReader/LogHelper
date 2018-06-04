@@ -1,4 +1,4 @@
-package resources;
+package com.test.automation.POMFramework.fileReader; 
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
