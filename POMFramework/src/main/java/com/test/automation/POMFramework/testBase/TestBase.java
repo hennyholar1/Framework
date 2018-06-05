@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -25,7 +26,7 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.Reporter;
 import org.testng.annotations.AfterMethod;
@@ -72,7 +73,7 @@ public class TestBase {
 	static String timeFormat = formater.format(calendar.getTime());
 	public static String TestVideoRecord = "TestVideo-" + timeFormat;
 	public static WebDriver driver;
-	public static Wait<WebDriver> wait;
+	public static WebDriverWait wait;
 	ReadDataFromExcelSheet excel;
 	String testReport = "TestReport_" + timeFormat + ".html";
 
@@ -137,7 +138,8 @@ public class TestBase {
 
 	@BeforeSuite(alwaysRun = true)
 	public void init() {
-
+		
+	//	new WaitHelper(driver);
 	//	extent = getReporter(useFileData("htmlReportPath") + testReport);
 		
 		/**
@@ -178,8 +180,8 @@ public class TestBase {
 		    } */
 		
 		extent.flush();
-		Thread.sleep(4000);
-		launchTestResult();
+		Thread.sleep(2500);
+	//	launchTestResult();
 	}
 	
 
@@ -414,7 +416,7 @@ public class TestBase {
 
 		log("Navigating to: " + url);
 		driver.navigate().to(url);
-		new WaitHelper(driver).waitImplicitly(5);
+	//	WaitHelper.waitImplicitly(5);
 	}
 
 	public static void loadPage(long timeOut) {
@@ -590,69 +592,59 @@ public class TestBase {
 
 		driver.getTitle();
 	}
-
-	public static String getElementAttribute(String element, String htmlAttribute) {
-
-		log("Getting attribute of " + element);
-		return getWebElement(element).getAttribute(htmlAttribute);
-	}
 	
 	public static WebElement getWebElement(WebElement locator) {
 		return wait.until(ExpectedConditions.visibilityOf(locator));
+	//	return locator;
 	}
 	
 	// Generic xPath locator NB: We can also us CSS
 	public static WebElement getWebElement(String data) {
 
-		return wait.until(ExpectedConditions
-				.visibilityOf(driver.findElement(By.xpath("//*[contains(text(),'" + data + "')]"))));
+	//	return wait.until(ExpectedConditions
+	//			.visibilityOf(driver.findElement(By.xpath("//*[contains(text(),'" + data + "')]"))));
+		return (driver.findElement(By.xpath("//*[contains(text(),'" + data + "')]")));
 	}
 	
-		
-	// Generic CSS locator for Link
-		public static WebElement getWebElementByLink(String data) {
-			
-		return wait.until(ExpectedConditions
-				.visibilityOf(driver.findElement(By.cssSelector("a[href*='"+ data + "']"))));
-		}
-		
-		// Generic CSS locator for image
-		public static WebElement getWebElementByImage(String element){
-			
-			return wait.until(ExpectedConditions
-					.visibilityOf(driver.findElement(By.cssSelector("img[src*='"+ element +"'']"))));
-		}
-		
-	// Generic elements locator using CSS NB: We can also us xPath
-/*	public static List<WebElement> getElements(String elements) {
-
-		log("Locating web element " + elements);
-		return driver.findElements(By.cssSelector("[id*='" + elements + "']"));
-	//	return driver.findElements(By.cssSelector("*[id~='" + elements + "']"));	
-	}*/
-
 	public static List<WebElement> getWebElements(String locator) {
-		log("Locating web elements " + locator);
+		
 		return  driver.findElements(By.xpath("//*[contains(text(),'" + locator + "')]"));
 	}
+		
+	@SuppressWarnings("unchecked")
+	public static List<WebElement> getWebElements(WebElement locators) {
+		return (List<WebElement>) wait.until(ExpectedConditions.visibilityOf(locators));
+	}
+	
+	// Generic CSS locator for Link
+		public static WebElement getWebElementByLink(String data) {
+		
+	return wait.until(ExpectedConditions
+			.visibilityOf( driver.findElement(By.cssSelector("a[href*='"+ data + "']"))));
+	}
+	
+	// Generic CSS locator for image
+	public static WebElement getWebElementByImage(String element){
+		
+		return wait.until(ExpectedConditions
+				.visibilityOf(driver.findElement(By.cssSelector("img[src*='"+ element +"'']"))));
+	}
+		
 	// Generic CSS element locator method
 	public static WebElement getWebElementByName(String element) {
 
-		log("Locating web element " + element);
 		return driver.findElement(By.cssSelector("[name*='" + element + "']"));
 	}
 
 	// Generic CSS element locator method
 	public static WebElement getWebElementByClass(String element) {
 
-		log("Locating web element " + element);
 		return driver.findElement(By.cssSelector("[class*='" + element + "']"));
 	}
 
 	// Generic CSS element locator method
 	public static WebElement getWebElementById(String element) {
 
-		log("Locating web element " + element);
 		return driver.findElement(By.cssSelector("[id*='" + element + "']"));
 	}
 
@@ -660,7 +652,6 @@ public class TestBase {
 	public static void clickOnExpandableMenu(String element) {
 
 		driver.findElement(By.xpath("//*[contains(text(),'" + element + "') and @aria-expanded='false')]")).click();
-		log("Clicking on expandable menu " + element);
 	}
 
 	// Generic expanded link/menu method for text displayed element
@@ -670,20 +661,16 @@ public class TestBase {
 
 				+ "') and @aria-expanded='true']/following-sibling::ul/child::li/child::a[contains(text),'" 
 				+ element + "')]")).click();
-		log("Clicking on expanded menu " + element);
 	}
 
 	public static void clickOnWebElement(WebElement element) {
 		
-		log("Clicking on " + element);
 		if (element!=null)
 		try
 			{
-	//	element.isDisplayed();
-	//	element.click();
-		wait.until(ExpectedConditions.elementToBeClickable(element)).click();
-			
-		}
+		element.click();
+	//	wait.until(ExpectedConditions.elementToBeClickable(element)).click();		
+			}
 		catch(Exception ex) {
 			ex.printStackTrace();
 		}
@@ -692,7 +679,6 @@ public class TestBase {
 	// For generic Element (non POM)
 	public static void clickOnWebElement(String element) {
 
-		log("Clicking on " + element);
 		getWebElement(element).click();
 	}
 
@@ -700,9 +686,9 @@ public class TestBase {
 		if (element!=null)
 			try
 		{
-		 wait.until(ExpectedConditions.visibilityOf(element));
-		log("Entering value in " + element + " field");
-		element.sendKeys(value);
+				wait.until(ExpectedConditions.visibilityOf(element));
+				element.sendKeys(value);
+				element.sendKeys(Keys.TAB);
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
@@ -712,8 +698,8 @@ public class TestBase {
 	// Generic text/input-box (non POM)
 	public static void setValue(String textboxName, String value) {
 
-		log("Entering value in " + textboxName + " field");
 		getWebElement(textboxName).sendKeys(value);
+		getWebElement(textboxName).sendKeys(Keys.TAB);
 	}
 
 	public static void clearTextArea(WebElement textbox) {
@@ -724,13 +710,12 @@ public class TestBase {
 	}
 	catch(Exception ex) {
 		ex.printStackTrace();
-	}
+		}
 	}
 
 	// Generic text area (non POM)
 	public static void clearTextArea(String textbox) {
 
-		log("Clearing on " + textbox);
 		getWebElement(textbox).clear();
 	}
 
