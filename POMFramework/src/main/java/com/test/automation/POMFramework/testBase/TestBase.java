@@ -33,7 +33,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
-
 import resources.ConfigurationDataSource;
 //import com.relevantcodes.extentreports.ExtentReports;
 //import com.relevantcodes.extentreports.ExtentTest;
@@ -64,18 +63,19 @@ public class TestBase {
 	public static ExtentReports extent;
 //	ConfigGenerator config;
 
-//	protected static  ExtentReports extent;
-//	protected static ExtentTest testInfo;
+/**  ... Extentreport 2.0 version ...
+ * 	//	protected static  ExtentReports extent;
+ * 	//	protected static ExtentTest testInfo; 
+ */
 	public static ITestResult result;
 	static Calendar calendar = Calendar.getInstance();
 	public static String videoFolder = (System.getProperty("user.dir") + "/test-output/TestExecutionVideos");
-	static SimpleDateFormat formater = new SimpleDateFormat("dd_MMM_yyyy_hh_mm_ss");
-	static String timeFormat = formater.format(calendar.getTime());
-	public static String TestVideoRecord = "TestVideo-" + timeFormat;
+	static String testReport = "TestReport_" + DateTimeHelper.getCurrentAndDateTime() + ".html";
+	public static String TestVideoRecord = "TestVideo-" + DateTimeHelper.getCurrentAndDateTime();
 	public static WebDriver driver;
 	public static WebDriverWait wait;
 	ReadDataFromExcelSheet excel;
-	String testReport = "TestReport_" + timeFormat + ".html";
+	
 
 	public static Logger log = LogHelper.getLogger(TestBase.class);
 
@@ -180,49 +180,45 @@ public class TestBase {
 		    } */
 		
 		extent.flush();
-		Thread.sleep(2500);
-	//	launchTestResult();
+		WaitHelper.sleep(1);
+		launchTestResult();
 	}
 	
+/** 	...	Extent 3.0 version	...	*/	
+	public static  ExtentReports GetExtent(){
 
-	//	Extent 3.0 Version
-	public  ExtentReports GetExtent(){
-
-	//	To avoid creating new instance of html file
-		if (extent != null)
-                return extent; 
+		if (extent != null) { return extent;} 
            extent = new ExtentReports();
     //	Additional information that makes our report looks nice
 		extent.setSystemInfo("Host Name", "Novenos IT Solutions Inc.");
-		extent.setSystemInfo("Environment", "FRB CARS Team");
+		extent.setSystemInfo("Environment", "My Mini-framework");
 		extent.setSystemInfo("Version", "V-1.0.0");
 		extent.setSystemInfo("OS", "Windows-10");
 		extent.attachReporter(getHtmlReporter());
 		return extent;
 	}
 	
-	private ExtentHtmlReporter getHtmlReporter() {	
+	private static ExtentHtmlReporter getHtmlReporter() {	
 
-		htmlReporter = new ExtentHtmlReporter(useFileData("htmlReportPath") + testReport); 
-	//	htmlReporter.loadXMLConfig(new File(useFileData("extent_config_xml")));
-        htmlReporter.config().setChartVisibilityOnOpen(true);
+		htmlReporter = new ExtentHtmlReporter(System.getProperty("user.dir") + useFileData("htmlReportPath") + testReport); 
+        	htmlReporter.config().setChartVisibilityOnOpen(true);
 		htmlReporter.config().setTheme(Theme.DARK); // Theme background - dark, standard
 		htmlReporter.config().setReportName("Automation Test Report");
-		htmlReporter.setAppendExisting(true); // allows appending test information to an existing report.
+		htmlReporter.setAppendExisting(true); 
 		htmlReporter.config().setTestViewChartLocation(ChartLocation.TOP); // chart location - top, bottom
 		htmlReporter.config().setTimeStampFormat("mm/dd/yyyy hh:mm:ss a"); // set timeStamp format
-        htmlReporter.config().setDocumentTitle("Demo automation report");
+        	htmlReporter.config().setDocumentTitle("Demo automation report");
+    		htmlReporter.loadXMLConfig(useFileData("extentConfigXml"));
         return htmlReporter;
-	}/**	*/
+	}
 
 	// Initializing and insert config.properties file with its value(s) at run time.
 	public static String useFileData(String configFileData) {
 		
-	//	return ConfigGenerator.configDataHolder.get(configFileData);
 		return ConfigurationDataSource.OR.getProperty(configFileData);
 	}
 
-	// Excel reader for data-driven
+	/**	...	 Excel reader for data-driven	...	*/
 	public String[][] getSpreadSheetData(String excelSheetName, String workbookName) {
 
 		excel = new ReadDataFromExcelSheet(useFileData("excelPath"));
@@ -238,7 +234,6 @@ public class TestBase {
 
 	public Object[][] getExcelData(String excelName, String excelSheetName, String testName) {
 
-		// The argument supplied here is the path to the package that contains all forms of data/files
 		String excelLocation = ResourceHelper.getResourcePath("testDataFilePath") + excelName;
 		excel = new ReadDataFromExcelSheet();
 		return excel.getExcelDataBasedOnStartingPoint(excelLocation, excelSheetName, testName);
@@ -257,12 +252,12 @@ public class TestBase {
 		return excel.parseData(data, col);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void selectBrowser(String browserType) {
 
 		System.out.println(System.getProperty("os.name"));
 		if (System.getProperty("os.name").contains("Windows")) {
 			if (browserType.equalsIgnoreCase("chrome")) {
-				System.out.println(browserType);
 				try {
 					Runtime.getRuntime().exec("taskkill /F /IM chrome.exe");
 				} catch (IOException e) {
@@ -274,18 +269,16 @@ public class TestBase {
 				options.addArguments("disable-infobars");
 				options.addArguments("--disable-extensions");
 				options.addArguments("--start-maximized");	
-				/** To launch headless browser *		*/
-				// options.addArguments("headless"); 	
 				DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 				capabilities.setCapability(ChromeOptions.CAPABILITY, options); 
+				/** To launch headless browser *				//	options.addArguments("headless"); 	*/
 				log("Launching " + browserType + " browser");
 				driver = new ChromeDriver(options);
 				driver.manage().deleteAllCookies();
-				maximizeWindow();
+				driver.manage().window().maximize();
 			}
 
 			else if (browserType.equalsIgnoreCase("InternetExplorer")) {
-				System.out.println(browserType);
 				try {
 					Runtime.getRuntime().exec("taskkill /F /IM iexplore.exe");
 				} catch (IOException e) {
@@ -295,11 +288,11 @@ public class TestBase {
 				DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
 				capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,	true);
 				capabilities.setCapability("requireWindowFocus", true);
-				//capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+				capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
 				log("Launching " + browserType + " browser");
 				driver = new InternetExplorerDriver(capabilities);
 				driver.manage().deleteAllCookies();
-				maximizeWindow();
+				driver.manage().window().maximize();
 			}
 			
 			else if (System.getProperty("os.name").contains("Mac")) {
@@ -315,15 +308,14 @@ public class TestBase {
 							true);
 					capabilities.setCapability("requireWindowFocus", true);
 					capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-
 					log("Launching " + browserType + " browser");
 					driver = new InternetExplorerDriver(capabilities);
 					driver.manage().deleteAllCookies();
-					maximizeWindow();
+					driver.manage().window().maximize();
 					
 				} else if (browserType.equalsIgnoreCase("chrome")) {
 					try {
-						Runtime.getRuntime().exec("taskkill /F /IM iexplore");
+						Runtime.getRuntime().exec("taskkill /F /IM chrome.exe");
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -331,13 +323,11 @@ public class TestBase {
 					options.addArguments("disable-infobars");
 					options.addArguments("--disable-extensions");
 					options.addArguments("--start-maximized");
-					/** To launch headless browser *		*/
-					// options.addArguments("headless"); 
-
+					/** To launch headless browser *				//	options.addArguments("headless"); 	*/
 					log("Launching " + browserType + " browser");
 					driver = new ChromeDriver(options);
 					driver.manage().deleteAllCookies();
-					maximizeWindow();
+					driver.manage().window().maximize();
 				}
 			}
 		}
@@ -346,16 +336,14 @@ public class TestBase {
 	
 	public String takeScreenShotOnFailure(String result) {
 
-		if (result == "")
-			result = "blank";
+		if (result == ""){result = "blank";}
 		File destFile = null;
 		File source = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 		destFile = new File(useFileData("failedTestScreenShotPath") + "/failedTestScreenshots/" 
-					+ result + "_" + timeFormat + ".png");
+					+ result + "_" + DateTimeHelper.getCurrentAndDateTime() + ".png");
 		try {
 			FileUtils.copyFile(source, destFile);
 			System.out.println("Screenshot taken");
-			// This will help us to link the screen shot in testNG report
 			Reporter.log("<a href='" + destFile.getAbsolutePath() + "'> <img src='" + destFile.getAbsolutePath()
 					+ "' height='100' width='100'/> </a>");
 		} catch (IOException e) {
@@ -366,14 +354,13 @@ public class TestBase {
 
 	public String takeScreenShot(String result) {
 
-		if (result == "")
-			result = "blank";
+		if (result == ""){result = "blank";}
 		File destFile = null;
 		File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 		try {
 			String reportDirectory = new File(System.getProperty("user.dir")).getAbsolutePath()
 					+ useFileData("screenShotPath");
-			destFile = new File((String) reportDirectory + "/" + result + "_" + timeFormat + ".png");
+			destFile = new File((String) reportDirectory + "/" + result + "_" + DateTimeHelper.getCurrentAndDateTime() + ".png");
 			FileUtils.copyFile(scrFile, destFile);
 			System.out.println("Screenshot taken");
 			Reporter.log("<a href='" + destFile.getAbsolutePath() + "'> <img src='" + destFile.getAbsolutePath()
@@ -386,72 +373,19 @@ public class TestBase {
 
 	public void launchApplication() {
 
-		log("Launching browser...");
 		selectBrowser(useFileData("browser"));
-		getUrl(useFileData("url"));
-		loadPage(20);
-		log("Page loaded!");
-	}
-
-	public void launchApplication(String browserType, long timeInSeconds, String url) {
-
-		log("Launching browser...");
-		selectBrowser(browserType);
-		loadPage(timeInSeconds);
-		getUrl(url);
+		driver.navigate().to(useFileData("url"));
+		driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
 		log("Page loaded!");
 	}
 
 	public void launchTestResult() {
 
-		log("Launching browser...");
 		selectBrowser(useFileData("browser"));
-		getUrl(useFileData("htmlReportPath") + testReport);
-	//	getUrl("www." + useFileData(("htmlReportPath") + testReport);	
-		loadPage(10);
+	//	getUrl(useFileData("htmlReportPath") + testReport);
+		driver.navigate().to((System.getProperty("user.dir") + useFileData("htmlReportPath") + testReport));	
+		driver.manage().timeouts().pageLoadTimeout(5, TimeUnit.SECONDS);
 		log("Page loaded!");
-	}
-
-	protected static void getUrl(String url) {
-
-		log("Navigating to: " + url);
-		driver.navigate().to(url);
-	//	WaitHelper.waitImplicitly(5);
-	}
-
-	public static void loadPage(long timeOut) {
-
-		driver.manage().timeouts().pageLoadTimeout(timeOut, TimeUnit.SECONDS);
-	}
-
-	public static void closeBrowser() {
-
-		driver.close();
-	}
-
-	public static void closeAllBrowsers() {
-
-		driver.quit();
-	}
-
-	public static void maximizeWindow() {
-
-		driver.manage().window().maximize();
-	}
-
-	public static void navigateBack() {
-
-		driver.navigate().back();
-	}
-
-	public static void navigateForward() {
-
-		driver.navigate().forward();
-	}
-
-	public static void refresh() {
-
-		driver.navigate().refresh();
 	}
 
 	public static void changeLogLevel(Level level) {
@@ -462,6 +396,7 @@ public class TestBase {
 	    }
 	}
 	
+	// 	To be moved to the Enum folder of Master package
 	public enum logLevel {
 		INFO, TRACE, DEBUG, WARN, ERROR, FATAL, OFF
 	}
@@ -514,7 +449,6 @@ public class TestBase {
 	//	testInfo.log(LogStatus.INFO, comment);	// Log output info for extent report 2.0 version
 	}
 	
-	
 	public static void log(String comment) {
 
 		log.info(comment);
@@ -531,234 +465,4 @@ public class TestBase {
 
 		log.trace(comment);
 	}
-
-	public static Set<String> getWindowHandles() {
-
-	return driver.getWindowHandles();
-	}
-
-	public static void SwitchToWindow(int index) {
-
-		LinkedList<String> windowsId = new LinkedList<String>(getWindowHandles());
-		if (index < 0 || index > windowsId.size())
-			throw new IllegalArgumentException("Invalid Index : " + index);
-		driver.switchTo().window(windowsId.get(index));
-	}
-
-	public static void switchToParentWindow() {
-
-		LinkedList<String> windowsId = new LinkedList<String>(getWindowHandles());
-		// driver.switchTo().defaultContent(); // same as the above code
-		driver.switchTo().window(windowsId.get(0));
-	}
-
-	public static void switchToParentAndCloseChildWindow() {
-
-		LinkedList<String> windowsId = new LinkedList<String>(getWindowHandles());
-		for (int i = 1; i < windowsId.size(); i++) {
-			driver.switchTo().window(windowsId.get(i));
-			driver.close();
-		}
-		switchToParentWindow();
-	}
-
-	public static void switchToFrame(By locator) {
-
-		driver.switchTo().frame(driver.findElement(locator));
-	}
-
-	public static void switchToFrame(String nameOrId) {
-
-		driver.switchTo().frame(nameOrId);
-	}
-
-	public void switchToFrame(int index) {
-
-		driver.switchTo().frame(index);
-	}
-
-	public static void switchToTab(int indesOfTab) {
-
-		ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
-		driver.switchTo().window(tabs.get(indesOfTab));
-	}
-
-	public static void switchToDefaultContent() {
-
-		driver.switchTo().defaultContent();
-	}
-
-	public static void getApplicationTitle() {
-
-		driver.getTitle();
-	}
-	
-	public static WebElement getWebElement(WebElement locator) {
-		return wait.until(ExpectedConditions.visibilityOf(locator));
-	//	return locator;
-	}
-	
-	// Generic xPath locator NB: We can also us CSS
-	public static WebElement getWebElement(String data) {
-
-	//	return wait.until(ExpectedConditions
-	//			.visibilityOf(driver.findElement(By.xpath("//*[contains(text(),'" + data + "')]"))));
-		return (driver.findElement(By.xpath("//*[contains(text(),'" + data + "')]")));
-	}
-	
-	public static List<WebElement> getWebElements(String locator) {
-		
-		return  driver.findElements(By.xpath("//*[contains(text(),'" + locator + "')]"));
-	}
-		
-	@SuppressWarnings("unchecked")
-	public static List<WebElement> getWebElements(WebElement locators) {
-		return (List<WebElement>) wait.until(ExpectedConditions.visibilityOf(locators));
-	}
-	
-	// Generic CSS locator for Link
-		public static WebElement getWebElementByLink(String data) {
-		
-	return wait.until(ExpectedConditions
-			.visibilityOf( driver.findElement(By.cssSelector("a[href*='"+ data + "']"))));
-	}
-	
-	// Generic CSS locator for image
-	public static WebElement getWebElementByImage(String element){
-		
-		return wait.until(ExpectedConditions
-				.visibilityOf(driver.findElement(By.cssSelector("img[src*='"+ element +"'']"))));
-	}
-		
-	// Generic CSS element locator method
-	public static WebElement getWebElementByName(String element) {
-
-		return driver.findElement(By.cssSelector("[name*='" + element + "']"));
-	}
-
-	// Generic CSS element locator method
-	public static WebElement getWebElementByClass(String element) {
-
-		return driver.findElement(By.cssSelector("[class*='" + element + "']"));
-	}
-
-	// Generic CSS element locator method
-	public static WebElement getWebElementById(String element) {
-
-		return driver.findElement(By.cssSelector("[id*='" + element + "']"));
-	}
-
-	// Generic expandable link/menu method for text displayed element
-	public static void clickOnExpandableMenu(String element) {
-
-		driver.findElement(By.xpath("//*[contains(text(),'" + element + "') and @aria-expanded='false')]")).click();
-	}
-
-	// Generic expanded link/menu method for text displayed element
-	public static void clickOnExpandedMenu(String expandedMenu, String element) {
-
-		driver.findElement(By.xpath("//*[contains(text(),'" + expandedMenu
-
-				+ "') and @aria-expanded='true']/following-sibling::ul/child::li/child::a[contains(text),'" 
-				+ element + "')]")).click();
-	}
-
-	public static void clickOnWebElement(WebElement element) {
-		
-		if (element!=null)
-		try
-			{
-		element.click();
-	//	wait.until(ExpectedConditions.elementToBeClickable(element)).click();		
-			}
-		catch(Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	// For generic Element (non POM)
-	public static void clickOnWebElement(String element) {
-
-		getWebElement(element).click();
-	}
-
-	public static void setValue(WebElement element, String value) {
-		if (element!=null)
-			try
-		{
-				wait.until(ExpectedConditions.visibilityOf(element));
-				element.sendKeys(value);
-				element.sendKeys(Keys.TAB);
-		}
-		catch(Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	// Generic text/input-box (non POM)
-	public static void setValue(String textboxName, String value) {
-
-		getWebElement(textboxName).sendKeys(value);
-		getWebElement(textboxName).sendKeys(Keys.TAB);
-	}
-
-	public static void clearTextArea(WebElement textbox) {
-		if (textbox!=null)
-			try
-		{
-		textbox.clear();
-	}
-	catch(Exception ex) {
-		ex.printStackTrace();
-		}
-	}
-
-	// Generic text area (non POM)
-	public static void clearTextArea(String textbox) {
-
-		getWebElement(textbox).clear();
-	}
-
-	
-	// Review this bootstrap method later
-	public static void bootStrapWithSimilarLocatorsWithoutFrame(WebElement bootStrapElement,
-			String bootStrapSubElements, String itemToClick) {
-
-		getWebElement(bootStrapElement);
-		List<WebElement> elementList = getWebElements(bootStrapSubElements);
-
-		for (WebElement ele : elementList) {
-			String dd_value = ele.getAttribute("innerHTML");
-
-			if (dd_value.contentEquals(itemToClick)) {
-				ele.click();
-				break;
-			}
-		}
-	}
-
-	public static void bootStrapWithSimilarLocatorsWithinSameFrame(WebElement bootStrapElement,
-			String bootStrapSubElements, String itemToClick, String frameName) {
-
-		clickOnWebElement(bootStrapElement);
-		switchToFrame(frameName);
-		List<WebElement> elementList = getWebElements(bootStrapSubElements);
-
-		for (WebElement ele : elementList) {
-			String dd_value = ele.getAttribute("innerHTML");
-
-			if (dd_value.contentEquals(itemToClick)) {
-				ele.click();
-				break;
-			}
-			switchToDefaultContent();
-		}
-	}
-
-	public static WebElement bootStrapItemWithDistinctLocator(WebElement bootStrapElement, String element) {
-
-		clickOnWebElement(bootStrapElement);
-		return getWebElement(element);
-	}
-
 }
