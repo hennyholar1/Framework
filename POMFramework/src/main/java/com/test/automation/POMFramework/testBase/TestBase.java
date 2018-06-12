@@ -237,7 +237,147 @@ public class TestBase {
 		String excelLocation = ResourceHelper.getResourcePath("testDataFilePath") + excelName;
 		excel = new ReadDataFromExcelSheet();
 		return excel.getExcelDataBasedOnStartingPoint(excelLocation, excelSheetName, testName);
-	}
+@SuppressWarnings("deprecation")
+	public void selectBrowser(String browserType) {
+
+		System.out.println(System.getProperty("os.name"));
+		if (System.getProperty("os.name").contains("Windows")) {
+			if (browserType.equalsIgnoreCase("chrome")) {
+				try {
+					Runtime.getRuntime().exec("taskkill /F /IM chrome.exe");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				System.setProperty(useFileData("chromeDriver"), useFileData("winChromeDriverPath"));
+				ChromeOptions options = new ChromeOptions();
+				options.setBinary(useFileData("winChromeDriverBinaryPath"));
+				options.addArguments("disable-infobars");
+				options.addArguments("--disable-extensions");
+				options.addArguments("--start-maximized");
+				DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+				capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+				/**
+				 * To launch headless browser * //
+				 * options.addArguments("headless");
+				 */
+				log("Launching " + browserType + " browser");
+				driver = new ChromeDriver(options);
+				driver.manage().deleteAllCookies();
+				driver.manage().window().maximize();
+			} else if (browserType.equalsIgnoreCase("firefox")) {
+				try {
+					Runtime.getRuntime().exec("taskkill /F /IM firefox.exe");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				System.setProperty(useFileData("firefoxDriver"), useFileData("winFirefoxDriverPath"));
+				FirefoxProfile myProfile = new FirefoxProfile();
+				DesiredCapabilities capabilities = new DesiredCapabilities();
+				capabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
+
+				/**
+				 * capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS,
+				 * true); capabilities.setCapability(FirefoxDriver.PROFILE,
+				 * myProfile); DesiredCapabilities.firefox();
+				 */
+
+				/**
+				 * DesiredCapabilities capabilities =
+				 * DesiredCapabilities.firefox();
+				 * capabilities.setCapability("marionette", true); WebDriver
+				 * driver = new MarionetteDriver(capabilities); // OR WebDriver
+				 * driver = new RemoteWebDriver(capabilities);
+				 */
+				driver = new FirefoxDriver(capabilities);
+				myProfile.setAcceptUntrustedCertificates(true);
+				myProfile.setAssumeUntrustedCertificateIssuer(true);
+
+				driver.manage().window().maximize();
+			} else if (browserType.equalsIgnoreCase("InternetExplorer")) {
+				try {
+					Runtime.getRuntime().exec("taskkill /F /IM iexplore.exe");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				System.setProperty(useFileData("ieDriver"), useFileData("winInternetExplorerDriverPath"));
+				DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
+				capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,
+						true);
+				capabilities.setCapability("requireWindowFocus", true);
+				capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+				log("Launching " + browserType + " browser");
+				driver = new InternetExplorerDriver(capabilities);
+				driver.manage().deleteAllCookies();
+				driver.manage().window().maximize();
+			}
+
+			else if (System.getProperty("os.name").contains("Mac")) {
+				if (browserType.equalsIgnoreCase("InternetExplorer")) {
+					try {
+						Runtime.getRuntime().exec("taskkill /F /IM iexplore.exe");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					System.setProperty(useFileData("ieDriver"), useFileData("macInternetExplorerDriverPath"));
+					DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
+					capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS,
+							true);
+					capabilities.setCapability("requireWindowFocus", true);
+					capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+					log("Launching " + browserType + " browser");
+					driver = new InternetExplorerDriver(capabilities);
+					driver.manage().deleteAllCookies();
+					driver.manage().window().maximize();
+				} else if (browserType.equalsIgnoreCase("firefox")) {
+					try {
+						Runtime.getRuntime().exec("taskkill /F /IM firefox.exe");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					System.setProperty(useFileData("firefoxDriver"), useFileData("winFirefoxDriverPath"));
+					FirefoxProfile myProfile = new FirefoxProfile();
+					DesiredCapabilities capabilities = new DesiredCapabilities();
+					capabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
+
+					/**
+					 * capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS,
+					 * true); capabilities.setCapability(FirefoxDriver.PROFILE,
+					 * myProfile); DesiredCapabilities.firefox();
+					 */
+
+					/**
+					 * DesiredCapabilities capabilities =
+					 * DesiredCapabilities.firefox();
+					 * capabilities.setCapability("marionette", true); WebDriver
+					 * driver = new MarionetteDriver(capabilities); // OR
+					 * WebDriver driver = new RemoteWebDriver(capabilities);
+					 */
+					driver = new FirefoxDriver(capabilities);
+					myProfile.setAcceptUntrustedCertificates(true);
+					myProfile.setAssumeUntrustedCertificateIssuer(true);
+					driver.manage().window().maximize();
+				} else if (browserType.equalsIgnoreCase("chrome")) {
+					try {
+						Runtime.getRuntime().exec("taskkill /F /IM chrome.exe");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					ChromeOptions options = new ChromeOptions();
+					options.addArguments("disable-infobars");
+					options.addArguments("--disable-extensions");
+					options.addArguments("--start-maximized");
+					/**
+					 * To launch headless browser * //
+					 * options.addArguments("headless");
+					 */
+					log("Launching " + browserType + " browser");
+					driver = new ChromeDriver(options);
+					driver.manage().deleteAllCookies();
+					driver.manage().window().maximize();
+				}
+			}
+		}
+	}	}
 
 	public void updateResult(String excelLocation, String excelSheetName, String testCaseName, String testStatus)
 			throws IOException {
