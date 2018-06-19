@@ -139,7 +139,6 @@ public class TestBase {
 	@BeforeSuite(alwaysRun = true)
 	public void init() {
 		
-	//	new WaitHelper(driver);
 	//	extent = getReporter(useFileData("htmlReportPath") + testReport);
 		
 		/**
