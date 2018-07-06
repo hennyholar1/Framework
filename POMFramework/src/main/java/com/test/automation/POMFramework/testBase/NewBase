@@ -8,8 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.*;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.WebDriver;import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.ITestResult;
@@ -35,16 +34,13 @@ public class Base {
 	public static WebDriver driver;
 	public static File reportDirectery;
 	static String testReport = "TestReport_" + DateTime.currentDateWithTime() + ".html";
+	public static Logger log = LogHelper.getLogger(TestUtility.class);
 
-	public static Logger log = LogHelper.getLogger(Base.class);
-
-	private Base(){} 
-	
+	private TestUtility(){} 
 	
 	//@BeforeSuite(alwaysRun = true)
 	public static void foreRunner() {
 		extent = ExtentManager.GetExtent();
-	
 	}
 	
 	//@AfterSuite(alwaysRun = true)
@@ -55,7 +51,7 @@ public class Base {
 	
 //	@BeforeTest
 	public static void initializedAll() throws Exception {
-		ObjectReader.reader = new PropertyFileReader();
+		ObjectReader.reader = new ConfigurationDataSource();
 		reportDirectery = new File(propertiesFileData("screenShotPath"));	
 		launchApplication(ObjectReader.reader.getBrowserType());	
 		CommonFunctions.setDriver(driver);
@@ -69,7 +65,7 @@ public class Base {
 		log(".... " + method.getName() + " test started ....");
 	}
 
-	@AfterMethod()
+	//@AfterMethod()
 	public static void testResult(ITestResult method) throws IOException {
 		if (ITestResult.SUCCESS == method.getStatus()) {
 	//		test.pass(method.getName() + " passed");
@@ -78,10 +74,11 @@ public class Base {
 		} else if (ITestResult.SKIP == method.getStatus()) {
 			test.log(Status.SKIP, method.getName() + " test is skipped and the reason is:- " + method.getThrowable());
 		} else if (ITestResult.FAILURE == method.getStatus()) {
+			test.log(Status.FAIL, method.getThrowable());
 		//	MediaEntityBuilder.createScreenCaptureFromPath(imagePath).build();
-			test.addScreenCaptureFromPath(captureScreen(driver, method.getName()));
-		//	test.fail((result.getName() + " failed during execution"), 
-		//			MediaEntityBuilder.createScreenCaptureFromPath(captureScreen(driver, result.getName())).build());
+		//	test.addScreenCaptureFromPath(captureScreen(driver, method.getName()));
+			test.fail((method.getName() + " failed during execution"), 
+					MediaEntityBuilder.createScreenCaptureFromPath(captureScreen(driver, method.getName())).build());
 			log("...... " + method.getName() + " test failed during execution ....");
 		}
 			log("...... " + method.getName() + " has finished executing ......");
@@ -95,7 +92,7 @@ public class Base {
 	}
 
 	public static WebDriver getDriver(BrowserType browserType) throws Exception {
-if (driver == null)
+	if (driver == null)
 		try{
 			switch(browserType){
 			case CHROME:
@@ -108,7 +105,7 @@ if (driver == null)
 				
 				case IE:
 					IExploreBrowser ie = new IExploreBrowser();
-					return ie.getIExplorerDriver(ie.getInternetExplorerOptions());
+					return ie.getIExplorerDriver();
 					
 				case EDGE:
 					EdgeBrowser edge = new EdgeBrowser();
@@ -124,27 +121,6 @@ if (driver == null)
 return driver;
 	}
 	
-//	Only for explorer when Protected Mode is not equally set: To be deleted later once protected mode is set equally.
-	@SuppressWarnings("deprecation")
-	public WebDriver getBrowserObject(BrowserType btype) {
-		if (System.getProperty("os.name").contains("Windows")) {
-			try {
-				Runtime.getRuntime().exec("taskkill /F /IM iexplore.exe");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			System.setProperty(propertiesFileData("ieDriver"), propertiesFileData("winIEDriverPath"));
-			DesiredCapabilities capabilities = DesiredCapabilities.internetExplorer();
-			capabilities.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
-			capabilities.setCapability("requireWindowFocus", true);
-			capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-			log("Launching " + btype + " browser");
-			driver = new InternetExplorerDriver(capabilities);
-			driver.manage().deleteAllCookies();
-		}
-		return driver;
-	}
-
 	public static void launchApplication(BrowserType browserType) throws Exception {
 		driver = getDriver(browserType);
 	//	driver = getBrowserObject(browserType);
@@ -154,9 +130,13 @@ return driver;
 	}
 	
 	public static void getApplicationUrl(){
-		driver.navigate().to(propertiesFileData("url"));
-		log.info("navigating to ..."+propertiesFileData("url"));
-
+			if (driver != null) {
+				driver.navigate().to(propertiesFileData("url"));
+				log.info("navigating to ..."+propertiesFileData("url"));
+	        }
+	        else {
+	            throw new WebDriverException("WebDriver not initialized properly");
+	        }
 	}
 
 	public static String captureScreen(WebDriver driver, String result) {
@@ -171,7 +151,8 @@ return driver;
 		File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
 		try {
 			destFile = new File(reportDirectery + "/pagescreenshots/" + result + "_" + DateTime.currentDateWithTime() + ".png");
-			FileUtils.copyFile(scrFile, destFile);
+		//	FileUtils.copyFile(scrFile, destFile);
+			Files.copy(scrFile, destFile);
 			log("Web page screenshot captured");
 			Reporter.log("<a href='" + destFile.getAbsolutePath() + "'> <img src='" + destFile + "' height='100' width='100'/> </a>");
 		} catch (IOException e) {
@@ -181,22 +162,27 @@ return driver;
 	}
 
 	public static void getPageNavigationScreenshot(WebDriver driver, String uIPageName)  {
-		log("capturing UI navigation screen of the current page...");
 		String screen = captureScreen(driver, uIPageName);
 		try {
 			test.addScreenCaptureFromPath(screen);
+		//	MediaEntityBuilder.createScreenCaptureFromPath(captureScreen(driver, uIPageName)).build();
+			log("capturing UI navigation screen of the current page...");
 		} catch (Exception e) {	
 			e.printStackTrace();
 		}
 	}
 	
-	public static void launchTestResult() {
+	public static void stopDriver() {
+        if (driver != null) {
+            driver.quit();
+        }
+        log.info("terminating all browsers opened by the driver!");
+    }
+	
+	public static void launchTestResult() throws Exception {
 		log("Navigating to the test result/report page ...");
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	//	driver = getDriver(ObjectReader.reader.getBrowserType());
+		WaitFunctions.sleep(5);
 		driver.navigate().to((System.getProperty("user.dir") + propertiesFileData("htmlReportPath") + testReport));
 		log("Test result/report page loaded!");
 	}
@@ -218,3 +204,4 @@ return driver;
 		return ReadDataFromExcelSheet.getDataFromSpreadSheetBasedOnStartingPoint(excelLocation, excelSheetName,
 				testName);
 	}
+}
