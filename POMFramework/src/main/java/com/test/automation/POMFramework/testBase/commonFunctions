@@ -472,8 +472,7 @@ public class CommonFunctions {
 	 */
 	public static void logFail(String comment) {
 		log.error(comment);
-		stepLevelInfo.log(Status.ERROR, comment);
-		stepLevelFail = ExtentManager.test.createNode("Step details").error(comment);
+		ExtentManager.test.createNode("Step details").error(comment);
 	}
 
 	/**
@@ -481,8 +480,8 @@ public class CommonFunctions {
 	 */
 	public static void logPass(String comment) {
 		log.info(comment);
-		stepLevelInfo.log(Status.PASS, comment);
-		stepLevelPass = ExtentManager.test.createNode("Step details").pass(comment);
+	//	ExtentManager.test.createNode("Step status").pass(comment);
+		ExtentManager.test.createNode("Step status").pass(comment);
 	}
 	
 }
