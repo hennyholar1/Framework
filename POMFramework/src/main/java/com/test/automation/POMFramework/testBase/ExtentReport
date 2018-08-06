@@ -1,0 +1,104 @@
+public class ExtentManager {
+
+	public static Logger log = LogFunction.getLogger(ExtentManager.class);
+	private static ExtentHtmlReporter htmlReporter;
+	private static ExtentReports extent;
+	private static String testReport = "TestReport_" + DateTime.currentDateWithTime() + ".html";
+	public static ExtentTest test;
+	
+	public static ExtentTest stepLevelPass;
+	public static ExtentTest stepLevelFail;
+	public static ExtentTest stepLevelInfo;
+	/**	
+	 * 	Initializing and insert config.properties file with its value(s) at run time.
+	 * 
+	 * @param configFileData
+	 * @return
+	 */
+		public static String propertiesFileData(String configFileData) {
+			return ConfigurationDataSource.getProperties().getProperty(configFileData);
+		}
+		
+		/**
+		 * @param comment
+		 */
+		public static void logInfo(String comment) {
+			log.info(comment);
+			test.log(Status.INFO, comment);
+		//	test.createNode("Step details").log(Status.INFO, comment);
+		}
+		
+	private static ExtentHtmlReporter getHtmlReporter() {
+		htmlReporter = new ExtentHtmlReporter(propertiesFileData("htmlReportPath") + testReport);
+		htmlReporter.config().setChartVisibilityOnOpen(true);
+		htmlReporter.config().setTheme(Theme.DARK); // Theme background - dark,	standard
+		htmlReporter.config().setReportName("Automation Test Report");
+		htmlReporter.setAppendExisting(true);
+		htmlReporter.config().setTestViewChartLocation(ChartLocation.TOP);  
+		htmlReporter.config().setTimeStampFormat("MMM/dd/yyyy hh:mm:ss a"); // "_MMM-dd-yyyy_HH-mm-ss"
+		htmlReporter.config().setEncoding("utf-8");
+		htmlReporter.config().setDocumentTitle("Demo automation report");
+		htmlReporter.loadXMLConfig(propertiesFileData("extentConfigXml"));
+		return htmlReporter;
+	}
+	
+	/**
+	 * @return
+	 */
+	public static ExtentReports GetExtent(){
+		if (extent != null) {
+			return extent;
+		}
+			extent = new ExtentReports();
+			//	Additional information that makes our report looks nice
+				extent.setSystemInfo("Host Name", "FRB ST LOUIS, MO");
+				extent.setSystemInfo("Environment", "FRB CARS Team");
+				extent.setSystemInfo("Version", "V-1.0.0");
+				extent.setSystemInfo("OS", "Windows-10");
+				extent.attachReporter(getHtmlReporter());
+				return extent;
+			}
+	
+	/**
+	 * @return 
+	 * 
+	 */
+	public static ExtentReports extentReportInitiator() {
+		extent = ExtentManager.GetExtent();
+		return extent;
+	}
+	
+	/**
+	 * @param method
+	 */
+	public static void getTestMethodsInformation(Method method) {
+		test = extent.createTest(method.getName(), "is being executed").assignAuthor("Oludare M Eniola (H1OME01").createNode(method.getName() + " Test Status");
+		logInfo(method.getName() + " is executing ... ");
+	}
+	
+	/**
+	 * 
+	 */
+	public static void flushTestReportToFile() {
+	//	launchTestResult();
+	}
+
+	/**
+	 * @param method
+	 * @throws IOException
+	 */
+	public static void getTestResult(ITestResult method) throws IOException {
+		if (ITestResult.SUCCESS == method.getStatus()) {
+			test.log(Status.PASS, method.getName() + " test passed");
+			logInfo(" ...... " + method.getName() + " test passed executed successfully ......");
+		} else if (ITestResult.SKIP == method.getStatus()) {
+			test.log(Status.SKIP, method.getName() + " test is skipped and the reason is:- " + method.getThrowable());
+		} else if (ITestResult.FAILURE == method.getStatus()) {
+			test.log(Status.FAIL, method.getThrowable());
+			test.fail((method.getName() + " test failed during execution"), 
+					MediaEntityBuilder.createScreenCaptureFromPath(TestUtility.captureScreen(method.getName())).build());
+		}
+		logInfo("...... " + method.getName() + " test execution completed ......");
+		extent.flush();
+		}
+	}
