@@ -2,66 +2,104 @@ package runnerPackage;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import org.apache.log4j.*;
+import org.apache.log4j.Logger;
+import org.frb.stls.cars.atm.pageobjects.AtmApplicationTest;
+import org.frb.stls.cars.atm.pageobjects.FiscalServiceLogInPO;
+import org.frb.stls.cars.atm.pageobjects.UsersDataProvider;
+import org.frb.stls.cars.atm.pageobjects.WjvDetailViewPagePO;
+import org.frb.stls.cars.atm.pageobjects.WjvNewTransactionsPO;
+import org.frb.stls.cars.atm.pageobjects.WjvPendingTransactionPO;
+import org.frb.stls.cars.atm.pageobjects.WjvPostedTransactionsPO;
+import static org.frb.stls.cars.common.utilities.AssertionFunctions.*;
+import static org.frb.stls.cars.common.utilities.ExtentManager.*;
+import org.frb.stls.cars.common.utilities.LogFunction;
+import static org.frb.stls.cars.common.webdrivers.TestUtility.*;
+import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;
+import org.testng.SkipException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-import cars.wjv.ui.pom.ATMHomepageUI;
-import cars.wjv.ui.pom.NewTransactionsUI;
-import resources.LogHelper;
-import testbase.Base;
-import utilities.CommonFunctions;
+limport org.testng.annotations.Test;
 
-public class TestRunner{ 
+/**
+ * @author h1OME01
+ *
+ */
+public class TestRunner {
 
-	public static Logger log = LogHelper.getLogger(TestRunner.class); 
-	static CommonFunctions commonHelper;
+	private static Logger log = LogFunction.getLogger(TestRunner.class);
+	private WebDriver myDriver; 
+	className classInstance;
 	
+	/**
+	 *
+	 */
 	@BeforeSuite(alwaysRun = true)
-	public void preCondition() throws Exception{
-		Base.foreRunner();
-	}
-		
-	@BeforeTest
-	public void beforeTest() throws Exception{
-		Base.initializedAll();
-	//	Base.runBeforeAnyClass();
-	}
-	
-	@BeforeMethod
-	public void beforeMethod(Method method) {
-		Base.getMethodInformation(method);	
-	}
-	
-	@AfterMethod()
-	public void testsResult(ITestResult method) throws IOException {
-		Base.testResult(method);
-	}
-	
-	@AfterSuite(alwaysRun = true)
-	public void runAfterSuite() throws Exception{
-		Base.flushTestReportToFile();
-	}
-	
-	@Test(priority = 1)
-	public void test_Scenario_001() throws Exception {
-		log.info("...............Test_Scenario_001 started...................");
-		new ATMHomepageUI(Base.driver).newTransaction();
-		new NewTransactionsUI(Base.driver).newWJVCreatePageScenario1();
-		log.info("...............Test_Scenario_001 completed...................");
+	public void intiateReport() {
+		extentReportInitiator();
 	}
 
+	/**
+	 *
+	 */
+	@BeforeTest(alwaysRun = true)
+	public void beforeTest() {
+		try {
+			myDriver = initializeDriver();
+	//		getApplicationUrl(myDriver);
+	//		getApplicationUrl();
+			classInstance = new className(myDriver);
+		} catch (Exception e) {
+			e.printStackTrace();		}
+	}
 	
-	  @Test (priority=2) 
-	  public void test_Scenario_002 () throws InterruptedException {
-	  log.info("...............Test_Scenario_002 started..................."); 
-	  new ATMHomepageUI(Base.driver).newTransaction(); 
-	  new NewTransactionsUI(Base.driver).newWJVCreatePageScenario2();
-	  log.info("...............Test_Scenario_002 completed..................."	 ); 
-	 }
-	  
+	/**
+	 * @param method
+	 */
+	@BeforeMethod(alwaysRun = true)
+	public void beforeMethod(Method method) {
+		getTestMethodsInformation(method);
+	}
+
+	/**
+	 * @param method
+	 * @throws IOException
+	 */
+	@AfterMethod(alwaysRun = true)
+	public void testsResult(ITestResult method) {
+		try 
+			getTestResult(method);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	assertItAll();
+	}
+
+	/**
+	 *
+	 */
+	@AfterSuite(alwaysRun = true)
+	public void runAfterSuite() {
+	 flushTestReportToFile();
+	}
+
+	/**
+	 * @param cellValue1
+	 * @param cellValue2
+	 * @param runMode
+	 */
+	@Test(priority = 1, dataProvider="testData", dataProviderClass=UsersDataProvider.class)
+	public void testScenario001(String testData1, String testData2, String runMode) {
+		if (runMode.equalsIgnoreCase("n")) {
+			throw new SkipException("Run-mode for this set of data is marked as N (to be skipped)!");
+		}
+
+	
+		log.info("...............dataDrivenDemo started...................");
+		
+	}
+
 }
