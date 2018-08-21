@@ -1,204 +1,196 @@
-package utilities;
+Package packageName.
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.apache.log4j.Logger;
+import org.frb.stls.cars.common.functions.MouseFunctions;
+import static org.frb.stls.cars.common.utilities.ExtentManager.*;
+import static org.frb.stls.cars.common.webdrivers.TestUtility.markTestAsFail;
+import org.frb.stls.cars.common.utilities.LogFunction;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import resources.LogHelper;
 
+/**
+ * @author Oludare
+ *
+ */
+public class CommonFunctions {
 
-public class CommonFunctions { 
-	
 	private final static Logger log = LogFunction.getLogger(CommonFunctions.class);
+	public static WebDriver myDriver;
 	public static Wait<WebDriver> wait;
-	static ExtentTest stepLevelPass;
-	static ExtentTest stepLevelFail;
-	static ExtentTest stepLevelInfo;
 
-	public CommonFunctions(WebDriver driver) {
-		TestUtility.driver = driver;
-		PageFactory.initElements(driver, this);
-		wait = new FluentWait<>(TestUtility.driver).withTimeout(Duration.ofSeconds(10))
-				.pollingEvery(Duration.ofSeconds(1)).ignoring(NoSuchElementException.class);
-	}
-	
-	/**
-	 * @param pageObject
-	 * @return
-	 */
-	public static WebElement waitForElementBeforeClick(WebElement pageObject) {
-		return wait.until(ExpectedConditions.elementToBeClickable(pageObject));
-	}
-	
-	/**
-	 * @param pageObject
-	 * @return
-	 */
-	public static WebElement waitForElement(WebElement pageObject) {
-		return wait.until(ExpectedConditions.visibilityOf(pageObject));
-	}
-	
-	/**
-	 * @param pageObject
-	 * @return
-	 */
-	public static WebElement waitForPresenceOfElement(By locatorType) {
-		return wait.until(ExpectedConditions.presenceOfElementLocated((locatorType)));
+	public static void initialize(WebDriver driver) {
+		myDriver = driver;
+		wait = new FluentWait<>(myDriver).withTimeout(Duration.ofSeconds(10)).pollingEvery(Duration.ofSeconds(1))
+				.ignoring(NoSuchElementException.class);
 	}
 
 	/**
-	 * @param uiElement
+	 * @param uiPageObject
+	 * @return
+	 */
+	public static WebElement waitForElement(WebElement uiPageObject) {
+		return wait.until(ExpectedConditions.visibilityOf(uiPageObject));
+	}
+
+	/**
+	 * @param uiPageObject
 	 * @param htmlAttributeValue
 	 * @return
 	 */
-	public static String getElementAttributeValue(WebElement uiElement, String htmlAttributeValue) {
-		if (!verifyElementIsPresent(uiElement))
+	public static String getPageObjectAttributeValue(WebElement uiPageObject, String htmlAttributeType) {
+		if (!verifyElementIsPresent(uiPageObject))
 			return null;
-		logInfo("Verify if UI element " + uiElement.getText() + " object");
-		return uiElement.getAttribute(htmlAttributeValue);
+		return uiPageObject.getAttribute(htmlAttributeType);
 	}
-
+	
 	/**
-	 * @param uiElement
+	 * @param uiPageObject
 	 * @return
 	 */
-	public static String getDisplayText(WebElement uiElement) {
-		waitForElement(uiElement);
-		logInfo("Get the displayed text value of " + uiElement.getText());
-		return getWebElement(uiElement).getText();
-	}
-
-	/**
-	 * @param uiElement
-	 * @return
-	 */
-	public static boolean verifyElementIsNotPresent(WebElement uiElement) {
+	public String getPageObjectAttributeValue(WebElement uiPageObject, String htmlAttributeType, String stepName, String testStepDetails) {
 		try {
-			getWebElement(uiElement).isDisplayed();
-			logInfo("Verify if UI element " + uiElement.getText() + " is not displayed");
+			if (uiPageObject.getAttribute(htmlAttributeType) != null) {
+			logPass(stepName, testStepDetails);
+			}
+		} catch (Exception e) {
+			logFail(stepName, "Unable to get the specified page object attribute type:  => " + e.getMessage());
+		}
+		return uiPageObject.getAttribute(htmlAttributeType);
+	}
+
+	/**
+	 * @param uiPageObject
+	 * @return
+	 */
+	public static String getDisplayText(WebElement uiPageObject) {
+		waitForElement(uiPageObject);
+		return getWebElement(uiPageObject).getText();
+	}
+	
+	/**
+	 * @param uiPageObject
+	 * @return
+	 */
+	public static String getDisplayText(WebElement uiPageObject, String stepName, String testStepDetails) {
+		try {
+			waitForElement(uiPageObject);
+			logPass(stepName, testStepDetails);
+		} catch (Exception e) {
+			logFail(stepName, "Unable to verify the page object displayed text on the web page:  => " + e.getMessage());
+		}
+		return uiPageObject.getText();
+	}
+
+//////////////////////////////////////////////////// Start here on Monday.
+	/**
+	 * @param uiPageObject
+	 * @return
+	 */
+	public static boolean verifyElementIsNotPresent(WebElement uiPageObject) {
+		try {
+			getWebElement(uiPageObject).isDisplayed();
 			return false;
 		} catch (Exception e) {
-			log.error(e.getMessage());
 			return true;
 		}
 	}
 
 	/**
-	 * @param uiElement
+	 * @param uiPageObject
 	 * @return
 	 */
-	public static boolean verifyElementIsPresent(WebElement uiElement) {
+	public static boolean verifyElementIsPresent(WebElement uiPageObject) {
+		return getWebElement(uiPageObject).isDisplayed();
+	}
+
+	/**
+	 * @param uiPageObject
+	 * @return
+	 */
+	public static boolean verifyElementIsEnabled(WebElement uiPageObject) {
 		try {
-			getWebElement(uiElement).isDisplayed();
-			logInfo("Verify if UI element " + uiElement.getText() + " is displayed");
+			getWebElement(uiPageObject).isEnabled();
 			return true;
 		} catch (Exception e) {
-			log.error(e.getMessage());
 			return false;
 		}
 	}
 
 	/**
-	 * @param uiElement
+	 * @param uiPageObject
 	 * @return
 	 */
-	public static boolean verifyElementIsEnabled(WebElement uiElement) {
+	public static boolean verifyElementIsDisabled(WebElement uiPageObject) {
 		try {
-			getWebElement(uiElement).isEnabled();
-			logInfo("Verify if UI element " + uiElement.getText() + " is enabled");
-			return true;
-		} catch (Exception e) {
-			log.error(e.getMessage());
-			return false;
-		}
-	}
-
-	/**
-	 * @param uiElement
-	 * @return
-	 */
-	public static boolean verifyElementIsDisabled(WebElement uiElement) {
-		try {
-			getWebElement(uiElement).isEnabled();
-			logInfo("Verify if UI element " + uiElement.getText() + " is not enabled");
+			getWebElement(uiPageObject).isEnabled();
 			return false;
 		} catch (Exception e) {
-			log.error(e.getMessage());
 			return true;
 		}
 	}
 
 	/**
-	 * @param uiElement
+	 * @param uiPageObject
 	 * @return
 	 */
-	public static boolean verifyElementIsSelected(WebElement uiElement) {
+	public static boolean verifyElementIsSelected(WebElement uiPageObject) {
 		try {
-			getWebElement(uiElement).isSelected();
-			logInfo("Verify if UI element " + uiElement.getText() + " is selected");
+			getWebElement(uiPageObject).isSelected();
 			return true;
 		} catch (Exception e) {
-			log.error(e.getMessage());
 			return false;
 		}
 	}
 
 	/**
-	 * @param uiElement
+	 * @param uiPageObject
 	 * @return
 	 */
-	public static boolean verifyElementIsNotSelected(WebElement uiElement) {
+	public static boolean verifyElementIsNotSelected(WebElement uiPageObject) {
 		try {
-			getWebElement(uiElement).isSelected();
-			logInfo("Verify if UI element " + uiElement.getText() + " is not selected");
+			getWebElement(uiPageObject).isSelected();
 			return false;
 		} catch (Exception e) {
-			log.error(e.getMessage());
 			return true;
 		}
 	}
 
+	
+	///  MS Note contain the new method body with reporting stuff.
 	/**
-	 * @param uiElement
+	 * @param uiPageObject
 	 * @param expectedText
 	 * @return
 	 */
-	public static boolean compareTextValue(WebElement uiElement, String expectedText) {
+	public static boolean compareTextValue(WebElement uiPageObject, String expectedText) {
 		try {
-			if (getDisplayText(uiElement).equals(expectedText)) {
-				logInfo("Compare two string text values: " + getDisplayText(uiElement) + " and " + expectedText);
+			if (getDisplayText(uiPageObject).equals(expectedText)) {
 				return true;
 			} else {
-				logInfo("The two text values: " + getDisplayText(uiElement) + " and " + expectedText + " are not the same");
 				return false;
 			}
 		} catch (Exception ex) {
-			log.error(ex.getMessage());
 			return false;
 		}
 	}
 
 	/**
-	 * @param uiElement
+	 * @param uiPageObject
 	 * @return
 	 */
-	public static WebElement getWebElement(WebElement uiElement) {
-		waitForElementBeforeClick(uiElement);
-		((JavascriptExecutor) TestUtility.driver).executeScript(
-				"arguments[0].setAttribute('style', 'background: lava; border: 3px solid red;');", uiElement);
-		WaitFunctions.sleep(0.15);
-		((JavascriptExecutor) TestUtility.driver).executeScript("arguments[0].setAttribute('style', arguments[1]);",
-				uiElement, "");
-		return waitForElement(uiElement);
+	public static WebElement getWebElement(WebElement uiPageObject) {
+		waitForElement(uiPageObject);
+		new JavaScriptFunctions(myDriver).highlightElement(uiPageObject);
+		return waitForElement(uiPageObject);
 	}
 
 	/**
@@ -206,128 +198,158 @@ public class CommonFunctions {
 	 * @return
 	 */
 	public static WebElement getWebElement(String uiText) {
-		return waitForPresenceOfElement(By.xpath("//*[contains(text(),'" + uiText + "')]"));
+		WebElement uiPageObject = waitForElement(myDriver.findElement(By.xpath("//*[contains(text(),'" + uiText + "')]")));
+		new JavaScriptFunctions(myDriver).highlightElement(uiPageObject);
+	//	wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + uiText + "')]")));
+		return uiPageObject;
 	}
 
 	/**
-	 * * This method will make sure element is visible ...
+	 * * This method will enable user set wait time polling time for an element,
+	 * and ensure element is visible before any action could be performed on it.
 	 * 
-	 * @param uiElement
+	 * @param uiPageObject
 	 * @param waitTime
 	 * @param pollingEveryInMiliSec
 	 * @return
 	 */
-	public static WebElement getWebElement(WebElement uiElement, int waitTime, int pollingEveryInMiliSec) {
-		return new WaitFunctions(TestUtility.driver).getfluentWait(waitTime, pollingEveryInMiliSec)
-				.until(ExpectedConditions.visibilityOf(uiElement));
+	public static WebElement getWebElement(WebElement uiPageObject, int waitTime, int pollingEveryInMiliSec) {
+		return new WaitFunctions(myDriver).getfluentWait(waitTime, pollingEveryInMiliSec)
+				.until(ExpectedConditions.visibilityOf(uiPageObject));
 	}
 
 	/**
-	 * @param uiElement
+	 * This method will enable user to enter any DATA TYPE as an input value for
+	 * a text box or text area on a web page , and the input value is converted
+	 * to String data type.
+	 * 
+	 * @param uiPageObject
+	 * @param value
 	 */
-	public static void clickOnWebElement(WebElement uiElement) {
-		try{
-			waitForElementBeforeClick(uiElement);
-			((JavascriptExecutor)TestUtility.driver).executeScript("arguments[0].setAttribute('style', 'background: lava; border: 3px solid red;');", uiElement);
-			WaitFunctions.sleep(0.15);
-			((JavascriptExecutor)TestUtility.driver).executeScript("arguments[0].setAttribute('style', arguments[1]);", uiElement, "");
-			logInfo("Click on UI element " + uiElement.getText());
-			waitForElementBeforeClick(uiElement).click();	
+	public static void setValue(WebElement uiPageObject, Object value) {
+		getWebElement(uiPageObject).clear();
+		uiPageObject.sendKeys(String.valueOf(value));
+		new MouseFunctions(myDriver).tabKey();
+	//	uiPageObject.sendKeys(Keys.TAB);
+	}
+
+	/**
+	 * This method will enable user to enter any DATA TYPE as an input value for
+	 * a text box or text area on a web page , and the input value is converted
+	 * to String data type.
+	 * 
+	 * @param uiTextboxName
+	 * @param value
+	 */
+	public static void setValue(String uiTextboxId, Object value) {
+		try {
+			WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(uiTextboxId)));
+			element.clear();
+			element.sendKeys(String.valueOf(value));
+			new MouseFunctions(myDriver).tabKey();
 		} catch (Exception e) {
-			logFail("Unable to click on " + uiElement.getText() + " : " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * This method will enable user to enter any DATA TYPE as an input value for
+	 * a text box or text area on a web page , and the input value is converted
+	 * to String data type. It will also allow user to enter step name and step
+	 * details for the reporting purpose.
+	 * 
+	 * @param uiPageObject
+	 * @param inputValue
+	 */
+	public static void setValue(WebElement uiPageObject, Object inputValue, String stepName, String stepDetails) {
+		try {
+			getWebElement(uiPageObject).clear();
+			uiPageObject.sendKeys(String.valueOf(inputValue));
+			new MouseFunctions(myDriver).tabKey();
+			logInfo(stepName, stepDetails);
+		} catch (Exception e) {
+			logFail(stepName, "Unable to enter data in the input field:  => " + e.getMessage());
+		}
+	}
+
+	/**
+	 * This method will enable user to enter any DATA TYPE as an input value for
+	 * a text box or text area on a web page , and the input value is converted
+	 * to String data type. It will also allow user to enter step name and step
+	 * details for the reporting purpose.
+	 * 
+	 * @param uiTextboxName
+	 * @param inputValue
+	 */
+	public static void setValue(String uiTextboxId, Object inputValue, String stepName, String stepDetails) {
+		try {
+			WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(uiTextboxId)));
+			element.clear();
+			element.sendKeys(String.valueOf(inputValue));
+			new MouseFunctions(myDriver).tabKey();
+			logInfo(stepName, stepDetails);
+		} catch (Exception e) {
+			logFail(stepName, "Unable to enter data in the input field:  => " + e.getMessage());
+		}
+	}
+
+	/**
+	 * @param uiPageObject
+	 */
+	public static void clickOnWebElement(WebElement uiPageObject) {
+		try {
+			getWebElement(uiPageObject).click();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * @param uiText
 	 */
 	public static void clickOnWebElement(String uiText) {
-		try{
-			logInfo("Click on UI element " + uiText);
+		try {
 			getWebElement(uiText).click();
 		} catch (Exception e) {
-			logFail("Unable to click on UI element " + uiText + " : " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * @param uiElement
-	 * @param waitTime
+	 * @param uiText
 	 */
-	public static void clickOnWebElement(WebElement uiElement, int waitTime) {
-		try{
-			logInfo("Click on UI element " + uiElement.getText());
-			new WaitFunctions(TestUtility.driver).getWait(waitTime, 1).until(ExpectedConditions.elementToBeClickable(uiElement)).click();
+	public static void clickOnWebElement(String uiText, String stepName, String stepDetails) {
+		try {
+			getWebElement(uiText).click();
+			logPass(stepName, stepDetails);
 		} catch (Exception e) {
-			logFail("Unable to click on " + uiElement.getText() + " : " + e.getMessage());
-			e.printStackTrace();
+			logError(stepName, "Unable to click on web element \"" + uiText + "\":  => " + e.getMessage());
+		}
+	}
+
+	/**
+	 * @param uiPageObject
+	 */
+	public static void clickOnWebElement(WebElement uiPageObject, String stepName, String stepDetails) {
+		try {
+			getWebElement(uiPageObject).click();
+			logPass(stepName, stepDetails);
+		} catch (Exception e) {
+			logError(stepName, "Unable to click on web element \"" + uiPageObject.getText() + "\":  => " + e.getMessage());
 		}
 	}
 
 	public static void selectDropdownValue(String dropDownElementToBeSelected) {
-		try{
-			clickOnWebElement(dropDownElementToBeSelected);
-		// waitForElementAndClick(By.xpath("//*[contains(text(),'" + dropDownElementToBeSelected + "')]"))).click();
-			logInfo("Click on UI element " + dropDownElementToBeSelected);
-		} catch (Exception e) {
-			logFail("Unable to click on " + dropDownElementToBeSelected + " : " + e.getMessage());
-		}
-	}
-
-	/**
-	 * @param uiElement
-	 * @param value
-	 */
-	public static void setValue(WebElement uiElement, String value) {
-		try {
-		//	uiElement.clear();
-			getWebElement(uiElement).clear();
-			uiElement.sendKeys(value);
-			logInfo("Setting value for UI element " + uiElement.getAttribute("id"));
-			uiElement.sendKeys(Keys.TAB);
-		} catch (Exception e) {
-			logFail("Unable to set value for UI element " + uiElement.getAttribute("id") + " : " + e.getMessage());
-		}
-	}
-
-	/**
-	 * @param uiElement
-	 * @param value
-	 */
-	public static void setValue(WebElement uiElement, long value) {
-		try {
-			getWebElement(uiElement).clear();
-			uiElement.sendKeys(String.valueOf(value));
-			logInfo("Setting value for UI element " + uiElement.getAttribute("id"));
-			uiElement.sendKeys(Keys.TAB);
-		} catch (Exception e) {
-			logFail("Unable to set value for UI element " + uiElement.getAttribute("id") + " : " + e.getMessage());
-		}
-	}
-
-	/**
-	 * @param uiTextboxName
-	 * @param value
-	 */
-	public static void setValue(String uiTextboxId, String value) {
-		try {
-			WebElement element = waitForPresenceOfElement(By.id(uiTextboxId));
-			element.clear();
-			element.sendKeys(value);
-			element.sendKeys(Keys.TAB);
-			logInfo("Setting value for UI element " + uiTextboxId);
-		} catch (Exception e) {
-			logFail("Unable to set value for UI element " + uiTextboxId + " : " + e.getMessage());
-		}
+		WebElement uiPageObject = waitForElement(myDriver.findElement(By.xpath("//*[contains(text(),'" + dropDownElementToBeSelected + "')]")));
+		waitForElement(uiPageObject).click();
+	//	clickOnWebElement(dropDownElementToBeSelected)
 	}
 
 	/**
 	 * @return
 	 */
 	public static Set<String> getWindowHandles() {
-		return TestUtility.driver.getWindowHandles();
+		return myDriver.getWindowHandles();
 	}
 
 	/**
@@ -338,10 +360,10 @@ public class CommonFunctions {
 			LinkedList<String> windowsId = new LinkedList<>(getWindowHandles());
 			if (index < 0 || index > windowsId.size())
 				throw new IllegalArgumentException("Invalid Index : " + index);
-			TestUtility.driver.switchTo().window(windowsId.get(index));
-			logInfo("Switching to window: " + index);
+			myDriver.switchTo().window(windowsId.get(index));
+			logPass("Switch To Window", "Switching to window: " + index);
 		} catch (Exception e) {
-			logFail("Unable to switch to window: " + index + " , " + e.getMessage());
+			logError("Switch To Window", "Unable to switch to window: " + index + ", " + e.getMessage());
 		}
 	}
 
@@ -350,15 +372,16 @@ public class CommonFunctions {
 	 */
 	public static void switchToParentWindow() {
 		try {
-			TestUtility.driver.switchTo().defaultContent();
+			myDriver.switchTo().defaultContent();
 			/** same as the above code */
 			/*
-			 * LinkedList<String> windowsId = new LinkedList<String>(getWindowHandles());
+			 * LinkedList<String> windowsId = new
+			 * LinkedList<String>(getWindowHandles());
 			 * driver.switchTo().window(windowsId.get(0));
 			 */
-			logInfo("Switching to parent window");
+			logPass("Switch To Window", "Switching to default/parent window");
 		} catch (Exception e) {
-			logFail("Unable to switch to parent window, " + e.getMessage());
+			logError("Switch To Window", "Unable to switch to parent/default window: " + e.getMessage());
 		}
 	}
 
@@ -366,16 +389,16 @@ public class CommonFunctions {
 	 * 
 	 */
 	public static void switchToParentAndCloseChildWindow() {
-		LinkedList<String> windowsId = new LinkedList<>(getWindowHandles());
-		for (int i = 1; i < windowsId.size(); i++) {
-			try {
-				TestUtility.driver.switchTo().window(windowsId.get(i));
-				TestUtility.driver.close();
+		try {
+			LinkedList<String> windowsId = new LinkedList<>(getWindowHandles());
+			for (int i = 1; i < windowsId.size(); i++) {
+				myDriver.switchTo().window(windowsId.get(i));
+				myDriver.close();
 				switchToParentWindow();
-				logInfo("Switching to parent window and close the child window");
-			} catch (Exception e) {
-				logFail("Unable to switch to parent window and close the child window, " + e.getMessage());
 			}
+			logPass("Switch To Window", "Switching to default/parent window");
+		} catch (Exception e) {
+			logError("Switch To Window", "Unable to switch to parent/default window: " + e.getMessage());
 		}
 	}
 
@@ -383,105 +406,76 @@ public class CommonFunctions {
 	 * @param locator
 	 */
 	public static void switchToFrame(By locator) {
-		try {
-			TestUtility.driver.switchTo().frame(TestUtility.driver.findElement(locator));
-			logInfo("Switching to frame: " + locator.toString());
-		} catch (Exception e) {
-			logFail("Unable to switch to frame: " + locator.toString() + " : " + e.getMessage());
-			e.printStackTrace();
-		}
+		myDriver.switchTo().frame(myDriver.findElement(locator));
 	}
 
 	/**
 	 * @param locator
 	 */
 	public static void switchToFrame(WebElement locator) {
-		try {
-			TestUtility.driver.switchTo().frame(waitForElement(locator));
-			logInfo("Switching to frame: " + locator.getText());
-		} catch (Exception e) {
-			logFail("Unable to switch to frame: " + locator.getText() + " : " + e.getMessage());
-			e.printStackTrace();
-		}
+		myDriver.switchTo().frame(waitForElement(locator));
 	}
 
 	/**
 	 * @param nameOrId
 	 */
 	public static void switchToFrame(String nameOrId) {
-		try {
-			TestUtility.driver.switchTo().frame(nameOrId);
-			logInfo("Switching to frame: " + nameOrId);
-		} catch (Exception e) {
-			logFail("Unable to switch to frame: " + nameOrId + " : " + e.getMessage());
-			e.printStackTrace();
-		}
+		myDriver.switchTo().frame(nameOrId);
 	}
 
 	/**
 	 * @param index
 	 */
 	public static void switchToFrame(int index) {
-		try {
-			TestUtility.driver.switchTo().frame(index);
-			logInfo("Switching to frame index " + index);
-		} catch (Exception e) {
-			logFail("Unable to switch to frame index " + index + " : " + e.getMessage());
-			e.printStackTrace();
-		}
+		myDriver.switchTo().frame(index);
 	}
 
 	/**
 	 * @param indexOfTab
 	 */
 	public static void switchToTab(int indexOfTab) {
-		ArrayList<String> tabs = new ArrayList<>(TestUtility.driver.getWindowHandles());
-		try {
-			TestUtility.driver.switchTo().window(tabs.get(indexOfTab));
-			logInfo("Switching to tab index " + indexOfTab);
-		} catch (Exception e) {
-			logFail("Unable to switch to tab index " + indexOfTab + " : " + e.getMessage());
-			e.printStackTrace();		
-		}
+		ArrayList<String> tabs = new ArrayList<>(myDriver.getWindowHandles());
+		myDriver.switchTo().window(tabs.get(indexOfTab));
 	}
 
 	/**
 	 * 
 	 */
 	public static void switchToDefaultContent() {
-		try {
-			TestUtility.driver.switchTo().defaultContent();
-			logInfo("Switching to default/parent window");
-		} catch (Exception e) {
-			logFail("Unable to switch to default/parent window: " + e.getMessage());
-			e.printStackTrace();			
-		}
+		myDriver.switchTo().defaultContent();
+	}
+
+	/** .......................... Logs....................... */
+
+	/**
+	 * @param comment
+	 */
+	public static void logInfo(String stepName, String details) {
+		log.info(details);
+		test.createNode(stepName).info(details);
 	}
 
 	/**
 	 * @param comment
 	 */
-	public static void logInfo(String comment) {
-		log.info(comment);
-		Reporter.log(comment);
-		ExtentManager.test.createNode("Step details").log(Status.INFO, comment);
+	public static void logError(String stepName, String details) {
+		log.error(details);
+		test.createNode(stepName).error(details);
 	}
 
 	/**
 	 * @param comment
 	 */
-	public static void logFail(String comment) {
-		log.error(comment);
-		ExtentManager.test.createNode("Step details").error(comment);
+	public static void logFail(String stepName, String errorMessageDetail) {
+		log.error(errorMessageDetail);
+		markTestAsFail(stepName, errorMessageDetail);
 	}
 
 	/**
-	 * @param comment
+	 * @param details
 	 */
-	public static void logPass(String comment) {
-		log.info(comment);
-	//	ExtentManager.test.createNode("Step status").pass(comment);
-		ExtentManager.test.createNode("Step status").pass(comment);
+	public static void logPass(String stepName, String details) {
+		log.info(details);
+		test.createNode(stepName).pass(details);
 	}
-	
 }
