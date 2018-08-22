@@ -84,6 +84,7 @@
 			<artifactId>testng</artifactId>
 			<version>6.11</version>
 			<scope>test</scope>
+
 		</dependency>
 
 		<dependency>
@@ -101,6 +102,7 @@
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
 			<version>2.0.2</version>
+
 		</dependency>
 
 		<dependency>
@@ -140,6 +142,12 @@
 			<version>5.5.12</version>
 		</dependency>
 
+		<dependency>
+			<groupId>de.redsix</groupId>
+			<artifactId>pdfcompare</artifactId>
+			<version>1.1.33</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
