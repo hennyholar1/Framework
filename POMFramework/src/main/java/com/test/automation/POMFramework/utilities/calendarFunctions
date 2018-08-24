@@ -28,19 +28,18 @@ public class CalendarFunctions {
 	private static WebDriver driver;
 	private static Wait<WebDriver> wait;
 
-	public TableAndCalendarFunctions(WebDriver driver) {
-		TableAndCalendarFunctions.driver = driver;
-		PageFactory.initElements(driver, this);
-		wait = new FluentWait<>(driver).withTimeout(Duration.ofSeconds(10)).pollingEvery(Duration.ofSeconds(1))
-				.ignoring(NoSuchElementException.class);
+	public static void initializeDriverAndWait(WebDriver driver) {
+		myDriver = driver;
+		wait = new FluentWait<>(myDriver).withTimeout(Duration.ofSeconds(10))
+				.pollingEvery(Duration.ofSeconds(1)).ignoring(NoSuchElementException.class);
 	}
 	
 	public static List<WebElement> listOfYears(){	
-		return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".years > tbody > tr > td")));
+		return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("...")));
 		}
 	
 	public static List<WebElement> disabledYears(){	
-		return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".years > tbody > tr > td.disabled")));
+		return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".....disabled")));
 		}
 	
 	public static Set<String> allYearsOnCurrentCalenderPageToListOfStrings(){
@@ -71,7 +70,7 @@ public class CalendarFunctions {
 	
 	public static void clickOnCalendarBoxAndClickOnYear(WebElement calenderObject){
 		wait.until(ExpectedConditions.elementToBeClickable(calenderObject)).click();
-		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.current:nth-of-type(3)"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("...."))).click();
 	}
 	
 	public static void setYear(WebElement calenderObject, int yearNumber) {
@@ -87,7 +86,7 @@ public class CalendarFunctions {
 			if(allYearsOnCurrentCalenderPageToListOfStrings().contains(String.valueOf(yearNumber)) 
 					&& !checkIfEnteredYearIsDisabledOnTheCalendartYearList().contains(String.valueOf(yearNumber))){
 				selectYear(String.valueOf(yearNumber));
-				}
+.				}
 			else if(allYearsOnCurrentCalenderPageToListOfStrings().contains(String.valueOf(yearNumber)) 
 					&& checkIfEnteredYearIsDisabledOnTheCalendartYearList().contains(String.valueOf(yearNumber))){
 				log.info(yearNumber	+ " is not an active set year.");
@@ -128,12 +127,12 @@ public class CalendarFunctions {
 
 	
 	public static List<WebElement> listOfMonths(){	
-		return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".months > tbody> tr > td > span")));
+		return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("...")));
 		}
 	
 	public static List<WebElement> disabledMonths(){
-		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".months > tbody> tr > td > span")));
-		return driver.findElements(By.cssSelector(".months > tbody> tr > .disabled"));
+		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("...")));
+		return driver.findElements(By.cssSelector("... .disabled"));
 		}
 	
 	public static Set<String> allMonthsOnCurrentCalenderYearAsListOfStrings(){
@@ -169,7 +168,7 @@ public class CalendarFunctions {
 	public static void selectMonth(String monthOnCalendar){
 		 for (WebElement calendarMonth : listOfMonths()){ 
 			 if(allMonthsOnCurrentCalenderYearAsListOfStrings().contains(monthOnCalendar)) //	&& !allMonthsOnCurrentStatus().contains("disabled"))
-				 {if (calendarMonth.getText().equals(monthOnCalendar)) {	  
+.				 {if (calendarMonth.getText().equals(monthOnCalendar)) {	  
 					 calendarMonth.click();
 					break;
 				 	}
@@ -179,7 +178,7 @@ public class CalendarFunctions {
 	
 	public static void setMonthAfterYear(String monthOnCalendar) {
 		if (!checkIfEnteredMonthIsDisabledOnSelectedYear().contains(monthOnCalendar)){	
-				selectMonth(monthOnCalendar);	
+.				selectMonth(monthOnCalendar);	
 			}
 		else if (checkIfEnteredMonthIsDisabledOnSelectedYear().contains(monthOnCalendar)){
 				log.info(monthOnCalendar	+ " is not an active month for this calendar year:  Please, enter an active month");	
@@ -192,7 +191,7 @@ public class CalendarFunctions {
 	
 	public static void changeMonthForCurrentYearOnCalendar(WebElement calenderObject, String monthOnCalendar) {
 		wait.until(ExpectedConditions.elementToBeClickable((calenderObject))).click();
-		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".bs-datepicker-container button.current:nth-of-type(2)"))).click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("..."))).click();
 		if (allMonthsOnCurrentCalenderYearAsListOfStrings().contains(monthOnCalendar)){	
 			if(!checkIfEnteredMonthIsDisabledOnSelectedYear().contains(monthOnCalendar)){
 				selectMonth(monthOnCalendar);	
@@ -208,12 +207,12 @@ public class CalendarFunctions {
 
 	
 	public static List<WebElement> listOfDays(){	
-		return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".days > tbody > tr > td")));
+		return wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("...")));
 		}
 	
 	public static List<WebElement> disabledDays(){
-		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".days > tbody > tr > td")));
-		return driver.findElements(By.cssSelector(".days > tbody > tr > td > .is-other-month"));
+		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("...")));
+		return driver.findElements(By.cssSelector("..."));
 		}
 	
 	public static Set<String> allDaysOnCurrentCalenderMonthAsListOfStrings(){
@@ -271,8 +270,7 @@ public class CalendarFunctions {
 	}
 
 	
-	public static void setDate(WebElement calendarUiInputBox, String dateValue) {
-		WebElement calendarFiled = wait.until(ExpectedConditions.elementToBeClickable(calendarUiInputBox));
+	public static void setDate(WebElement calendarUiInputBox, String dateValue) {		WebElement calendarFiled = wait.until(ExpectedConditions.elementToBeClickable(calendarUiInputBox));
 		calendarFiled.clear();
 		calendarFiled.sendKeys(dateValue);
 	}
@@ -298,7 +296,7 @@ public class CalendarFunctions {
 
 	public static WebElement clickNext() { // .bs-datepicker-container .bs-datepicker-head .next
 		WebElement element = wait
-				.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".bs-datepicker-head button.next")));
+				.until(ExpectedConditions.elementToBeClickable(By.cssSelector("...")));
 		while (element.isEnabled()) {
 			element.click();
 			break;
@@ -308,50 +306,12 @@ public class CalendarFunctions {
 
 	public static WebElement clickPrevious() {
 		WebElement element = wait
-				.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".bs-datepicker-head button.previous")));
+				.until(ExpectedConditions.elementToBeClickable(By.cssSelector("...")));
 		while (element.isEnabled()) {
 			element.click();
 			break;
 		}
 		return element;
 	}
-
-	@FindBy(css = "#transactionDate")
-	static WebElement transactionDateBox;
-	
-	@FindBy(css = "#effectiveDate")
-	static WebElement effectiveDateBox;
-	
-	@FindBy(css = "#Footnotes")
-	static WebElement footnotes;
-
-
-public static void main(String[] args) throws Exception {
-
-	System.setProperty(TestUtility.propertiesFileData("firefoxDriver"), TestUtility.propertiesFileData("winFirefoxDriverPath"));
-	FirefoxOptions firefoxOptions = new FirefoxOptions();
-	firefoxOptions.setBinary(TestUtility.propertiesFileData("winFirefoxBrowserBinaryPath"));
-	// firefoxOptions.setBinary("./src/main/resources/driversbinarypath/mozilla/firefox.exe");
-	driver = new FirefoxDriver(firefoxOptions);
-	driver.manage().window().maximize();
-	driver.get("url");
-
-	PageFactory.initElements(driver, TableAndCalendarFunctions.class);
-
-	// driver.findElement(By.cssSelector("cssLocator")).click();
-	// TableAndCalendarFunctions.setYear("cssLocator", 2009);
-
-	WaitFunctions.sleep(.5);
-	TableAndCalendarFunctions.setYear(inputBoxLocaotr, "2024");
-//	WaitFunctions.sleep(1);
-//	TableAndCalendarFunctions.setMonthAfterYear("March");
-//	TableAndCalendarFunctions.changeMonthForCurrentYearOnCalendar(inputBoxLocator, "July");
-//	TableAndCalendarFunctions.setDay(03);
-//	TableAndCalendarFunctions.setDate("webelement", "2016", "July", "3");
-//	TableAndCalendarFunctions.setDate(webelement, "07/03/2016");
-//	TableAndCalendarFunctions.setDate(webelement, 2016, "July", 03);
-	wait.until(ExpectedConditions.visibilityOf(webelement)).sendKeys("Hello");
-	 new Actions(driver).sendKeys(Keys.TAB).build().perform();
-	log.info("log info message goes here");
 
 }
