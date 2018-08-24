@@ -1,12 +1,17 @@
-package com.test.automation.POMFramework.fileReader;
+package POMFrameWork.src.main.java.com.test.automation.POMFramework.fileReader;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
+import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -14,596 +19,335 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
-public class ReadDataFromExcelSheet {
-		
-	public String path;
-	public XSSFSheet sheet;
-	public FileInputStream fis;
-	public XSSFWorkbook workbook;
-	public XSSFRow row;
-	public XSSFCell cell;
+/**
+ * @author Novenox
+ */
+public class SpreadSheetHandler {
+
+	private static final Logger logger = LogFunction.getLogger(SpreadSheetHandler.class);
+	public FileInputStream file = null;
+	public XSSFWorkbook workbook = null;
+	public XSSFSheet sheet = null;
+	protected String pathToWorkbookLocation = null;
+	protected XSSFRow row = null;
+	protected XSSFCell cell = null;
+	protected Row rows = null;
+	protected Cell cells = null;
 	
-	public ReadDataFromExcelSheet(String path) {
 
-		this.path = path;
+	/**
+	 * This is a constructor that user will use to create an instance of this class and,
+	 * enter the path to the excel/spreadsheet workbook with the spreadsheet (sheet) name.
+	 * 
+	 * @param workBookWithItsLocationPath
+	 * @param excelSheetName
+	 */
+	public SpreadSheetHandler (String workBookWithItsLocationPath, String excelSheetName) {
+		this.pathToWorkbookLocation = workBookWithItsLocationPath;
 		try {
-			fis = new FileInputStream(path);
-			workbook = new XSSFWorkbook(fis);
-			}
-
-		catch (Exception e) {
+			file = new FileInputStream(new File(workBookWithItsLocationPath));
+			workbook = new XSSFWorkbook(file);
+			sheet = workbook.getSheet(excelSheetName);
+			file.close(); 
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public ReadDataFromExcelSheet() {
-
-		try {
-			fis = new FileInputStream(this.path);
-			workbook = new XSSFWorkbook(fis);
-			}
-
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 
 	/**
-	 * This will enable user to do data-driven with independent unique spreadsheet workbook sheet
+	 * This will enable user to do data-driven with independent unique spreadsheet workbook sheet, 
+	 * and data pulling/driven will start from the second row because the first row will contain the column titles
 	 * 
-	 * @param sheetName
-	 * @param workbookName
 	 * @return
 	 */
-//	@SuppressWarnings({ })
-	public String[][] getDataFromSpreadSheet(String sheetName, String workbookName) {
-
-		String dataSets[][] = null;
-
-			try {
-				// get sheet from excel workbook
-				XSSFSheet sheet = workbook.getSheet(sheetName);
-
-				// count number of active tows
-				int totalRow = sheet.getLastRowNum() + 1;
-
-				// count number of active columns in row
-				int totalColumn = sheet.getRow(0).getLastCellNum();
-
-				// Create array of rows and column
-				dataSets = new String[totalRow - 1][totalColumn];
-
-				// Run for loop and store data in 2D array
-				
-					// This for loop will run on rows
-				for (int i = 1; i < totalRow; i++) {
-
-					XSSFRow rows = sheet.getRow(i);	
-
-					// This for loop will run on columns of that row
-					for (int j = 0; j < totalColumn; j++) {
-
-						// get Cell method will get cell
-						XSSFCell cell = rows.getCell(j);
-
-						// If cell of type String , then this if condition will work
-						if (cell.getCellType() == Cell.CELL_TYPE_STRING)
-
-							dataSets[i - 1][j] = cell.getStringCellValue();
-
-						// If cell of type Number , then this if condition will work
-						else if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-
-							String cellText = String.valueOf(cell.getNumericCellValue());
-
-							dataSets[i - 1][j] = cellText;	
-
-						} else
-
-							// If cell of type boolean , then this if condition will work
-							dataSets[i - 1][j] = String.valueOf(cell.getBooleanCellValue());
-					}
-				}
-
-				return dataSets;
-
-			} catch (Exception e) {
-
-				System.out.println("Exception in reading xlxs file" + e.getMessage());
-				e.printStackTrace();
-			}
-
-			return dataSets;
-		}
-
-		
-	/**
-	 * This will enable user to do data-driven with independent unique spreadsheet workbook sheet
-	 * 
-	 * @param excellocation
-	 * @param sheetName
-	 * @param rowTitle
-	 * @return
-	 */
-	public String[][] getSpreadsheetData(String excelLocation, String sheetName, String FirstColumnText) {
-
+	public Object[][] getSpreadSheetData () {
+		Object[][] dataSets = null;
 		try {
-			String dataSets[][] = null;
-
-			FileInputStream file = new FileInputStream(new File(excelLocation));
-
-			// Create Workbook instance holding reference to .xlsx file
-			XSSFWorkbook workbook = new XSSFWorkbook(file);
-
-			// Get first/desired sheet from the workbook
-			XSSFSheet sheet = workbook.getSheet(sheetName);
-
-			// count number of active rows
 			int totalRow = sheet.getLastRowNum();
-
-			// count number of active columns in row
 			int totalColumn = sheet.getRow(0).getLastCellNum();
-
-			// Create array of rows and column
 			dataSets = new String[totalRow][totalColumn];
 
-			// Iterate through each rows one by one
-			Iterator<Row> rowIterator = sheet.iterator();
+			for (int i = 1; i <= totalRow; i++) {
+				row = sheet.getRow(i);
+				for (int j = 0; j < totalColumn; j++) {
+					cell = row.getCell(j);
 
-			int i = 0;
-
-			while (rowIterator.hasNext()) {
-
-				Row row = rowIterator.next();
-
-				// For each row, iterate through all the columns
-				Iterator<Cell> cellIterator = row.cellIterator();
-
-				int j = 0;
-
-				while (cellIterator.hasNext()) {
-
-					Cell cell = cellIterator.next();
-
-					if (cell.getStringCellValue().contains(FirstColumnText)) {
-
-						break;
-					}
-
-					// Check the cell type and format accordingly
-					switch (cell.getCellType()) {
-
-					case Cell.CELL_TYPE_NUMERIC:
-
-						dataSets[i - 1][j++] = cell.getStringCellValue();
-
-						break;
-
-					case Cell.CELL_TYPE_STRING:
-
-						dataSets[i - 1][j++] = cell.getStringCellValue();
-
-						break;
-
-					case Cell.CELL_TYPE_BOOLEAN:
-
-						dataSets[i - 1][j++] = cell.getStringCellValue();
-
-						break;
-
-					case Cell.CELL_TYPE_FORMULA:
-
-						dataSets[i - 1][j++] = cell.getStringCellValue();
-
-						System.out.println(cell.getStringCellValue());
-
-						break;
-					}
-				}
-
-				System.out.println("");
-
-				i++;
-			}
-
-			file.close();
-
-			return dataSets;
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	
-	/**
-	 * This will enable user to use one spreadsheet page for all data input created separately on a sheet
-	 * 
-	 * @param excellocation
-	 * @param sheetName
-	 * @param testName
-	 * @return
-	 */
-	public Object[][] getExcelDataBasedOnStartingPoint(String excellocation, String sheetName, String testName) {
-
-		try {
-
-			String dataSets[][] = null;
-
-			FileInputStream file = new FileInputStream(new File(excellocation));
-
-			// Create Workbook instance holding reference to .xlsx file
-			XSSFWorkbook workbook = new XSSFWorkbook(file);
-
-			// Get first/desired sheet from the workbook
-			XSSFSheet sheet = workbook.getSheet(sheetName);
-
-			// count number of active rows
-			int totalRow = sheet.getLastRowNum();
-
-			int totalColumn = 0;
-
-			// Iterate through each rows one by one
-			Iterator<Row> rowIterator = sheet.iterator();
-
-			int i = 0;
-
-			int count = 1;
-
-			while (rowIterator.hasNext() && count == 1 || count == 2) {
-				
-				Row row = rowIterator.next();
-
-				// For each row, iterate through all the columns
-				Iterator<Cell> cellIterator = row.cellIterator();
-
-				int j = 0;
-
-				while (cellIterator.hasNext()) {
-
-					Cell cell = cellIterator.next();
-
-					if (cell.getStringCellValue().contains(testName + "end")) {
-
-						count = 0;
-
-						break;
-					}
-
-					if (cell.getStringCellValue().contains(testName + "start")) {
-
-						// count number of active columns in row
-						totalColumn = row.getPhysicalNumberOfCells() - 1;
-
-						// Create array of rows and column
-						dataSets = new String[totalRow][totalColumn];
-
-					}
-
-					if (cell.getStringCellValue().contains(testName + "start") || count == 2) {
-
-						count = 2;
-
-						// Check the cell type and format accordingly
-						switch (cell.getCellType()) {
-
-						case Cell.CELL_TYPE_NUMERIC:
-
-							dataSets[i - 1][j++] = cell.getStringCellValue();
-
-							break;
-
-						case Cell.CELL_TYPE_STRING:
-
-							if (!cell.getStringCellValue().contains(testName + "start")) {
-
-								dataSets[i - 1][j++] = cell.getStringCellValue();
-							}
-
-							break;
-
-						case Cell.CELL_TYPE_BOOLEAN:
-
-							dataSets[i - 1][j++] = cell.getStringCellValue();
-
-							break;
-
-						case Cell.CELL_TYPE_FORMULA:
-
-							dataSets[i - 1][j++] = cell.getStringCellValue();
-
-							break;
-
-						}
-					}
-				}
-
-				System.out.println("");
-				
-				i++;
-			}
-
-			file.close();
-
-			return parseData(dataSets, totalColumn);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-	
-	
-	/**
-	 * This method is used to retrieve data from the spreadsheet cell 
-	 * 
-	 * @param sheetName
-	 * @param colName
-	 * @param rowNum
-	 * @return
-	 */
-	public String getSpreadsheetCellData(String sheetName, String colName, int rowNum) {
-		
-		try {
-			int col_Num = 0;
-
-			int index = workbook.getSheetIndex(sheetName);
-
-			sheet = workbook.getSheetAt(index);
-
-			XSSFRow row = sheet.getRow(0);
-
-			for (int i = 0; i < row.getLastCellNum(); i++) {
-
-				if (row.getCell(i).getStringCellValue().equals(colName)) {
-
-					col_Num = i;
-
-					break;
-				}
-			}
-
-			row = sheet.getRow(rowNum - 1);
-
-			XSSFCell cell = row.getCell(col_Num);
-
-			if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
-
-				return cell.getStringCellValue();
-
-			} else if (cell.getCellType() == Cell.CELL_TYPE_BLANK) {
-
-				return "";
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	
-	/**
-	 * This method is used to update the test result 
-	 * 
-	 * @param excellocation
-	 * @param sheetName
-	 * @param testCaseName
-	 * @param testStatus
-	 * @return
-	 */
-	public void updateResult(String excellocation, String sheetName, String testCaseName, String testStatus)
-			throws IOException {
-
-		try {
-			FileInputStream file = new FileInputStream(new File(excellocation));
-
-			// Create Workbook instance holding reference to .xlsx file
-			XSSFWorkbook workbook = new XSSFWorkbook(file);
-
-			// Get first/desired sheet from the workbook
-			XSSFSheet sheet = workbook.getSheet(sheetName);
-
-			// count number of active tows
-			int totalRow = sheet.getLastRowNum() + 1;
-
-			// count number of active columns in row
-			for (int i = 1; i < totalRow; i++) {
-
-				XSSFRow r = sheet.getRow(i);
-
-				String ce = r.getCell(1).getStringCellValue();
-
-				if (ce.contains(testCaseName)) {
-
-					r.createCell(2).setCellValue(testStatus);
-
-					file.close();
-
-					System.out.println("result updated");
-
-					FileOutputStream outFile = new FileOutputStream(new File(excellocation));
-
-					workbook.write(outFile);
-
-					outFile.close();
-
-					break;
-				}
-
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-
-	/**
-	 * This method is used to remove unwanted null/space data from array 
-	 * 
-	 * @param data
-	 * @param colSize
-	 * @return
-	 */
-
-	public Object[][] parseData(Object[][] data, int colSize) {
-
-		ArrayList<ArrayList<String>> list = new ArrayList<ArrayList<String>>();
-
-		// This array list will store one Array index data, every array index has three sets of data
-		ArrayList<String> list1;
-
-		// running for loop on array size
-		for (int i = 0; i < data.length; i++) {
-
-			list1 = new ArrayList<String>();
-
-			// this for loop will run on array index, since each array index has
-			// three sets of data
-			for (int j = 0; j < data[i].length; j++) {
-
-				// this if will check null
-				if (data[i][j] != null) {
-
-					list1.add((String) data[i][j]);
-				}
-			}
-
-			// once all one array index data is entered in arrayList , then putting this object in parent arrayList
-			if (list1.size() > 0) {
-
-				list.add(list1);
-			}
-		}
-
-		// convert array List Data into 2D Array
-		Object[][] arr2d = new Object[list.size()][colSize];
-
-		// run loop on array list data
-		for (int i = 0; i < list.size(); i++) {
-
-			// every array list index has arryList inside
-			ArrayList<String> t = list.get(i);
-
-			// run loop on inner array List
-			for (int j = 0; j < t.size(); j++) {
-
-				arr2d[i][j] = t.get(j);
-			}
-		}
-
-		return arr2d;
-	}
-	
-	
-
-	public Object[][] getExcelData(String excelLocation, String sheetName) {
-
-		try {
-			Object dataSets[][] = null;
-			FileInputStream file = new FileInputStream(new File(excelLocation));
-			// Create Workbook instance
-			XSSFWorkbook workbook = new XSSFWorkbook(file);
-
-			// Get sheet Name from Workbook
-			XSSFSheet sheet = workbook.getSheet(sheetName);
-
-			// count number of active rows in excel sheet
-			int totalRow = sheet.getLastRowNum();
-            System.out.println(totalRow);
-			// count active columns in row
-			int totalColumn = sheet.getRow(0).getLastCellNum();
-
-			dataSets = new Object[totalRow][totalColumn-1];
-
-			// Iterate Through each Rows one by one.
-			Iterator<Row> rowIterator = sheet.iterator();
-			int i = 0;
-			while (rowIterator.hasNext()) {
-				i++;
-				// for Every row , we need to iterator over columns
-				Row row = rowIterator.next();
-				Iterator<Cell> cellIterator = row.cellIterator();
-				int j = 0;
-				while (cellIterator.hasNext()) {
-					
-					Cell cell = cellIterator.next();
-					if (cell.getStringCellValue().contains("Start")) {
-						i = 0;
-						break;
-					}
 					switch (cell.getCellTypeEnum()) {
-					case STRING:
-						dataSets[i-1][j++] = cell.getStringCellValue();
-						break;
+
 					case NUMERIC:
-						dataSets[i-1][j++] = cell.getNumericCellValue();
+						dataSets[i-1][j] = String.valueOf(cell.getNumericCellValue());
 						break;
+
+					case STRING:
+						dataSets[i-1][j] = cell.getStringCellValue();
+						break;
+
 					case BOOLEAN:
-						dataSets[i-1][j++] = cell.getBooleanCellValue();
+						dataSets[i-1][j] = String.valueOf(cell.getBooleanCellValue());
+						break;
+
 					case FORMULA:
-						dataSets[i-1][j++] = cell.getCellFormula();
+						dataSets[i-1][j] = String.valueOf(cell.getCellFormula());
+						break;
+
+					case BLANK:
 						break;
 
 					default:
-						System.out.println("no matching enum date type found");
+						logger.info("Not a matching data type");
 						break;
 					}
 				}
 			}
 			return dataSets;
 		} catch (Exception e) {
+			logger.info("Exception when reading .xlxs spreadsheet test data file: " + e.getMessage());
 			e.printStackTrace();
 		}
-		return null;
+		return dataSets;
 	}
 	
-	public void updateResult(String excelLocation, String sheetName, String testCaseName, String testStatus){
-		try{
-			FileInputStream file = new FileInputStream(new File(excelLocation));
-			// Create Workbook instance
-			XSSFWorkbook workbook = new XSSFWorkbook(file);
+	/**
+	 * This will enable user to do data-driven using unique spreadsheet workbook sheet, and data pulling/driven
+	 * will start from the second row because the first row will contain the column title with the "start" word 
+	 * that will ensure the write data is being used for data driven test.
+	 * 
+	 * @return
+	 */
+	public Object[][] getSpreadSheetData (String firstRowAndFirstColumnName) {
+		Object[][] dataSets = null;
+		try {
+			int totalRow = sheet.getLastRowNum();
+			int totalColumn = sheet.getRow(0).getLastCellNum();
+			dataSets = new String[totalRow][totalColumn];
+			Iterator<Row> rowIterator = sheet.iterator();
+			int i = 0;
+			while (rowIterator.hasNext()) {
+				rows = rowIterator.next();
+				Iterator<Cell> cellIterator = rows.cellIterator();
+				int j = 0;
 
-			// Get sheet Name from Workbook
-			XSSFSheet sheet = workbook.getSheet(sheetName);
-			// count number of active rows in excel sheet
-			int totalRow = sheet.getLastRowNum()+1;
-			for(int i =1; i<totalRow; i++){
-				XSSFRow r = sheet.getRow(i);
-				String ce = r.getCell(0).getStringCellValue();
-				if(ce.contains(testCaseName)){
-					r.createCell(1).setCellValue(testStatus);
-					file.close();
-					log.info("result updated..");
-					FileOutputStream out = new FileOutputStream(new File(excelLocation));
-					workbook.write(out);
-					out.close();
+				while (cellIterator.hasNext()) {
+					cells = cellIterator.next();
+
+					if (cells.getStringCellValue().equalsIgnoreCase(firstRowAndFirstColumnName)) {
+						i = 0;
+						break;
+					}
+
+					switch (cells.getCellTypeEnum()) {
+					case STRING:
+						dataSets[i-1][j++] = cells.getStringCellValue();
+						break;
+
+					case NUMERIC:
+						dataSets[i-1][j++] = String.valueOf(cells.getNumericCellValue());
+						break;
+
+					case BOOLEAN:
+						dataSets[i-1][j++] = String.valueOf(cells.getBooleanCellValue());
+						break;
+
+					case FORMULA:
+						dataSets[i-1][j++] = String.valueOf(cells.getCellFormula());
+						break;
+						
+					case BLANK:
+						break;
+						
+					default:
+						logger.info("Not a matching data type");
+						break;
+					}
+				}
+				i++;
+			}
+			return dataSets;
+		} catch (Exception e) {
+			logger.info("Exception when reading .xlxs spreadsheet test data file: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return dataSets;
+	}
+	
+	/**
+	 * This will enable user to use one spreadsheet page for all data input
+	 * created separately on a sheet
+	 * 
+	 * @param firstRowFirstColumn
+	 * @return
+	 */
+	public Object[][] getDataBasedOnFirstColumnWithStart (String testDataName) {
+		Object[][] dataSets = null;	
+		try {	
+		  int totalRow = sheet.getLastRowNum(); 
+		  int totalColumn = 0;
+		  Iterator<Row> rowsIterator = sheet.iterator(); 
+		  int i = 0; 
+		  int count = 1;
+		  
+		  while (rowsIterator.hasNext() && (count == 1 || count == 2)) {  
+			  rows = rowsIterator.next(); 
+			  Iterator<Cell> cellIterator = rows.cellIterator();  
+			  int  j = 0;
+			  while (cellIterator.hasNext()) { 
+				  cells = cellIterator.next();
+			  
+			  if (cells.toString().equalsIgnoreCase(testDataName + "end")) { 
+				  count  = 0; 	
+				  break; }
+			  
+			  if (cells.toString().equalsIgnoreCase(testDataName + "start")) {
+			  totalColumn = (rows.getPhysicalNumberOfCells() - 1); 
+			  dataSets = new String[totalRow][totalColumn]; }
+			  
+			  if (cells.toString().equalsIgnoreCase(testDataName + "start") || count == 2) { 
+				  count = 2;
+				  switch (cells.getCellTypeEnum()) {
+					  case STRING: 
+						  if (!cells.toString().equalsIgnoreCase(testDataName + "start"))
+						  { dataSets[i-1][j++] = cells.getStringCellValue();  }
+						  break;
+						  
+					  case NUMERIC: 
+						  dataSets[i-1][j++] = String.valueOf(cells.getNumericCellValue());
+						  break;
+					  
+					  case BOOLEAN: 
+						  dataSets[i-1][j++] = String.valueOf(cells.getBooleanCellValue());
+						  break;
+					  
+					  case FORMULA: 
+						  dataSets[i-1][j++] = String.valueOf(cells.getCellFormula()); 
+						  break;
+						  
+					  case BLANK:
+							break;
+					  
+					  default: 
+						  logger.info("Not a matching enum data type"); 
+						  break;
+					  		}  
+				  		} 
+				  	} 
+			  	i++; 
+		  		}
+		  	return parseData(dataSets, totalColumn); 
+		  } catch (Exception e)  { 
+			  logger.info("Exception when reading .xlxs spreadsheet test data file: " + e.getMessage());
+			  e.printStackTrace(); 
+			  }
+	  return dataSets; 
+	  }
+	 
+	 
+	/**
+	 * This method will remove unwanted null/space data from the user selected/chosen sheet which contains "start" word.
+	 * 
+	 * @param incomingData
+	 * @param columnSize
+	 * @return
+	 */
+	public Object[][] parseData(Object[][] incomingData, int columnSize) {
+		ArrayList<ArrayList<String>> outerDatalist = new ArrayList<ArrayList<String>>();
+		ArrayList<String> innerDatalist;
+
+		for (int i = 0; i < incomingData.length; i++) {
+			innerDatalist = new ArrayList<>();
+			for (int j = 0; j < incomingData[i].length; j++) {
+				if (incomingData[i][j] != null) {
+					innerDatalist.add((String) incomingData[i][j]);
+				}
+			}
+			 if (!innerDatalist.isEmpty()) {
+			//	 if (innerDatalist.size() > 0) {
+				 outerDatalist.add(innerDatalist);
+			}
+		}
+
+		Object[][] array2d = new Object[outerDatalist.size()][columnSize];
+		for (int k = 0; k < outerDatalist.size(); k++) {
+			ArrayList<String> newArray = outerDatalist.get(k);
+			for (int l = 0; l < newArray.size(); l++) {
+				array2d[k][l] = newArray.get(l);
+			}
+		}
+		return array2d;
+	}
+
+	/**
+	 * This method is used to retrieve data from the spreadsheet based on the column name and row number. 
+	 * The row number starts from 1, unlike the computer 0 index for row or column 1.
+	 * 
+	 * @param columnName
+	 * @param rowNumber
+	 * @return
+	 */
+	public Object getSpreadsheetCellData(String columnName, int rowNumber) {
+		try {
+			String cellValue = null;
+			row = sheet.getRow(0);
+			int colNum = 0;
+			
+			for (int i = 0; i < row.getLastCellNum(); i++) {
+				if (row.getCell(i).getStringCellValue().equalsIgnoreCase(columnName)) {
+					colNum = i;
 					break;
 				}
 			}
-		}
-		catch(Exception e){
 			
+			row = sheet.getRow(rowNumber - 1);
+			cell = row.getCell(colNum);
+			
+			if (cell.getCellTypeEnum() == CellType.STRING) 
+				return cell.getStringCellValue();
+
+			else if (cell.getCellTypeEnum() == CellType.NUMERIC || cell.getCellTypeEnum() == CellType.FORMULA) {
+				cellValue = String.valueOf(cell.getNumericCellValue());
+				if(HSSFDateUtil.isCellDateFormatted(cell)) {
+					DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+					Date date = cell.getDateCellValue();
+					cellValue = dateFormat.format(date);
+				}
+				return cellValue;
+					
+			} else if (cell.getCellTypeEnum() == CellType.BLANK) {
+				return "";
+			}
+			
+			else {
+				return String.valueOf(cell.getBooleanCellValue());
+			}
+
+		} catch (Exception e) {
+			logger.info("Exception when reading .xlxs spreadsheet test data file: " + e.getMessage());
+			return "No Matching value";
 		}
 	}
-	
-	public static void main(String[] args) {
-	 ExcelHelper	 excelHelper = new ExcelHelper();
-	 String excelLocation = ResourceHelper.getResourcePath("src/main/resources/configfile/testData.xlsx");
-	 Object[][] data = excelHelper.getExcelData(excelLocation, "loginData");
-	 //System.out.println(data);
-//	 excelHelper.updateResult(excelLocation, "TestScripts", "Login", "PASS");
-//	 excelHelper.updateResult(excelLocation, "TestScripts", "Registration", "FAIL");
-//	 excelHelper.updateResult(excelLocation, "TestScripts", "Add to Cart", "PASS");
-	 
-	}
-}
 
+	/**
+	 * This method is meant to update the test result
+	 * 
+	 * @param testCaseName
+	 * @param testStatus
+	 */
+	public void updateResult(String testCaseName, String testStatus) {
+		try {
+			int totalRow = sheet.getLastRowNum();
+			for (int i = 1; i <= totalRow; i++) {
+				row = sheet.getRow(i);
+				String cel = row.getCell(0).getStringCellValue();
+				if (cel.contains(testCaseName)) {
+					row.createCell(1).setCellValue(testStatus);
+					file.close();
+					FileOutputStream writeOutToFile = new FileOutputStream(new File(pathToWorkbookLocation));
+					workbook.write(writeOutToFile);
+					writeOutToFile.close();
+					break;
+				}
+			}
+		} catch (Exception e) {
+			logger.info("Exception when reading .xlxs spreadsheet test data file: " + e.getMessage());
+		}
+	}
 }
