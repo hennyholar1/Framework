@@ -1,0 +1,94 @@
+Package packagePath
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import org.apache.log4j.Logger;
+import static utilities.AssertionFunctions.*;
+import static utilities.ExtentReportHandler.*;
+import utilities.LogFunction;
+import TestUtility.*;
+import org.openqa.selenium.WebDriver;
+import org.testng.ITestResult;
+import org.testng.SkipException;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+/**
+ * @author Novenox
+ */
+public class TestRunner {
+
+	private static Logger log = LogFunction.getLogger(TestRunner.class);
+	private WebDriver myDriver;
+	className instance;
+	
+	@BeforeSuite(alwaysRun = true)
+	public void intiateReport() {
+		extentReportInitiator();
+	}
+
+	@BeforeTest(alwaysRun = true)
+	public void beforeTest() {
+		try {
+			myDriver = initializeDriver();
+			// getApplicationUrl(myDriver);
+			instance = new className(myDriver);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	
+	@BeforeMethod(alwaysRun = true)
+	public void beforeMethod(Method method) {
+		getTestMethodsInformation(method);
+	}
+
+	@AfterMethod(alwaysRun = true)
+	public void testsResult(ITestResult method) {
+		try {
+			getTestResult(method);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		assertItAll();
+	}
+	@AfterSuite(alwaysRun = true)
+	public void runAfterSuite() {
+	//	lunchTestReportViaBrowser();
+	}
+
+
+@Test(priority = 1, dataProvider = "test1", dataProviderClass = UsersDataProvider.class)
+	public void userInterfaceValidation(String testData1, String testData2, String userRole) {
+		log.info("...............Test_Scenario_001 started...................");
+		
+		getApplicationUrl();
+		if (userRole.equalsIgnoreCase("excelColumnData")) {
+			instance.login(testData1, testData2);
+			updateTestStatus(instance.verifyPageObjectPresence(instance.uiPageObject));
+			instance.logOff();
+		} else if (!(userRole.equalsIgnoreCase("excelColumnData"))) {
+			instance.login(testData1, testData2);
+			updateTestStatus(instance.verifyPageObjectPresence(instance.uiPageObject));
+			instance.logOff();
+		}
+		
+		log.info("...............Test_Scenario_001 completed...................");
+	}
+
+
+ @Test(priority = 6, dataProvider="test3", dataProviderClass=UsersDataProvider.class)
+	public void allTestDataInOneExcel(String testData1, String testData2, String testData3, String testData4,String testData5) {
+	//	 if (runMode.equalsIgnoreCase("n")) {throw new SkipException("Run-mode for this set of data is marked as N (to be skipped)!");	}
+		 
+		getApplicationUrl();
+	//	instance.login(testData1, testData2);
+		log.info("Col1:  " + testData1 + "," + "  Col2:   " + testData2  + ","  + " Col3:   " + testData3 + "," + "  Col4:   " + testData4 + ","  + " Col5:   " + testData5);
+	}
+
+}
