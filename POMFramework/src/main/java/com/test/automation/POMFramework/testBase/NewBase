@@ -29,179 +29,244 @@ import browserconfiguration.*;
 
 public class Base {
 
-	public static ExtentReports extent;
-	public static ExtentTest test;
-	public static WebDriver driver;
-	public static File reportDirectery;
-	static String testReport = "TestReport_" + DateTime.currentDateWithTime() + ".html";
-	public static Logger log = LogHelper.getLogger(TestUtility.class);
+ private static final Logger LOGGER = LoggerFactory.getLogger(TestUtility.class);
 
-	private TestUtility(){} 
-	
-	//@BeforeSuite(alwaysRun = true)
-	public static void foreRunner() {
-		extent = ExtentManager.GetExtent();
-	}
-	
-	//@AfterSuite(alwaysRun = true)
-	public static void flushTestReportToFile() throws Exception {
-		extent.flush();
-		launchTestResult();
-	}
-	
-//	@BeforeTest
-	public static void initializedAll() throws Exception {
-		ObjectReader.reader = new ConfigurationDataSource();
-		reportDirectery = new File(propertiesFileData("screenShotPath"));	
-		launchApplication(ObjectReader.reader.getBrowserType());	
-		CommonFunctions.setDriver(driver);
-		CommonFunctions.setWait();
-	}
-	
-	//@BeforeMethod
-	public static void getMethodInformation(Method method) {
-		test = extent.createTest(method.getName(), "is being executed").assignAuthor("Oludare_Eniola");
-		test.log(Status.INFO, method.getName() + " test starts executing ");
-		log(".... " + method.getName() + " test started ....");
-	}
+    private static WebDriver driver;
+    static String testReport = "TestReport_" + currentDateWithTime() + ".html";
+    private static ExtentTest test;
 
-	//@AfterMethod()
-	public static void testResult(ITestResult method) throws IOException {
-		if (ITestResult.SUCCESS == method.getStatus()) {
-	//		test.pass(method.getName() + " passed");
-			test.log(Status.PASS, method.getName() + " test passed");
-			log(" ...... " + method.getName() + " test passed executed successfully ......");
-		} else if (ITestResult.SKIP == method.getStatus()) {
-			test.log(Status.SKIP, method.getName() + " test is skipped and the reason is:- " + method.getThrowable());
-		} else if (ITestResult.FAILURE == method.getStatus()) {
-			test.log(Status.FAIL, method.getThrowable());
-		//	MediaEntityBuilder.createScreenCaptureFromPath(imagePath).build();
-		//	test.addScreenCaptureFromPath(captureScreen(driver, method.getName()));
-			test.fail((method.getName() + " failed during execution"), 
-					MediaEntityBuilder.createScreenCaptureFromPath(captureScreen(driver, method.getName())).build());
-			log("...... " + method.getName() + " test failed during execution ....");
-		}
-			log("...... " + method.getName() + " has finished executing ......");
-		//	extent.flush();
-		}
-	
+    private TestUtility() {    }
 
-// 	Inserting config.properties file with its value(s) at the run time.
-	public static String propertiesFileData(String configFileData) {
-		return ConfigurationDataSource.OR.getProperty(configFileData);
-	}
+    /**
+     * @param myDriver
+     * @param result
+     * @return
+     */
+    public static String captureScreen(String result) {
+        if (result == "") {
+            result = "blank";
+        }
+        File destFile = null;
+        final File scrFile = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.FILE);
+        try {
+            destFile = new File(propertiesFileData("screenShotPath") + result + "_"
+                            + DateTimeHandler.currentDateWithTime() + ".png");
+            Files.copy(scrFile, destFile);
+            log("Web page screenshot captured");
+            // Reporter.log("<a href='" + destFile.getAbsolutePath() + "'> <img src='" + destFile + "' height='80'
+            // width='100'/> </a>");
+        } catch (final IOException e) {
+            log("Exception while taking screenshot" + e.getMessage());
+        }
+        return destFile.toString();
+    }
 
-	public static WebDriver getDriver(BrowserType browserType) throws Exception {
-	if (driver == null)
-		try{
-			switch(browserType){
-			case CHROME:
-				ChromeBrowser chrome = new ChromeBrowser();
-				return chrome.getChromeDriver(chrome.getChromeOptions());
+    /**
+     * @param workBookName
+     * @param excelSheetName
+     * @param testName
+     * @return
+     */
+    public static Object[][] getAllDataInOneExcelSheet(final String workBookName, final String excelSheetName,
+        final String testName) {
+        final String excelLocation = propertiesFileData("testDataFilePath") + workBookName;
+        return new SpreadSheetHandler(excelLocation, excelSheetName).getDataBasedOnFirstColumnWithStart(testName);
+    }
 
-			case FIREFOX:
-				FirefoxBrowser firefox = new FirefoxBrowser();				
-				return firefox.getFirefoxDriver(firefox.getFirefoxOptions());
-				
-				case IE:
-					IExploreBrowser ie = new IExploreBrowser();
-					return ie.getIExplorerDriver();
-					
-				case EDGE:
-					EdgeBrowser edge = new EdgeBrowser();
-					return edge.getEdgeDriver(edge.getEdgeOptions());	
+    /**
+     *
+     */
+    public static void getApplicationUrl(final String domainUrl) {
+        if (driver != null) {
+            driver.get(propertiesFileData(domainUrl));
+            LOGGER.info("navigating to ..." + propertiesFileData(domainUrl));
+        } else {
+            throw new WebDriverException("WebDriver not initialized properly");
+        }
+    }
 
-				default:
-					throw new Exception("Browser type: " + browserType.name() + " not yet supported for this application");
-				}
-			} catch (Exception e) {
-				log.info(e.getMessage());
-				throw e;
-			}
-return driver;
-	}
-	
-	public static void launchApplication(BrowserType browserType) throws Exception {
-		driver = getDriver(browserType);
-	//	driver = getBrowserObject(browserType);
-		getApplicationUrl();
-		log.info("Initialize Web driver: "+driver.hashCode());
-		driver.manage().timeouts().pageLoadTimeout(ObjectReader.reader.getPageLoadTime(), TimeUnit.SECONDS);
-	}
-	
-	public static void getApplicationUrl(){
-			if (driver != null) {
-				driver.navigate().to(propertiesFileData("url"));
-				log.info("navigating to ..."+propertiesFileData("url"));
-	        }
-	        else {
-	            throw new WebDriverException("WebDriver not initialized properly");
-	        }
-	}
+    /**
+     * @param incominDriver
+     */
+    public static void getApplicationUrl(final WebDriver incomingDriver, final String domainUrl) {
+        if (incomingDriver != null) {
+            incomingDriver.get(propertiesFileData(domainUrl));
+            LOGGER.info("navigating to ..." + propertiesFileData(domainUrl));
+        } else {
+            LOGGER.info("throwing new WebDriver:Excpetion");
+            throw new WebDriverException("WebDriver not initialized properly");
+        }
+    }
 
-	public static String captureScreen(WebDriver driver, String result) {
-		if (driver == null) {
-			log("driver is null..");
-			return null;
-		}
-		if (result == "") {
-			result = "blank";
-		}
-		File destFile = null;
-		File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-		try {
-			destFile = new File(reportDirectery + "/pagescreenshots/" + result + "_" + DateTime.currentDateWithTime() + ".png");
-		//	FileUtils.copyFile(scrFile, destFile);
-			Files.copy(scrFile, destFile);
-			log("Web page screenshot captured");
-			Reporter.log("<a href='" + destFile.getAbsolutePath() + "'> <img src='" + destFile + "' height='100' width='100'/> </a>");
-		} catch (IOException e) {
-			System.out.println("Exception while taking screenshot" + e.getMessage());
-		}
-		return destFile.toString();
-	}
+    /**
+     * @param browserType
+     */
+    public static WebDriver getBrowser(final BrowserType browserType) {
+        driver = getWebDriver(browserType);
+        LOGGER.info("Initialize Web driver: " + driver.hashCode());
+        driver.manage().window().maximize();
+        driver.manage().timeouts().pageLoadTimeout(new ConfigurationDataSource().getPageLoadTime(), TimeUnit.SECONDS);
+        return driver;
+    }
 
-	public static void getPageNavigationScreenshot(WebDriver driver, String uIPageName)  {
-		String screen = captureScreen(driver, uIPageName);
-		try {
-			test.addScreenCaptureFromPath(screen);
-		//	MediaEntityBuilder.createScreenCaptureFromPath(captureScreen(driver, uIPageName)).build();
-			log("capturing UI navigation screen of the current page...");
-		} catch (Exception e) {	
-			e.printStackTrace();
-		}
-	}
-	
-	public static void stopDriver() {
+    /**
+     * @param workBookName
+     * @param excelSheetName
+     * @param colName
+     * @param rowNum
+     * @return
+     */
+    public static Object getCellData(final String workBookName, final String excelSheetName, final String colName,
+        final int rowNum) {
+        final String excelLocation =
+            ResourceHelper.getResourcePath(propertiesFileData("testDataFilePath")) + workBookName;
+        return new SpreadSheetHandler(excelLocation, excelSheetName).getSpreadsheetCellData(colName, rowNum);
+    }
+
+    /**
+     * @return
+     */
+    public static WebDriver getDriver() {
+        return driver;
+    }
+
+    /**
+     * ... Excel reader for data-driven ...
+     *
+     * @param workBookName
+     * @param excelSheetName
+     * @return
+     */
+    public static Object[][] getExcelData(final String workBookName, final String excelSheetName) {
+        // String excelLocation = ResourceHelper.getResourcePath(propertiesFileData("testDataFilePath")) + workBookName;
+        final String excelLocation = propertiesFileData("testDataFilePath") + workBookName;
+        // return new ReadDataFromExcelSheet(excelLocation, excelSheetName).getDataFromSpreadSheet("UserName");
+        return new SpreadSheetHandler(excelLocation, excelSheetName).getSpreadSheetData();
+    }
+
+    /**
+     * ... Excel reader for data-driven ...
+     *
+     * @param workBookName
+     * @param excelSheetName
+     * @return
+     */
+    public static Object[][] getExcelData(final String workBookName, final String excelSheetName,
+        final String firstRowAndFirstColumnName) {
+        // String excelLocation = ResourceHelper.getResourcePath(propertiesFileData("testDataFilePath")) + workBookName;
+        final String excelLocation = propertiesFileData("testDataFilePath") + workBookName;
+        return new SpreadSheetHandler(excelLocation, excelSheetName).getSpreadSheetData(firstRowAndFirstColumnName);
+
+    }
+
+    /**
+     * @param driver
+     * @param uIPageName
+     */
+    public static void getPageNavigationScreenshot(final String uIPageName) {
+        try {
+            test.addScreenCaptureFromPath(TestUtility.captureScreen(uIPageName));
+            // MediaEntityBuilder.createScreenCaptureFromPath(captureScreen(uIPageName)).build();
+            log("capturing UI navigation screen of the current page... " + uIPageName);
+        } catch (final Exception e) {
+            log(e.getMessage());
+        }
+    }
+
+    /**
+     * @param browserType
+     * @return
+     * @throws UnsupportedOperationException
+     * @throws Exception
+     */
+    public static WebDriver getWebDriver(final BrowserType browserType) {
+        if (driver == null) {
+            switch (browserType) {
+                case CHROME:
+                    final ChromeBrowser chrome = new ChromeBrowser();
+                    return chrome.getChromeDriver(chrome.getChromeOptions());
+
+                case FIREFOX:
+                    final FirefoxBrowser firefox = new FirefoxBrowser();
+                    return firefox.getFirefoxDriver(firefox.getFirefoxOptions());
+
+                case IE:
+                    final IExplorerBrowser ie = new IExplorerBrowser();
+                    return ie.getIExplorerDriver();
+
+                case EDGE:
+                    stopDriver();
+                    final EdgeBrowser edge = new EdgeBrowser();
+                    return edge.getEdgeDriver(edge.getEdgeOptions());
+
+                default:
+                    throw new UnsupportedOperationException(
+                                    "Browser type: " + browserType.name() + " not yet supported for this application");
+            }
+        }
+        return driver;
+    }
+
+    /**
+     *
+     */
+    public static WebDriver initializeDriver() {
+        return TestUtility.getBrowser(new ConfigurationDataSource().getBrowserType());
+    }
+
+    /**
+     *
+     */
+    public static void launchTestResult() {
+        log("Navigating to the test result/report page ...");
+        // driver = getDriverOfType(new ConfigurationDataSource().getBrowserType());
+        WaitFunctions.syncTimeInSeconds(2);
+        driver.get(System.getProperty("user.dir") + propertiesFileData("htmlReportPath") + testReport);
+        log("Test result/report page loaded!");
+    }
+
+    /**
+     * @param comment
+     */
+    public static void log(final String comment) {
+        LOGGER.info(comment);
+        // Reporter.log(comment);
+    }
+
+    /**
+     * @param stepName
+     * @param errorMessage
+     */
+    public static ExtentTest markTestAsFail(final String stepName, final String errorMessageDetail) {
+        MediaEntityModelProvider screenshot = null;
+        try {
+            screenshot = MediaEntityBuilder.createScreenCaptureFromPath(captureScreen(stepName)).build();
+            // screenshot = ExtentManager.test.addScreenCaptureFromPath(TestUtility.captureScreen(method.getName()));
+        } catch (final Exception e) {
+            LOGGER.warn("Error creating screenshot");
+            LOGGER.error(e.getMessage());
+            ExtentReportHandler.test.createNode(stepName).error(e);
+        }
+        return ExtentReportHandler.test.createNode(stepName).fail(errorMessageDetail, screenshot);
+    }
+
+    /**
+     * @param configFileData
+     * @return
+     */
+    public static String propertiesFileData(final String configFileData) {
+        return ConfigurationDataSource.getProperties().getProperty(configFileData);
+    }
+
+    /**
+     *
+     */
+    public static void stopDriver() {
         if (driver != null) {
             driver.quit();
         }
-        log.info("terminating all browsers opened by the driver!");
+        LOGGER.info("terminating all opened browsers!");
     }
-	
-	public static void launchTestResult() throws Exception {
-		log("Navigating to the test result/report page ...");
-	//	driver = getDriver(ObjectReader.reader.getBrowserType());
-		WaitFunctions.sleep(5);
-		driver.navigate().to((System.getProperty("user.dir") + propertiesFileData("htmlReportPath") + testReport));
-		log("Test result/report page loaded!");
-	}
-
-	public static void log(String comment) {
-		log.info(comment);
-		Reporter.log(comment);
-	 	test.log(Status.INFO, comment);
-	}
-
-	/** ... Excel reader for data-driven ... */
-	public static String[][] getExcelData(String workBookName, String excelSheetName) {
-		String excelLocation = ResourceHelper.getResourcePath(propertiesFileData("testDataFilePath")) + workBookName;
-		return ReadDataFromExcelSheet.getDataFromSpreadSheet(excelLocation, excelSheetName);
-	}
-
-	public static Object[][] getAllDataInOneExcelSheet(String workBookName, String excelSheetName, String testName) {
-		String excelLocation = ResourceHelper.getResourcePath(propertiesFileData("testDataFilePath")) + workBookName;
-		return ReadDataFromExcelSheet.getDataFromSpreadSheetBasedOnStartingPoint(excelLocation, excelSheetName,
-				testName);
-	}
 }
+	
+
