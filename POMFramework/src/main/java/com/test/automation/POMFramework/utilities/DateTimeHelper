@@ -1,24 +1,181 @@
 package com.test.automation.POMFramework.utilities;
 
-import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import CommonFunctions package;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;;
 
 
 public class DateTimeHelper {
 
-	public static String getCurrentAndDateTime() {
+	static String dateTimePatter = "MM/dd/yyyy - hh:mm:ss a z";
+    private final WebDriver myDriver;
 
-		DateFormat dateFormat = new SimpleDateFormat("_yyyy-MM-dd_HH-mm-ss");
-		Calendar cal = Calendar.getInstance();
-		String time = "" + dateFormat.format(cal.getTime());
-		return time;
-	}
+    public DateTimeHandler(final WebDriver driver) {
+        myDriver = driver;
+    }
 
+    public void compareDateAndTime(final WebElement uiObjectWithDateAndTime, final String systemDateAndTime1,
+        final String systemDateAndTime2) {
 
-	public static String getCurrentDate() {
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy - hh:mm:ss a z");
+        Date date1 = null;
+        Date date2 = null;
+        Date date3 = null;
+        try {
+            date1 = dateFormatter.parse(systemDateAndTime1);
+            date2 = dateFormatter.parse(systemDateAndTime2);
+            date3 = dateFormatter.parse(new CommonFunctions(myDriver).getText(uiObjectWithDateAndTime));
+            if ((date2.after(date3)) && (date1.before(date3))) {
+                logPass("Compare Date and Time", "Verify that the date and time is the system date and time."
+                                + " Displayed Time And Date: " + uiObjectWithDateAndTime.getText());
+            }
+        } catch (final ParseException e) {
+            logFail("Compare Date and Time",
+                            "Unable to compare application date and time: " + date1 + "," + " " + date2 + ", and "
+                                            + date3 + " with the system date time. Exception" + " Message --> "
+                                            + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
-		return getCurrentAndDateTime().substring(0, 11);
-	}
+    public void compareDateAndTime(final WebElement uiObjectWithDateAndTime, final String systemDateAndTime1,
+        final String systemDateAndTime2, final String stepNodeName, final String detailMessages) {
+
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy - hh:mm:ss a z");
+        Date date1 = null;
+        Date date2 = null;
+        Date date3 = null;
+        try {
+            date1 = dateFormatter.parse(systemDateAndTime1);
+            date2 = dateFormatter.parse(systemDateAndTime2);
+            date3 = dateFormatter.parse(uiObjectWithDateAndTime.getText());
+            if (((date2.after(date3)) || ((date2.compareTo(date3)) == 0)) && (date1.before(date3))) {
+                logPass(stepNodeName, detailMessages);
+            }
+        } catch (final ParseException e) {
+            logFail(stepNodeName, "Unable to compare application date and time: " + date1 + "," + " " + date2 + ", and "
+                            + date3 + " with the system date time. Exception" + " Message --> " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void compareDateAndTime(final WebElement uiObjectWithDateAndTime1,
+        final WebElement uiObjectWithDateAndTime2) {
+
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy - hh:mm:ss a z");
+        Date date1 = null;
+        Date date2 = null;
+
+        try {
+            date1 = dateFormatter.parse(new CommonFunctions(myDriver).getText(uiObjectWithDateAndTime1));
+            date2 = dateFormatter.parse(new CommonFunctions(myDriver).getText(uiObjectWithDateAndTime2));
+            if ((date1.before(date2))) {
+                logPass("Compare Date/Time",
+                                "Verify that the two date/time: " + date1 + ", and " + date2 + " are the same.");
+            } else if ((date1.compareTo(date2)) == 0) {
+                logPass("Compare Date/Time",
+                                "Verify that the two date/time: " + date1 + ", and " + date2 + " are the same.");
+            } else if (date1.after(date2)) {
+                logFail("Compare Date/Time", "The two date/time: " + date1 + ", and " + date2 + " are not the same.");
+            }
+        } catch (final ParseException e) {
+            logError("Compare Date and Time",
+                            "Unable to compare the two date and time. Exception " + "Message: " + e.getMessage());
+        }
+    }
+
+    /**
+     * @param uiObjectWithDateAndTime1
+     * @param uiObjectWithDateAndTime2
+     * @param stepNodeName
+     * @param detailMessages
+     */
+    public void compareDateAndTime(final WebElement uiObjectWithDateAndTime1, final WebElement uiObjectWithDateAndTime2,
+        final String stepNodeName, final String detailMessages) {
+
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy - hh:mm:ss a z");
+        Date date1 = null;
+        Date date2 = null;
+
+        try {
+            date1 = dateFormatter.parse(new CommonFunctions(myDriver).getText(uiObjectWithDateAndTime1));
+            date2 = dateFormatter.parse(new CommonFunctions(myDriver).getText(uiObjectWithDateAndTime2));
+            if ((date1.before(date2))) {
+                logPass(stepNodeName, detailMessages);
+            } else if ((date1.compareTo(date2)) == 0) {
+                logPass(stepNodeName, detailMessages);
+            } else if (date1.after(date2)) {
+                logFail(stepNodeName, "The two date/time: " + date1 + ", and " + date2 + " are not the same.");
+            }
+        } catch (final ParseException e) {
+            logError(stepNodeName, "Unable to compare the two date and time. Exception Message: " + e.getMessage());
+        }
+    }
+
+    /**
+     * @return
+     */
+    public String currentDateAndTime() {
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat(dateTimePatter);
+        final Calendar calendarDateAndTime = Calendar.getInstance();
+        dateFormatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+        return dateFormatter.format(calendarDateAndTime.getTime());
+    }
+
+    /**
+     * @param dateTimePageObject
+     * @param regexExpectedDateTimeFormat
+     */
+    public void validateDateTimeFormat(final WebElement dateTimePageObject, final String regexExpectedDateTimeFormat) {
+        try {
+
+            final Pattern pattern = Pattern.compile(regexExpectedDateTimeFormat);
+            final Matcher matcher = pattern.matcher(new CommonFunctions(myDriver).getText(dateTimePageObject));
+            if (matcher.matches()) {
+                logPass("Verify Date/Time Format", "Verify that the actual date and time format matches that of the"
+                                + " expected date and time format.");
+            }
+        } catch (final Exception e) {
+            logFail("Verify Date/Time Format", "Unable to Verify date and time format: " + e.getMessage());
+        }
+    }
+
+    public void validateDateTimeFormat(final WebElement actualDateTimeFormat, final String regexExpectedDateTimeFormat,
+        final String stepName, final String stepDetails) {
+        try {
+
+            final Pattern pattern = Pattern.compile(regexExpectedDateTimeFormat);
+            final Matcher matcher = pattern.matcher(new CommonFunctions(myDriver).getText(actualDateTimeFormat));
+            if (matcher.matches()) {
+                logPass(stepName, stepDetails);
+            }
+        } catch (final Exception e) {
+            logFail(stepName, "Unable to Verify date and time format: " + e.getMessage());
+        }
+    }
+
+    /**
+     * @return
+     */
+    public static String currentDateWithTime() {
+        final SimpleDateFormat dateFormatter = new SimpleDateFormat("_MMM-dd-yyyy_hh-mm-ss");
+        final Calendar calendarDateAndTime = Calendar.getInstance();
+        return "" + dateFormatter.format(calendarDateAndTime.getTime());
+    }
+
+    /**
+     * @return
+     */
+    public static String getCurrentDate() {
+        return currentDateWithTime().substring(0, 11);
+    }
 
 }
