@@ -1,3 +1,4 @@
+
 package com.test.automation.POMFramework.utilities;
 
 import org.openqa.selenium.Keys;
@@ -9,91 +10,133 @@ import testBase.TestBase;
 
 public class MouseHelper {
 
-	/**
-	 * ... To run a bat file using Selenium and double click function ....
-	 * 
-	 * FindBy (By.xpath("element locator (.bat file location path)")) WebElement
-	 * LocatedElement;
-	 */
+    /**
+     * ... To run a bat file using Selenium and double click function .... FindBy (By.xpath("webElement locator (.bat
+     * file location path)")) WebElement LocatedElement;
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MouseFunctions.class);
+    private static WebDriver driver;
+    Actions mouseEffect;
 
-	TestBase tBase = new TestBase();
-	public static WebDriver driver;
-
-	// ... { Mouse effect } ...
-	public Actions mouseEffect() {
-		return new Actions(driver);
-	}
-
-	public void mouseOver(WebElement element) {
-
-		TestBase.log("doing mouse over on : " + element);
-		mouseEffect().moveToElement(element).build().perform();
-		// mouseEffect().moveToElement(element).perform();
-	}
-
-	// Locate the element (non POM)
-	public void mouseOver(String element) {
-
-		TestBase.log("doing mouse over on : " + element);
-		mouseEffect().moveToElement(tBase.getElement(element)).build().perform();
-		// mouseEffect().moveToElement(tBase.getElement(element)).perform();
-	}
-
-	// Double click using POM
-	public void doubleClick(WebElement element) {
-
-		TestBase.log("Double clicking on : " + element);
-		mouseEffect().moveToElement(element).doubleClick().build().perform();
-	}
-
-	// Double click (non POM)
-
-	public void doubleClick(String element) {
-
-		TestBase.log("Double clicking on : " + element);
-		Actions action = new Actions(driver);
-		action.moveToElement(tBase.getElement(element)).doubleClick().build().perform();
-	}
-
-	// Right click using POM
-	public void rightClick(WebElement element) {
-
-		TestBase.log("Right clicking on :" + element);
-		// mouseEffect().contextClick(element).perform();
-		mouseEffect().contextClick(element).build().perform();
-	}
-
-	// Right click (non POM)
-	public void rightClick(String element) {
-
-		TestBase.log("Right clicking on :" + element);
-		// mouseEffect().contextClick(tBase.getElement(element)).perform();
-		mouseEffect().contextClick(tBase.getElement(element)).build().perform();
-	}
-
-	// Drag And Drop (non POM)
-	public void dragAndDrop(String from, String to) {
-
-		TestBase.log("Drag and dropping element from one place to another");
-		Action dragAndDrop = mouseEffect().clickAndHold(tBase.getElement(from)).moveToElement(tBase.getElement(to))
-				.release(tBase.getElement(to)).build();
-		dragAndDrop.perform();
-	}
-
-	// Drag And Drop (non POM)
-	public void dragAndDrop(WebElement from, WebElement to) {
-
-		TestBase.log("Drag and dropping element from one place to another");
-		Action dragAndDrop = mouseEffect().clickAndHold(from).moveToElement(to).release(to).build();
-		dragAndDrop.perform();
-	}
-	
-	public void clickEscapeKey() {
-		mouseEffect().sendKeys(Keys.ESCAPE).perform();
+    /**
+     * @param driver: Constructor for the class which accept am incoming driver use it to create an instance of the
+     * MouseFunction class before user can call any of the non-static methods
+     */
+    public MouseFunctions(final WebDriver driver) {
+        MouseFunctions.driver = driver;
+        mouseEffect = (new Actions(driver));
     }
 
-    
-    public void clickTabKey() {
-    	mouseEffect().sendKeys(Keys.TAB).perform();
-}
+    // Double click (non POM)
+    public MouseFunctions doubleClick(final String webElement) {
+        mouseEffect.moveToElement(
+                        driver.findElement(By.xpath("//*[contains(normalize-space(text()),'" + webElement + "')]")))
+                        .doubleClick().build().perform();
+        return this;
+    }
+
+    public MouseFunctions doubleClick(final WebElement webElement) {
+        mouseEffect.moveToElement(webElement).doubleClick().build().perform();
+        return this;
+    }
+
+    // Drag And Drop (non POM)
+    public MouseFunctions dragAndDrop(final String from, final String to) {
+        mouseEffect.clickAndHold(driver.findElement(By.xpath("//*[contains(normalize-space(text()),'" + from + "')]")))
+                        .moveToElement(driver
+                                        .findElement(By.xpath("//*[contains(normalize-space(text()),'" + to + "')]")))
+                        .release(driver.findElement(By.xpath("//*[contains(normalize-space(text()),'" + to + "')]")))
+                        .build().perform();
+        return this;
+    }
+
+    public MouseFunctions dragAndDrop(final WebElement from, final WebElement to) {
+        final Action dragAndDrop = mouseEffect.clickAndHold(from).moveToElement(to).release(to).build();
+        dragAndDrop.perform();
+        return this;
+    }
+
+    public MouseFunctions escapeKey() {
+        mouseEffect.sendKeys(Keys.ESCAPE).perform();
+        return this;
+    }
+
+    // Move mouse over the webElement (non POM)
+    public MouseFunctions mouseOver(final String webElement) {
+        mouseEffect.moveToElement(
+                        driver.findElement(By.xpath("//*[contains(normalize-space(text()),'" + webElement + "')]")))
+                        .build().perform();
+        return this;
+    }
+
+    public MouseFunctions mouseOver(final WebElement webElement) {
+        mouseEffect.moveToElement(webElement).build().perform();
+        return this;
+    }
+
+    public MouseFunctions mouseOverAndClick(final String webElement) {
+        mouseEffect.moveToElement(
+                        driver.findElement(By.xpath("//*[contains(normalize-space(text()),'" + webElement + "')]")))
+                        .click().build().perform();
+        return this;
+    }
+
+    public MouseFunctions mouseOverAndClick(final WebElement webElement) {
+        mouseEffect.moveToElement(webElement).click(webElement).build().perform();
+        return this;
+    }
+
+    // Right click (non POM)
+    public MouseFunctions rightClick(final String webElement) {
+        mouseEffect.contextClick(
+                        driver.findElement(By.xpath("//*[contains(normalize-space(text()),'" + webElement + "')]")))
+                        .build().perform();
+        return this;
+    }
+
+    public MouseFunctions rightClick(final WebElement webElement) {
+        mouseEffect.contextClick(webElement).build().perform();
+        return this;
+    }
+
+    public MouseFunctions shiftKey() {
+        mouseEffect.keyDown(Keys.SHIFT).build().perform();
+        return this;
+    }
+
+    public MouseFunctions tabKey() {
+        mouseEffect.sendKeys(Keys.TAB).perform();
+        return this;
+    }
+
+    public WebElement toolTipMsg(final WebElement toolTipParentObject, final WebElement toolTipObject) {
+        mouseEffect.clickAndHold(toolTipParentObject).build().perform();
+        return toolTipObject;
+    }
+
+    public static void logFail(final String stepName, final String errorMessageDetail) {
+        LOGGER.error(errorMessageDetail);
+        markTestAsFail(stepName, errorMessageDetail);
+    }
+
+    public static void logInfo(final String stepName, final String stepDetails) {
+        LOGGER.info(stepDetails);
+        test.createNode(stepName).info(stepDetails);
+    }
+
+    public static void logPass(final String stepName, final String stepDetails) {
+        LOGGER.info(stepDetails);
+        test.createNode(stepName).pass(stepDetails);
+    }
+
+    public static void logWarning(final String stepName, final String warningMessageDetail) {
+        LOGGER.warn(warningMessageDetail);
+        test.createNode(stepName).warning(warningMessageDetail);
+    }
+
+    /**
+     * mouseEffect().(keyDown(..could be parameterized webElement.., Keys.enumValue)) or keyUp(.. same here..,
+     * Keys.enumValue) .seleniumMethod(...could be parameterized...And could also contain Key.enumValue
+     * function).build().perform(); To switch to new tab: webElement.sendKeys(Keys.CONTROL + "\t");
+     */
 }
