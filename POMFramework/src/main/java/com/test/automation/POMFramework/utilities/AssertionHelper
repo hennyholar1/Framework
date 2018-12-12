@@ -1,0 +1,219 @@
+package name;
+import commonfunction package;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
+import org.testng.asserts.SoftAssert;
+
+public class AssertionFunctions {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssertionFunctions.class);
+    private static WebDriver myDriver;
+    public static SoftAssert assertSoftly = new SoftAssert();
+
+    private final CommonFunctions commonFunctions;
+
+    public AssertionFunctions(final WebDriver driver) {
+        myDriver = driver;
+        commonFunctions = new CommonFunctions(myDriver);
+    }
+
+    public AssertionFunctions assertFalseValue(final String expectedText) {
+        try {
+            Assert.assertTrue(false, expectedText);
+            logPass("Assert Text Value", "The expected input value: \"" + expectedText
+                            + "\", is not equal to the actual text value!");
+        } catch (final Exception e) {
+            logFail("Assert Text Value", "The expected input value: \"" + expectedText
+                            + "\", is equal to the actual text value!" + e.getMessage());
+        }
+        return this;
+    }
+
+    public AssertionFunctions assertItAll() {
+        assertSoftly.assertAll();
+        return this;
+    }
+
+    public AssertionFunctions assertTextValues(final String actualText, final String expectedText) {
+        try {
+            Assert.assertEquals(actualText, expectedText);
+            if (!actualText.equals(expectedText)) {
+                logFail("Assert Text Value", "Actual value and expected value are not the same");
+            } else {
+                logPass("Assert Text Value", "Assert that these two values: " + actualText + " and " + expectedText
+                                + " are the same");
+            }
+        } catch (final Exception e) {
+            logError("Assert Text Value", "Unable to compare values: " + e.getMessage());
+        }
+        return this;
+    }
+
+    public AssertionFunctions assertTextValues(final WebElement uiPageObject, final String expectedText) {
+        try {
+            Assert.assertEquals(commonFunctions.getText(uiPageObject), expectedText);
+            if (!(uiPageObject.getText()).equals(expectedText)) {
+                logFail("Assert Text Value", "Actual value and expected value are not the same");
+            } else {
+                logPass("Assert Text Value", "Assert that these two values: " + commonFunctions.getText(uiPageObject)
+                                + " and " + expectedText + " are the same");
+            }
+        } catch (final Exception e) {
+            logError("Assert Text Value", "Unable to compare values: " + e.getMessage());
+        }
+        return this;
+    }
+
+    public AssertionFunctions assertTextValuesSoftly(final String actualText, final String expectedText) {
+        try {
+            assertSoftly.assertEquals(actualText, expectedText);
+        } catch (final Exception e) {
+            LOGGER.error("Assert Text Value", "Unable to compare values: " + e);
+        }
+        return this;
+    }
+
+    public AssertionFunctions assertTextValuesSoftly(final String uiPageObject, final String expectedText,
+        final String stepName, final String stepDetails) {
+        try {
+            assertSoftly.assertEquals(uiPageObject, expectedText);
+            if (!(uiPageObject).equals(expectedText)) {
+                logFail(stepName, stepDetails + "Actual value and, expected value are not the same!");
+            } else {
+                logPass(stepName, stepDetails);
+            }
+        } catch (final Exception e) {
+            logError(stepName, "Unable to compare values: " + e.getMessage());
+        }
+        return this;
+    }
+
+    public AssertionFunctions assertTextValuesSoftly(final WebElement uiPageObject, final String expectedText) {
+        try {
+            assertSoftly.assertEquals(commonFunctions.getText(uiPageObject), expectedText);
+            if (!(uiPageObject.getText()).equals(expectedText)) {
+                logFail("Assert Text Value", "Actual value, and expected value are not the same!");
+            } else {
+                logPass("Assert Text Value", "Assert that these two values: \'" + uiPageObject.getText() + "\' and \'"
+                                + expectedText + "\' are the same");
+            }
+        } catch (final Exception e) {
+            logError("Assert Text Value", "Unable to compare values: " + e.getMessage());
+        }
+        return this;
+    }
+
+    public AssertionFunctions assertTextValuesSoftly(final WebElement uiPageObject, final String expectedText,
+        final String stepName, final String stepDetails) {
+        try {
+            assertSoftly.assertEquals(commonFunctions.getText(uiPageObject), expectedText);
+            if (!(uiPageObject.getText()).equals(expectedText)) {
+                logFail(stepName, stepDetails + ": Actual value and, expected value are not the same!");
+            } else {
+                logPass(stepName, stepDetails);
+            }
+        } catch (final Exception e) {
+            logError(stepName, "Unable to compare values: " + e.getMessage());
+        }
+        return this;
+    }
+
+    public AssertionFunctions assertTextValuesSoftly(final WebElement actualUiPageObject,
+        final WebElement expectedUiPageObject) {
+        try {
+            assertSoftly.assertEquals(commonFunctions.getText(actualUiPageObject),
+                            commonFunctions.getText(expectedUiPageObject));
+            if (!(actualUiPageObject.getText()).equals(expectedUiPageObject.getText())) {
+                logFail("Assert Text Value", "Actual value, and expected value are not the same!");
+            } else {
+                logPass("Assert Text Value", "Actual value, and expected value are the same");
+            }
+        } catch (final Exception e) {
+            logError("Assert Text Value", "Unable to compare values: " + e.getMessage());
+        }
+        return this;
+    }
+
+    public AssertionFunctions assertTextValuesSoftly(final WebElement actualUiPageObject,
+        final WebElement expectedUiPageObject, final String stepName, final String stepDetails) {
+        try {
+            assertSoftly.assertEquals(commonFunctions.getText(actualUiPageObject),
+                            commonFunctions.getText(expectedUiPageObject));
+            if (!(actualUiPageObject.getText()).equals(expectedUiPageObject.getText())) {
+                logFail(stepName, stepDetails + "Actual value and, expected value are not the same!");
+            } else {
+                logPass(stepName, stepDetails);
+            }
+        } catch (final Exception e) {
+            logError(stepName, "Unable to compare values: " + e.getMessage());
+        }
+        return this;
+    }
+
+    public AssertionFunctions assertTrueValue(final String expectedText) {
+        try {
+            Assert.assertTrue(true, expectedText);
+            logPass("Assert Text Value",
+                            "The expected input value: \'" + expectedText + "\', is equal to the actual text value!");
+        } catch (final Exception e) {
+            logFail("Assert Text Value", "The expected input value: \'" + expectedText
+                            + "\', is not equal to the actual text value!" + e.getMessage());
+        }
+        return this;
+    }
+
+    public AssertionFunctions markScriptFail() {
+        try {
+            Assert.assertTrue(false);
+            logPass("Script Status", "marking script as FAIL..");
+        } catch (final Exception e) {
+            logFail("Script Status", "script failed: " + e.getMessage());
+        }
+        return this;
+    }
+
+    public AssertionFunctions markScriptPass() {
+        try {
+            Assert.assertTrue(true);
+            LOGGER.info("marking script as PASS..");
+        } catch (final Exception e) {
+            LOGGER.error("script failed: " + e.getMessage());
+        }
+        return this;
+    }
+
+    public AssertionFunctions updateTestStatus(final boolean status) {
+        if (status) {
+            markScriptPass();
+        } else {
+            markScriptFail();
+        }
+        return this;
+    }
+
+    public AssertionFunctions verifyFalseStatus(final boolean status) {
+        Assert.assertFalse(status);
+        return this;
+    }
+
+    public AssertionFunctions verifyNotNullValue(final String expectedText) {
+        Assert.assertNotNull(expectedText);
+        return this;
+    }
+
+    public AssertionFunctions verifyNullValue(final String expectedText) {
+        Assert.assertNull(expectedText);
+        return this;
+    }
+
+    public AssertionFunctions verifyTrueStatus(final boolean status) {
+        Assert.assertTrue(status);
+        return this;
+    }
+
+}
+
+
