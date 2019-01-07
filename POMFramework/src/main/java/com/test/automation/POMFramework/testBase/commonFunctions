@@ -3,6 +3,8 @@
 import static utilities.ExtentReportHandler.test package;
 import static webdrivers.TestUtility.markTestAsFail package;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.text.Collator;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -60,7 +62,7 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 
 /**
- * @author Oludare
+ * @author Novenox
  *
  */
 public class CommonFunctions {
@@ -446,6 +448,16 @@ public class CommonFunctions {
     public CommonFunctions switchToTab(final int indexOfTab) {
         final ArrayList<String> tabs = new ArrayList<>(myDriver.getWindowHandles());
         myDriver.switchTo().window(tabs.get(indexOfTab));
+        return this;
+    }
+    
+    public CommonFunctions pasteText(final WebElement element, final String value) {
+        syncTimeInSeconds(1);
+        element.clear();
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(value), null);
+        element.click();
+        element.sendKeys(Keys.chord(Keys.CONTROL, "v"), "");
+        // syncTimeInSeconds(1);
         return this;
     }
 
