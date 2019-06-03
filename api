@@ -1,0 +1,188 @@
+public static void getTestMethodsInformation(final Method method) {
+        test = extent.createTest(method.getName(), "is being executed")
+                        .createNode(method.getName() + " Test Result Status");
+        logInfo(method.getName() + " test is executing ... ");
+    }
+    
+    getTestResult(final ITestResult method, final WebDriver driver) throws IOException {
+
+        if (ITestResult.SUCCESS == method.getStatus()) {
+            test.log(Status.PASS, method.getName() + " test passed");
+        } else if (ITestResult.SKIP == method.getStatus()) {
+            test.log(Status.SKIP, method.getName() + " test is skipped and the reason is:- " + method.getThrowable());
+        } else if (ITestResult.FAILURE == method.getStatus()) {
+            test.log(Status.FAIL, method.getThrowable());
+            test.fail((method.getName() + " test failed during execution"), MediaEntityBuilder
+                            .createScreenCaptureFromPath(captureScreen(method.getName(), driver)).build());
+            test.addScreenCaptureFromPath(captureScreen(method.getName(), driver));
+        }
+        logInfo("...... " + method.getName() + " test execution completed.");
+        extent.flush();
+    }
+    
+    
+    BrowserType getBrowserEnum(final String browser) { // BrowserType is an enum
+        final String msg = "Get browser enum for: {}";
+        logger.trace("Get browser enum for: {}", msg);
+        switch (browser.toUpperCase()) {
+            case "CHROME":
+                logger.trace(msg, BrowserType.CHROME);
+                return BrowserType.CHROME;
+            case "EDGE":
+                logger.trace(msg, BrowserType.EDGE);
+                return BrowserType.EDGE;
+            case "FIREFOX":
+                logger.trace(msg, BrowserType.FIREFOX);
+                return BrowserType.FIREFOX;
+            case "IE":
+                logger.trace(msg, BrowserType.IE);
+                return BrowserType.IE;
+            case "CHROME_HEADLESS":
+                logger.trace(msg, BrowserType.CHROME_HEADLESS);
+                return BrowserType.CHROME_HEADLESS;
+            case "FIREFOX_HEADLESS":
+                logger.trace(msg, BrowserType.FIREFOX_HEADLESS);
+                return BrowserType.FIREFOX_HEADLESS;
+            default:
+                logger.trace(msg, BrowserType.IE);
+                return BrowserType.IE;
+        }
+    }
+    
+    String propertiesFileData(final String configFileData) {
+        return FrameworkConfig.properties.getProperty(configFileData);
+    }
+    
+    //Data provider
+    protected String setWorkBook(final String workName) {
+        final StringBuilder sb = new StringBuilder();
+        // sb.append(System.getProperty("user.dir")).append(FrameworkConfig.propertiesFileData(TESTDATAPATH))
+        sb.append(FrameworkConfig.propertiesFileData(TESTDATAPATH)).append(workName);
+        return sb.toString();
+    }
+    
+    @DataProvider(name = "providerName")
+    public Object[][] MethodName() {
+        return new SpreadSheetHandler(setWorkBook("WorkBookName"), "SheetName", false).getTestData();
+    }
+    
+    //Variable declaration
+    public FileInputStream file = null;
+    public XSSFWorkbook workbook = null;
+    public XSSFSheet sheet = null;
+    protected String pathToWorkbookLocation = null;
+    protected XSSFRow row = null;
+    protected XSSFCell cell = null;
+    protected Row rows = null;
+    protected Cell cells = null;
+    
+    //Constructor
+    SpreadSheetHandler(final String workBook, final String excelSheet, final boolean isSheetTypeIndex) {
+        this.pathToWorkbookLocation = workBook;
+        try {
+            file = new FileInputStream(new File(workBook));
+            workbook = new XSSFWorkbook(file);
+            if (isSheetTypeIndex) {
+                final int index = Integer.parseInt(excelSheet);
+                sheet = workbook.getSheetAt(index);
+            } else {
+                sheet = workbook.getSheet(excelSheet);
+            }
+            file.close();
+        } catch (final Exception e) {
+            logger.error("Error Occured", e);
+        }
+    }
+    
+    //Data retrieval
+     public Object[][] getTestData() {
+
+        final int totalRow = sheet.getLastRowNum();
+        final int totalColumn = sheet.getRow(0).getLastCellNum();
+        final Object[][] dataSets = new Object[totalRow][1];
+        HashMap<Object, Object> tableData = null;
+        boolean rowIsNotEmpty = false;
+        int nonEmptyRows = 0;
+
+        for (int i = 0; i < totalRow; i++) {
+            tableData = new HashMap<>();
+          
+            for (int j = 0; j < totalColumn; j++) {
+                final XSSFRow currentRow = sheet.getRow(i + 1);
+                XSSFCell xssfcell = null;
+                if (currentRow != null) {
+                    xssfcell = sheet.getRow(i + 1).getCell(j);
+                    if (xssfcell != null && xssfcell.toString().trim().length() > 0) {
+                        rowIsNotEmpty = true;
+                        tableData.put(sheet.getRow(0).getCell(j).toString(), xssfcell.toString());
+                    } else {
+                        tableData.put(sheet.getRow(0).getCell(j).toString(), "");
+                    }
+                }
+            }
+
+            if (rowIsNotEmpty) {
+                nonEmptyRows++;
+                dataSets[i][0] = tableData;
+            }
+        }
+
+        final Object[][] validDataSets = new Object[nonEmptyRows][1];
+        if (nonEmptyRows > 0) {
+            for (int r = 0; r < nonEmptyRows; r++) {
+                validDataSets[r][0] = dataSets[r][0];
+            }
+        }
+        return validDataSets;
+    }
+    
+  //Regulare expression for number validation
+  Integer checkIfNumeric(final String strData) {
+        if (strData.matches("[0-9]+")) {
+            return Integer.parseInt(strData);
+        }
+        return null;
+    }
+    
+    
+    //String to array conversion
+    List<String> stringToArray(final String stringValue) {
+        return new ArrayList<>(Arrays.asList((stringValue.equals("") ? "''" : stringValue).split(",")));
+    }
+    
+    //Lambda expression (loop)
+    arrayData.stream().filter(element -> element.getText().equals(value)).findFirst().get(); (search an array and pick first match)
+    arrayData.stream().anyMatch(element -> (element.substring(0).contains("character")) (search an array list and pick any match)
+    arrayData.forEach(variable -> verifyVariablePresence(arrayData)); (loop through an array list one by one to the end)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
