@@ -155,34 +155,221 @@ public static void getTestMethodsInformation(final Method method) {
     arrayData.stream().anyMatch(element -> (element.substring(0).contains("character")) (search an array list and pick any match)
     arrayData.forEach(variable -> verifyVariablePresence(arrayData)); (loop through an array list one by one to the end)
     
+    =============================================================================================================================
+    import com.deque.axe.AXE;
+import io.github.bonigarcia.wdm.DriverManagerType;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.extern.slf4j.Slf4j;
+import enums.userRole;
+import interfaces.interfaceName;
+import package.class1;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.testng.annotations.*;
+
+import java.net.URL;
+
+import static org.frb.stls.cars.atm.ui.test.fw.enums.AtmTxnType.APPROPRIATION_WARRANT;
+import static org.testng.AssertJUnit.assertTrue;
+
+@Slf4j
+public class axe508cTests {
+    private static final String FIREFOX_PATH = "BrowserBinaries\\mozilla\\firefox.exe";
+    private static WebDriver driver;
+    private Test test;
+
+    private static final URL scriptUrl = org.frb.stls.cars.atm.ui.test.fw.pageobjects.AtmPOv2Tests.class.getResource("/axe.min.js");
+
+    @BeforeTest
+    static void setupAll() {
+        final FirefoxOptions options = new FirefoxOptions();
+        options.setBinary(FIREFOX_PATH);
+        options.setAcceptInsecureCerts(true);
+        options.setLogLevel(FirefoxDriverLogLevel.INFO);
+        WebDriverManager.getInstance(DriverManagerType.FIREFOX)
+                .browserPath(FIREFOX_PATH)
+                .version("0.24.0")
+                .proxy("h1proxy.frb.org:8080")
+                .setup();
+        driver = new FirefoxDriver(options);
+    }
+
+    @BeforeMethod
+    void setUpEach() {
+        driver.get("url");
+        driver.manage().window().maximize();
+        atmPo = new AtmPOv2(driver, userRole);
+    }
+
+    @Test
+    void homePage508c() {
+        JSONObject responseJSON = new AXE.Builder(driver, scriptUrl).analyze();
+        JSONArray violations = responseJSON.getJSONArray("violations");
+
+        if (violations.length() == 0) {
+            assertTrue("No violations found", true);
+        } else {
+            AXE.writeResults("tryAxeCore", responseJSON);
+            assertTrue(AXE.report(violations), false);
+        }
+    }
+
+    @Test
+    void createPage508c() {
+        test.methodName(Class page title);
+        JSONObject responseJSON = new AXE.Builder(driver, scriptUrl).analyze();
+        JSONArray violations = responseJSON.getJSONArray("violations");
+        if (violations.length() == 0) {
+            assertTrue("No violations found", true);
+        } else {
+            AXE.writeResults("tryAxeCore", responseJSON);
+            assertTrue(AXE.report(violations), false);
+        }
+    }
+
+    @Test
+    void ConfirmationPage508c() {
+        driver.get("entered data detail page url/view;id= uniqueID");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException ie) {
+
+        }
+        JSONObject responseJSON = new AXE.Builder(driver, scriptUrl).analyze();
+        JSONArray violations = responseJSON.getJSONArray("violations");
+        if (violations.length() == 0) {
+            assertTrue("No violations found", true);
+        } else {
+            AXE.writeResults("tryAxeCore", responseJSON);
+            assertTrue(AXE.report(violations), false);
+        }
+    }
+
+    @AfterMethod
+    void tearDownEach() {
+        testBase.logOff();
+    }
+
+    @AfterTest
+    void tearDownAll() {
+        driver.quit();
+    }
+}
+
+
+========================================================================================
+    
+    //Extent Report
+<?xml version="1.0" encoding="UTF-8"?>
+<extentreports>
+    <configuration>
+        <!-- report theme -->
+        <!-- standard, dark -->
+        <theme>standard</theme>
+    
+        <!-- document encoding -->
+        <!-- defaults to UTF-8 -->
+        <encoding>UTF-8</encoding>
+        
+        <!-- protocol for script and stylesheets -->
+        <!-- defaults to https -->
+        <protocol>https</protocol>
+        
+        <!-- title of the document -->
+        <documentTitle>Extent</documentTitle>
+        
+        <!-- report name - displayed at top-nav -->
+        <reportName>Automation Report By CARS Automation Team</reportName>
+        
+        <!-- location of charts in the test view -->
+        <!-- top, bottom -->
+        <testViewChartLocation>bottom</testViewChartLocation>
+		
+        <!-- custom javascript -->
+        <scripts>
+            <![CDATA[
+                $(document).ready(function() {
+                    
+                });
+            ]]>
+        </scripts>
+        
+        <!-- custom styles -->
+        <styles>
+            <![CDATA[
+                
+            ]]>
+        </styles>
+    </configuration>
+</extentreports>
+
+
+# fileName.properties
+key : value
+key = value # another alternative
+
+
+<!-- logback.xml comment -->
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+       <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>test-output/logs/test.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover monthly -->
+            <fileNamePattern>system-%d{yyyy-MM}.log.zip</fileNamePattern>
+            <maxHistory>12</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%-26(%d [%-5level]) %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <root level="info">
+        <appender-ref ref="ROLLING" />
+    </root>
+     <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+<!-- Log Back  dependency -->
+ <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+
+  <!--  configure slf4j binding -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+<!--  Driver manager -->
+	<dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>3.4.0</version>
+            <scope>test</scope>
+        </dependency>
+
+<!-- 508 compliance -->
+	<dependency>
+            <groupId>com.deque</groupId>
+            <artifactId>axe-selenium</artifactId>
+            <version>3.0</version>
+            <scope>test</scope>
+        </dependency>
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+  ===================================================================================
