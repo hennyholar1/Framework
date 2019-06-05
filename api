@@ -156,7 +156,7 @@ public static void getTestMethodsInformation(final Method method) {
     arrayData.forEach(variable -> verifyVariablePresence(arrayData)); (loop through an array list one by one to the end)
     
     =============================================================================================================================
-    import com.deque.axe.AXE;
+import com.deque.axe.AXE;
 import io.github.bonigarcia.wdm.DriverManagerType;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
@@ -170,10 +170,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.annotations.*;
-
 import java.net.URL;
 
-import static org.frb.stls.cars.atm.ui.test.fw.enums.AtmTxnType.APPROPRIATION_WARRANT;
+import static enumsPackage.EnumName.EnumMethodOrVariable;
 import static org.testng.AssertJUnit.assertTrue;
 
 @Slf4j
@@ -259,7 +258,6 @@ public class axe508cTests {
         driver.quit();
     }
 }
-
 
 ========================================================================================
     
