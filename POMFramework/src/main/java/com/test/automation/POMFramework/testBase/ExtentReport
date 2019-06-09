@@ -7,12 +7,7 @@ public class ExtentManager {
 	private static String testReport = "TestReport_" + DateTime.currentDateWithTime() + ".html";
 	public static ExtentTest test;
 
-	/**	
-	 * 	Initializing and insert config.properties file with its value(s) at run time.
-	 * 
-	 * @param configFileData
-	 * @return
-	 */
+	/**  Initializing and insert config.properties file with its value(s) at run time. */
 		public static String propertiesFileData(String configFileData) {
 			return ConfigurationDataSource.getProperties().getProperty(configFileData);
 		}
@@ -49,8 +44,8 @@ public class ExtentManager {
 		}
 			extent = new ExtentReports();
 			//	Additional information that makes our report looks nice
-				extent.setSystemInfo("Host Name", "FRB ST LOUIS, MO");
-				extent.setSystemInfo("Environment", "FRB CARS Team");
+				extent.setSystemInfo("Host Name", "Company System Information goes here");
+				extent.setSystemInfo("Environment", "QA");
 				extent.setSystemInfo("Version", "V-1.0.0");
 				extent.setSystemInfo("OS", "Windows-10");
 				extent.attachReporter(getHtmlReporter());
@@ -70,7 +65,7 @@ public class ExtentManager {
 	 * @param method
 	 */
 	public static void getTestMethodsInformation(Method method) {
-	//	test = extent.createTest(method.getName(), "is being executed").assignAuthor("Oludare M Eniola (H1OME01").createNode(method.getName() + " Test Result Status");
+	//	test = extent.createTest(method.getName(), "is being executed").assignAuthor("Oludare M Eniola").createNode(method.getName() + " Test Result Status");
 		test = extent.createTest(method.getName(), "is being executed").createNode(method.getName() + " Test Result Status");
 		logInfo(method.getName() + " test is executing ... ");
 	}
