@@ -145,6 +145,11 @@ public static void getTestMethodsInformation(final Method method) {
     }
     
     
+    /**  Initializing and insert config.properties file with its value(s) at run time. */
+	public static String propertiesFileData(String configFileData) {
+	return ConfigurationDataSource.getProperties().getProperty(configFileData);
+	}
+    
     //String to array conversion
     List<String> stringToArray(final String stringValue) {
         return new ArrayList<>(Arrays.asList((stringValue.equals("") ? "''" : stringValue).split(",")));
