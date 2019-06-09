@@ -1,24 +1,78 @@
-public static void getTestMethodsInformation(final Method method) {
-        test = extent.createTest(method.getName(), "is being executed")
-                        .createNode(method.getName() + " Test Result Status");
-        logInfo(method.getName() + " test is executing ... ");
-    }
-    
-    getTestResult(final ITestResult method, final WebDriver driver) throws IOException {
+public class Listeners extends TestListenerAdapter {
 
-        if (ITestResult.SUCCESS == method.getStatus()) {
-            test.log(Status.PASS, method.getName() + " test passed");
-        } else if (ITestResult.SKIP == method.getStatus()) {
-            test.log(Status.SKIP, method.getName() + " test is skipped and the reason is:- " + method.getThrowable());
-        } else if (ITestResult.FAILURE == method.getStatus()) {
-            test.log(Status.FAIL, method.getThrowable());
-            test.fail((method.getName() + " test failed during execution"), MediaEntityBuilder
-                            .createScreenCaptureFromPath(captureScreen(method.getName(), driver)).build());
-            test.addScreenCaptureFromPath(captureScreen(method.getName(), driver));
-        }
-        logInfo("...... " + method.getName() + " test execution completed.");
-        extent.flush();
-    }
+	public ExtentHtmlReporter htmlReporter;
+	public ExtentReports extent;
+	public ExtentTest test;
+//	public ITestResult result;
+
+	/*
+	 * @AfterMethod() public void captureStatus(ITestResult result) { if
+	 * (ITestResult.SUCCESS == result.getStatus()) { test.pass(result.getName() +
+	 * " Passed"); test.log(Status.PASS, result.getName() + " test passed"); }
+	 * 
+	 * else if (ITestResult.STARTED == result.getStatus()) { test.log(Status.INFO,
+	 * result.getName() + " test started"); }
+	 * 
+	 * else if (ITestResult.SKIP == result.getStatus()) { test.log(Status.SKIP,
+	 * result.getName() + " test is skipped and the reason is:- " +
+	 * result.getThrowable()); }
+	 * 
+	 * else if (ITestResult.FAILURE == result.getStatus()) { test.log(Status.ERROR,
+	 * result.getName() + " test failed! And the reason is: " +
+	 * result.getThrowable()); } }
+	 */
+
+	/**
+	 * @param method
+	 */
+	public  void getTestMethodsInformation(Method method) {
+		test = extent.createTest(method.getName(), "is being executed").assignAuthor("Oludare M Eniola").createNode(method.getName() + " Test Result Status");
+	//	test = extent.createTest(method.getName(), "is being executed").createNode(method.getName() + " Test Result Status");
+}
+	
+	public void onStart(ITestContext testContext) {
+		htmlReporter = new ExtentHtmlReporter(System.getProperty("user.dir") + "/Reports/myReport.html");
+		// htmlReporter.loadXMLConfig(new File(useFileData("extent_config_xml")));
+		htmlReporter.config().setDocumentTitle("Test Execution - ExtentReports");
+		htmlReporter.config().setReportName("API RestAssured Automation Test Report");
+		htmlReporter.config().setTheme(Theme.DARK); // Theme background - dark, standard
+		htmlReporter.config().setTimeStampFormat("mm/dd/yyyy hh:mm:ss a"); // set timeStamp format
+		htmlReporter.loadXMLConfig("C:\\Users\\Da Novenos\\eclipse-workspace\\RestAssuredAPITestingFramework\\src\\main\\java\\com\\apitest\\utility\\extent-config.xml");
+		// htmlReporter.config().setTestViewChartLocation(ChartLocation.TOP); // BOTTOM
+
+		// Additional information that makes our report looks nice
+		 if (extent == null) {
+		extent = new ExtentReports();
+		 }
+		extent.setSystemInfo("Host Name", "Novenos IT Solutions Inc.");
+		extent.setSystemInfo("Project Name", "Employee Database API project");
+		extent.setSystemInfo("Environment", "QA/Automation Testing");
+		extent.setSystemInfo("Version", "V-1.0.0");
+		extent.setSystemInfo("OS", "Windows-10");
+		extent.attachReporter(htmlReporter);
+	}
+
+	public void onTestSuccess(ITestResult result) {
+		test = extent.createTest(result.getName());
+		test.log(Status.PASS, result.getName() + " test passed");
+	}
+
+	public void onTestFailure(ITestResult result) {
+		test = extent.createTest(result.getName());
+		test.log(Status.FAIL, result.getName() + " test failed! ---> " + result.getThrowable());
+	}
+
+	public void onTestSkip(ITestResult result) {
+		test = extent.createTest(result.getName());
+		test.log(Status.SKIP, result.getName() + " was skipped.");
+	}
+
+	public void onFinish() {
+		extent.flush();
+	}
+
+}
+
     
     
     BrowserType getBrowserEnum(final String browser) { // BrowserType is an enum
@@ -343,6 +397,7 @@ key = value # another alternative
      <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
+----------------------------------------------------------------------------------------
 
 <!-- Log Back  dependency -->
  <dependency>
@@ -373,6 +428,105 @@ key = value # another alternative
             <version>3.0</version>
             <scope>test</scope>
         </dependency>
+	
+	<!-- https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
+	<dependency>
+		<groupId>io.rest-assured</groupId>
+		<artifactId>rest-assured</artifactId>
+		<version>4.0.0</version>
+		<scope>test</scope>
+	</dependency>
+
+
+	<!-- https://mvnrepository.com/artifact/org.testng/testng -->
+	<dependency>
+		<groupId>org.testng</groupId>
+		<artifactId>testng</artifactId>
+		<version>6.14.3</version>
+		<scope>test</scope>
+	</dependency>
+
+
+	<!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+	<dependency>
+		<groupId>com.googlecode.json-simple</groupId>
+		<artifactId>json-simple</artifactId>
+		<version>1.1.1</version>
+	</dependency>
+
+
+	<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi</artifactId>
+		<version>4.1.0</version>
+	</dependency>
+
+
+	<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi-ooxml</artifactId>
+		<version>4.1.0</version>
+	</dependency>
+
+
+	<!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
+	<dependency>
+		<groupId>com.aventstack</groupId>
+		<artifactId>extentreports</artifactId>
+		<version>4.0.9</version>
+	</dependency>
+
     
-    
+ <build>
+	<plugins> <!-- These two plug-ins will help compile and run tests via pom.xml file. -->
+
+		<plugin>
+			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<configuration>
+				<source>1.8</source>
+				<target>1.8</target>
+			</configuration>
+		</plugin>
+
+
+		<plugin>
+			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<version>2.18.1</version>
+			<configuration>
+				<suiteXmlFiles>
+					<suiteXmlFile>testng.xml</suiteXmlFile>
+				</suiteXmlFiles>
+			</configuration>
+		</plugin>
+
+	</plugins>
+</build>
+   
   ===================================================================================
+  
+  # To run test via command line:
+  1) Download and install maven on the system where test will be ran: https://maven.apache.org/download.cgi
+  2) Set maven path in the system environment variable: maven bin file extracted path (in the maven folder)  
+  3) Verify maven is installed successfully: mvn -version
+  4) mvn clean test (This will run the test from the command line)
+  
+  ===================================================================================
+  
+  # To run test via .bat file
+  1) Create a test file with a name and save it with .bat extension
+  2) Enter these two commands/instructions in the .bat file and save:
+        cd path to the project
+	mvn clean install
+ 3) Double click on the .bat file to run the tests in the project specified in the .bat file.
+ 4) Go to the log file to read the test result in case the comman line window closed due to failed test.
+ 
+ =======================================================================================
+ 
+ # To run test via Jenkins or Bamboo
+ 1)
