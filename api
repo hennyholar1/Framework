@@ -428,7 +428,10 @@ key = value # another alternative
             <version>3.0</version>
             <scope>test</scope>
         </dependency>
-	
+----------------------------------------------------------------------------------------
+
+<!-- SDET Regular REST-Assured API video URL: https://www.youtube.com/playlist?list=PLUDwpEzHYYLuMRzT6LFq4r8DwKZdcqHmY -->
+<!-- Bhanu Regular REST-Assured API video URL: https://www.youtube.com/playlist?list=PL5NG-eEzvTtiTfE8p2ZXfDkDKD2gSdx9e -->
 	<!-- https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
 	<dependency>
 		<groupId>io.rest-assured</groupId>
@@ -477,6 +480,29 @@ key = value # another alternative
 		<artifactId>extentreports</artifactId>
 		<version>4.0.9</version>
 	</dependency>
+	
+	<!-- For BDD REST Assured API Testing -->
+<!-- BDD Sample Video URL: https://www.youtube.com/playlist?list=PLUDwpEzHYYLskkglxoXd0L6DKu4uOfh-m -->
+	<!-- https://mvnrepository.com/artifact/io.rest-assured/json-schema-validator -->
+	<dependency>
+	    <groupId>io.rest-assured</groupId>
+	    <artifactId>json-schema-validator</artifactId>
+	    <version>4.0.0</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/io.rest-assured/json-path -->
+	<dependency>
+	    <groupId>io.rest-assured</groupId>
+	    <artifactId>json-path</artifactId>
+	    <version>4.0.0</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/io.rest-assured/xml-path -->
+	<dependency>
+	    <groupId>io.rest-assured</groupId>
+	    <artifactId>xml-path</artifactId>
+	    <version>4.0.0</version>
+	</dependency>
 
     
  <build>
@@ -508,7 +534,7 @@ key = value # another alternative
 	</plugins>
 </build>
 
-
+,!-- or this alternative -->
 <build>
         <plugins>
             <plugin>
