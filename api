@@ -585,8 +585,17 @@ key = value # another alternative
  
  =======================================================================================
  
- # To run test via Jenkins or Bamboo
- 1)
+ # To run test (job) via Jenkins or Bamboo
+ 1) Download jenkins war file (https://jenkins.io/download/)
+ 2) Keep the war file in a directory
+ 3) Open the command promp and change to the war file location
+ 4) run the command code (java -jar jenkins.war) and do not close the window open
+ 5) Open your web browser and enter the localjenkins URL (localhost:8080)
+ 6) Log in (if user already exist) or create a new user credential and log in
+ 7) Create new item (project name --> Select Freestyle project --> OK button --> 
+ 	go to "Build" session and select "Execute window batch command")
+ 8) Enter "cd project directory" and "batfileName.bat" in the input box -- click "Apply" --> "Save" button
+ 9) Click on "Build Now" logo or right click on the project and select build now.
  
  ======================================================================================
  C:\...\.m2\repository\commons-lang\commons-lang\
