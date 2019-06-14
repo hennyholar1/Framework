@@ -607,3 +607,41 @@ key = value # another alternative
  
  ======================================================================================
  C:\...\.m2\repository\commons-lang\commons-lang\
+ 
+  private static ArrayList<String> listOfDomain() {
+        final ArrayList<String> domain = new ArrayList<String>();
+        domain.add("@yahoo.com");
+        domain.add("@mail.com");
+        domain.add("@msn.net");
+        domain.add("@fakeit.org");
+        domain.add("@restassure.io");
+        domain.add("@testng.org");
+        return domain;
+    }
+
+    @Test
+    private static void randomlyPickDomain() {
+        final int arraySize = listOfDomain().size();
+
+        final List<String> domainList = Arrays.asList("kaka.ng", "bola.uk", "baba.com", "ojo.org", "united.net");
+
+        final String random1 = listOfDomain().get(new Random().nextInt(arraySize));
+        final String random2 = listOfDomain().get(new Random().nextInt(arraySize));
+        final String random3 = listOfDomain().get(new Random().nextInt(arraySize));
+
+        final String pick1 = domainList.get(new Random().nextInt(domainList.size()));
+        final String pick2 = domainList.get(new Random().nextInt(domainList.size()));
+        final String pick3 = domainList.get(new Random().nextInt(domainList.size()));
+
+        LOGGER.info("Selected domain1 is: " + random1);
+        LOGGER.info("Selected domain2 is: " + random2);
+        LOGGER.info("Selected domain3 is: " + random3);
+
+        LOGGER.info("--------------------------------------------");
+        LOGGER.info("Selected Picked Value 1 is: " + pick1);
+        LOGGER.info("Selected Picked Value 2 is: " + pick2);
+        LOGGER.info("Selected Picked Value 3 is: " + pick3);
+
+    }
+
+ 
