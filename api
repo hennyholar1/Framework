@@ -215,6 +215,7 @@ public class Listeners extends TestListenerAdapter {
     arrayData.forEach(variable -> verifyVariablePresence(arrayData)); (loop through an array list one by one to the end)
     
     =============================================================================================================================
+// https://github.com/dequelabs/axe-selenium-java/blob/develop/src/test/java/com/deque/axe/ExampleTest.java    
 import com.deque.axe.AXE;
 import io.github.bonigarcia.wdm.DriverManagerType;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -236,11 +237,11 @@ import static org.testng.AssertJUnit.assertTrue;
 
 @Slf4j
 public class axe508cTests {
-    private static final String FIREFOX_PATH = "BrowserBinaries\\mozilla\\firefox.exe";
+    private static final String FIREFOX_PATH = "pathToFirefox .exe file\\firefox.exe";
     private static WebDriver driver;
     private Test test;
 
-    private static final URL scriptUrl = org.frb.stls.cars.atm.ui.test.fw.pageobjects.AtmPOv2Tests.class.getResource("/axe.min.js");
+    private static final URL scriptUrl = ClassNameStartingWithPackageFullPath.class.getResource("/axe.min.js");
 
     @BeforeTest
     static void setupAll() {
@@ -259,7 +260,7 @@ public class axe508cTests {
     @BeforeMethod
     void setUpEach() {
         driver.get("url");
-        driver.manage().window().maximize();
+        driver.manage().window().fullScreen();//.maximize();
         atmPo = new AtmPOv2(driver, userRole);
     }
 
