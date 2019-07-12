@@ -1,3 +1,38 @@
+// For Table cell locator using table label ID
+private String getTableCellData(final String tableId, final String columnName, final int rowNumber) {
+        final SearchContext tableContext = driver.findElement(By.id(tableId));
+        final int columnIndex = tasColumnIndexByName(columnName);
+        final String inputSelector =
+            "tbody > tr:nth-child(" + rowNumber + ") > td:nth-child(" + columnIndex + ") input";
+        return tableContext.findElement(By.cssSelector(inputSelector)).getAttribute("value");
+    }
+    
+    //Enum returning String
+public enum ENUMname{
+
+    VALUE1 {
+        @Override
+        public String toString() {
+            return EXPECTED_VALUE1;
+        }
+    },
+     VALUE2 {
+        @Override
+        public String toString() {
+            return EXPECTED_VALUE2;
+        }
+    }
+}
+
+//LambDa Expression for String to Object
+private static BigDecimal convertStringToBigDecimal(final String strValue) {
+        if (!Utility.isNullOrWhitespaces(strValue)) {
+            final String tmp = strValue.replaceAll("[^0-9.]", "");
+            return new BigDecimal(tmp);
+        }
+        return null;
+    }
+
 public class Listeners extends TestListenerAdapter {
 
 	public ExtentHtmlReporter htmlReporter;
