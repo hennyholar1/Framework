@@ -1,11 +1,19 @@
 // For Table cell locator using table label ID
-private String getTableCellData(final String tableId, final String columnName, final int rowNumber) {
-        final SearchContext tableContext = driver.findElement(By.id(tableId));
-        final int columnIndex = tasColumnIndexByName(columnName);
-        final String inputSelector =
-            "tbody > tr:nth-child(" + rowNumber + ") > td:nth-child(" + columnIndex + ") input";
-        return tableContext.findElement(By.cssSelector(inputSelector)).getAttribute("value");
-    }
+private WebElement editableTableCell(final String tableId, final String columnName, final int rowNumber) {
+	return driver.findElement(By.cssSelector("#" + tableId + " tbody tr:nth-child(" + rowNumber + ") td:nth-child("
+			+ getColumnIndex(columnName) + ") input"));
+	}
+	
+	private int getColumnIndex(final String columnName) {
+		int index = 0;
+		for (WebElement colNum : driver.findElements(By.cssSelector("thead th"))) {
+			index = index + 1;
+			if (colNum.getText().equalsIgnoreCase(columnName)) {
+				return index;
+			}
+		}
+		return -10;
+	}
     
     //Enum returning String
 public enum ENUMname{
@@ -24,6 +32,15 @@ public enum ENUMname{
     }
 }
 
+ public JavaScriptFunctions waitForPageToReady() {
+        for (int i = 0; i < 25; i++) {
+            if (getJsExecutor().executeScript("return document.readyState").toString().equals("complete")) {
+                return this;
+            }
+        }
+        return this;
+    }
+
 //LambDa Expression for String to Object
 private static BigDecimal convertStringToBigDecimal(final String strValue) {
         if (!Utility.isNullOrWhitespaces(strValue)) {
@@ -32,6 +49,69 @@ private static BigDecimal convertStringToBigDecimal(final String strValue) {
         }
         return null;
     }
+    
+ //Ternary with StringBuilder   
+public String cellRowData(final String tableDomId, final int rowNumber) {
+	return new StringBuilder()
+			.append(getCellData(tableDomId, columnName, rowNumber).equals("") ? "-- "
+				: getTasCellData(tableDomId, columnName, rowNumber) + " ").toString();
+}
+
+public String getCellData(final String tableId, final String columnName, final int rowNumber) {
+		String readOnly = "";
+		String cellValue = "";
+		WebElement nonEditableCell = driver.findElement(By.cssSelector("#" + tableId + " tbody tr:nth-child("
+				+ rowNumber + ") td:nth-child(" + getColumnIndex(columnName) + ")"));
+
+		if (!(nonEditableCell.getSize()).equals(0)) {
+			readOnly = nonEditableCell.getText();
+		} else {
+			cellValue = editableTableCell(tableId, columnName, rowNumber).getAttribute(ATTRIBUTE_VALUE) == null
+					? editableTableCell(tableId, columnName, rowNumber).getText()
+					: editableTableCell(tableId, columnName, rowNumber).getAttribute(ATTRIBUTE_VALUE);
+		}
+
+		return readOnly.equals("") ? cellValue : readOnly;
+	}
+
+
+// BigDecimal method in use
+public BigDecimal getCalculatedSumOfAmountColumnValue(List<String> amountColumn) {
+		if (amountColumn.isEmpty()) {
+			return BigDecimal.ZERO;
+		} else {
+			BigDecimal totalAmount = BigDecimal.ZERO;
+			for (final String row : amountColumn) {
+				totalAmount = totalAmount.add(new BigDecimal(row));
+			}
+			return totalAmount;
+		}
+	}
+	
+public List<String> getTableColumnData(final String tableHtmlId, final String columnName) {
+
+final List<String> editable = new ArrayList<>();
+final List<String> nonEditable = new ArrayList<>();
+
+List<WebElement> columns = driver.findElements(
+		By.cssSelector("#" + tableHtmlId + " tbody td:nth-child(" + getColumnIndex(columnName) + ") input"));
+
+if (!columns.isEmpty()) {
+	columns.forEach(cell -> editable.add(cell.getAttribute(ATTRIBUTE_VALUE)));
+} else {
+	driver.findElements(
+			By.cssSelector("#" + tableHtmlId + " tbody td:nth-child(" + getColumnIndex(columnName) + ")"))
+			.forEach(cell -> {
+				if (cell.getText().equals("")) {
+					nonEditable.add("''");
+				} else {
+					nonEditable.add(cell.getText());
+				}
+			});
+}
+
+return CollectionUtils.isEmpty(nonEditable) ? editable : nonEditable;
+}
 
 public class Listeners extends TestListenerAdapter {
 
