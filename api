@@ -1,7 +1,7 @@
 // For Table cell locator using table label ID
 private WebElement editableTableCell(final String tableId, final String columnName, final int rowNumber) {
 	return driver.findElement(By.cssSelector("#" + tableId + " tbody tr:nth-child(" + rowNumber + ") td:nth-child("
-			+ getColumnIndex(columnName) + ") input"));
+			+ getColumnIndex(columnName) + ") input")); //it could have th , so check for it.
 	}
 	
 	private int getColumnIndex(final String columnName) {
@@ -57,21 +57,10 @@ public String cellRowData(final String tableDomId, final int rowNumber) {
 				: getTasCellData(tableDomId, columnName, rowNumber) + " ").toString();
 }
 
-public String getCellData(final String tableId, final String columnName, final int rowNumber) {
-		String readOnly = "";
-		String cellValue = "";
-		WebElement nonEditableCell = driver.findElement(By.cssSelector("#" + tableId + " tbody tr:nth-child("
-				+ rowNumber + ") td:nth-child(" + getColumnIndex(columnName) + ")"));
-
-		if (!(nonEditableCell.getSize()).equals(0)) {
-			readOnly = nonEditableCell.getText();
-		} else {
-			cellValue = editableTableCell(tableId, columnName, rowNumber).getAttribute(ATTRIBUTE_VALUE) == null
-					? editableTableCell(tableId, columnName, rowNumber).getText()
-					: editableTableCell(tableId, columnName, rowNumber).getAttribute(ATTRIBUTE_VALUE);
-		}
-
-		return readOnly.equals("") ? cellValue : readOnly;
+public String getCellData((final String tableId, final String columnName, final int rowNumber) {
+		return (!nonEditableTasCell(tableId, columnName, rowNumber).getAttribute("class").contains("input"))
+				? nonEditableTasCell(tableId, columnName, rowNumber).getText() 
+						: editableTasCell(tableId, columnName, rowNumber).getAttribute("value");
 	}
 
 
@@ -91,26 +80,26 @@ public BigDecimal getCalculatedSumOfAmountColumnValue(List<String> amountColumn)
 public List<String> getTableColumnData(final String tableHtmlId, final String columnName) {
 
 final List<String> editable = new ArrayList<>();
-final List<String> nonEditable = new ArrayList<>();
+		final List<String> nonEditable = new ArrayList<>();
 
-List<WebElement> columns = driver.findElements(
-		By.cssSelector("#" + tableHtmlId + " tbody td:nth-child(" + getColumnIndex(columnName) + ") input"));
+		List<WebElement> columns = driver.findElements(
+				By.cssSelector("#" + tableHtmlId + " tbody td:nth-child(" + getColumnIndex(columnName) + ") input"));
 
-if (!columns.isEmpty()) {
-	columns.forEach(cell -> editable.add(cell.getAttribute(ATTRIBUTE_VALUE)));
-} else {
-	driver.findElements(
-			By.cssSelector("#" + tableHtmlId + " tbody td:nth-child(" + getColumnIndex(columnName) + ")"))
-			.forEach(cell -> {
-				if (cell.getText().equals("")) {
-					nonEditable.add("''");
-				} else {
-					nonEditable.add(cell.getText());
-				}
-			});
-}
+		if (!columns.isEmpty()) {
+			columns.forEach(cell -> editable.add(cell.getAttribute("value")));
+		} else {
+			driver.findElements(
+					By.cssSelector("#" + tableHtmlId + " tbody td:nth-child(" + getColumnIndex(columnName) + ")"))
+					.forEach(cell -> {
+						if (cell.getText().equals("")) {
+							nonEditable.add("''");
+						} else {
+							nonEditable.add(cell.getText());
+						}
+					});
+		}
 
-return CollectionUtils.isEmpty(nonEditable) ? editable : nonEditable;
+		return CollectionUtils.isEmpty(nonEditable) ? editable : nonEditable;
 }
 
 public class Listeners extends TestListenerAdapter {
