@@ -64,18 +64,29 @@ public String getCellData((final String tableId, final String columnName, final 
 	}
 
 
-// BigDecimal method in use
-public BigDecimal getCalculatedSumOfAmountColumnValue(List<String> amountColumn) {
-		if (amountColumn.isEmpty()) {
-			return BigDecimal.ZERO;
-		} else {
-			BigDecimal totalAmount = BigDecimal.ZERO;
-			for (final String row : amountColumn) {
-				totalAmount = totalAmount.add(new BigDecimal(row));
+public String getSumOfAmountValueEntered(List<String> amountColumn) {
+	if (amountColumn.isEmpty()) {
+		return BigDecimal.ZERO.toString();
+	} else {
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		for (final String amount : amountColumn) {
+			if(!Utility.isNullOrWhitespaces(amount)){
+				totalAmount =totalAmount.add(new BigDecimal(amount.replace("$", "").replaceAll(",", "")));
 			}
-			return totalAmount;
 		}
+	return NumberFormat.getCurrencyInstance(getLocaleFromCurrency("USD")).format(totalAmount.floatValue());
 	}
+ }
+ 
+ private static Locale getLocaleFromCurrency(String strCode) {
+    for (final Locale locale : NumberFormat.getAvailableLocales()) {
+	final String code = NumberFormat.getCurrencyInstance(locale).getCurrency().getCurrencyCode();
+	if (strCode.equals(code)) {
+	    return locale;
+	}
+    }  
+    return null;
+}
 	
 public List<String> getTableColumnData(final String tableHtmlId, final String columnName) {
 
