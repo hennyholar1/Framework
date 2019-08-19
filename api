@@ -87,31 +87,32 @@ public String getSumOfAmountValueEntered(List<String> amountColumn) {
     }  
     return null;
 }
-	
+
 public List<String> getTableColumnData(final String tableHtmlId, final String columnName) {
-
-final List<String> editable = new ArrayList<>();
-		final List<String> nonEditable = new ArrayList<>();
-
-		List<WebElement> columns = driver.findElements(
-				By.cssSelector("#" + tableHtmlId + " tbody td:nth-child(" + getColumnIndex(columnName) + ") input"));
+		final List<String> editableCell = new ArrayList<>();
+		final List<String> nonEditableCell = new ArrayList<>();
+		List<WebElement> columns = editableColumn( tableHtmlId,  columnName);
 
 		if (!columns.isEmpty()) {
-			columns.forEach(cell -> editable.add(cell.getAttribute("value")));
+			columns.forEach(cell -> {
+				if (cell.getAttribute(ATTRIBUTE_VALUE).equals("")) { 
+					editableCell.add("''");
+				} else {
+					editableCell.add(cell.getAttribute(ATTRIBUTE_VALUE));					
+				}
+			});	
 		} else {
-			driver.findElements(
-					By.cssSelector("#" + tableHtmlId + " tbody td:nth-child(" + getColumnIndex(columnName) + ")"))
-					.forEach(cell -> {
+			nonEditableColumn( tableHtmlId,  columnName).forEach(cell -> {
 						if (cell.getText().equals("")) {
-							nonEditable.add("''");
+							nonEditableCell.add("''");
 						} else {
-							nonEditable.add(cell.getText());
+							nonEditableCell.add(cell.getText());
 						}
 					});
 		}
+		return CollectionUtils.isEmpty(nonEditableCell) ? editableCell : nonEditableCell;
+	}
 
-		return CollectionUtils.isEmpty(nonEditable) ? editable : nonEditable;
-}
 
 public class Listeners extends TestListenerAdapter {
 
