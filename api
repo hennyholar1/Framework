@@ -189,6 +189,45 @@ public class Listeners extends TestListenerAdapter {
 
 }
 
+
+public class PageLinksFunction {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PageLinksFunction.class);
+
+    public static WebDriver myDriver;
+
+    public PageLinksFunction(final WebDriver driver) {
+        myDriver = driver;
+    }
+
+    public void getAllPageLinks() {
+        final List<WebElement> links = myDriver.findElements(By.tagName("a"));
+        LOGGER.info("The total number of links on this web page is: " + links.size());
+        for (final WebElement ele : links) {
+            final String url = ele.getAttribute("href");
+            verifyActiveLink(url);
+        }
+    }
+
+    private static void verifyActiveLink(final String urlLink) {
+        try {
+            final URL url = new URL(urlLink);
+            final HttpURLConnection httpConnectUrl = (HttpURLConnection) url.openConnection();
+            httpConnectUrl.setConnectTimeout(3000);
+            httpConnectUrl.connect();
+            if (httpConnectUrl.getResponseCode() == 200) {
+                LOGGER.info(urlLink + " - " + httpConnectUrl.getResponseMessage());
+            }
+            if (httpConnectUrl.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+                LOGGER.info(urlLink + " - " + httpConnectUrl.getResponseMessage() + " - "
+                                + HttpURLConnection.HTTP_NOT_FOUND);
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Error Occured", e);
+        }
+    }
+}
+
     
     
     BrowserType getBrowserEnum(final String browser) { // BrowserType is an enum
