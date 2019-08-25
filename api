@@ -116,7 +116,30 @@
 
 <!-- TO CONVERT JAVA OBJECT TO JSON FILE, WE USE: Jackson Core, Jackson DataBind and Jackson Annotation 
 MAVEN DEPENDECY FOR ......  1-TO-1, and MANY-TO MANY arraylist Object CONVERSION -->
+<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+	<dependency>
+		<groupId>com.fasterxml.jackson.core</groupId>
+		<artifactId>jackson-databind</artifactId>
+		<version>2.9.9</version>
+	</dependency>
 
+
+	<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+	<dependency>
+		<groupId>com.fasterxml.jackson.core</groupId>
+		<artifactId>jackson-core</artifactId>
+		<version>2.9.9</version>
+	</dependency>
+
+
+	<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+	<dependency>
+		<groupId>com.fasterxml.jackson.core</groupId>
+		<artifactId>jackson-annotations</artifactId>
+		<version>2.9.9</version>
+	</dependency>
+
+<!-- TO CONVERT JAVA OBJECT TO JSON FILE, WE USE: gosn, and json-simple MAVEN DEPENDECY FOR ...... MANY-TO ONE arraylist Object CONVERSION -->
 	<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 	<dependency>
 	    <groupId>com.google.code.gson</groupId>
