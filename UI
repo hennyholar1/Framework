@@ -1,4 +1,4 @@
-
+SELENIUM, PROTRACTOR (built on selenium: cross browser testing), CYPRESS (built on selenium: mainly for Chrome browser)
 // For Table cell locator using table label ID
 private WebElement editableTableCell(final String tableId, final String columnName, final int rowNumber) {
 	return driver.findElement(By.cssSelector("#" + tableId + " tbody tr:nth-child(" + rowNumber + ") td:nth-child("
