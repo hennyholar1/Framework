@@ -1,1 +1,620 @@
 
+// For Table cell locator using table label ID
+private WebElement editableTableCell(final String tableId, final String columnName, final int rowNumber) {
+	return driver.findElement(By.cssSelector("#" + tableId + " tbody tr:nth-child(" + rowNumber + ") td:nth-child("
+			+ getColumnIndex(columnName) + ") input")); //it could have th , so check for it.
+	}
+	
+	private int getColumnIndex(final String columnName) {
+		int index = 0;
+		for (WebElement colNum : driver.findElements(By.cssSelector("thead th"))) {
+			index = index + 1;
+			if (colNum.getText().equalsIgnoreCase(columnName)) {
+				return index;
+			}
+		}
+		return -10;
+	}
+    
+    //Enum returning String
+public enum ENUMname{
+
+    VALUE1 {
+        @Override
+        public String toString() {
+            return EXPECTED_VALUE1;
+        }
+    },
+     VALUE2 {
+        @Override
+        public String toString() {
+            return EXPECTED_VALUE2;
+        }
+    }
+}
+
+ public JavaScriptFunctions waitForPageToReady() {
+        for (int i = 0; i < 25; i++) {
+            if (getJsExecutor().executeScript("return document.readyState").toString().equals("complete")) {
+                return this;
+            }
+        }
+        return this;
+    }
+
+//LambDa Expression for String to Object
+private static BigDecimal convertStringToBigDecimal(final String strValue) {
+        if (!Utility.isNullOrWhitespaces(strValue)) {
+            final String tmp = strValue.replaceAll("[^0-9.]", "");
+            return new BigDecimal(tmp);
+        }
+        return null;
+    }
+    
+ //Ternary with StringBuilder   
+public String cellRowData(final String tableDomId, final int rowNumber) {
+	return new StringBuilder()
+			.append(getCellData(tableDomId, columnName, rowNumber).equals("") ? "-- "
+				: getCellData(tableDomId, columnName, rowNumber) + " ").toString();
+}
+
+public String getCellData((final String tableId, final String columnName, final int rowNumber) {
+		return (!nonEditableCell(tableId, columnName, rowNumber).getAttribute("class").contains("input"))
+				? nonEditableCell(tableId, columnName, rowNumber).getText() 
+						: editableCell(tableId, columnName, rowNumber).getAttribute("value");
+	}
+
+
+public String getSumOfAmountValueEntered(List<String> amountColumn) {
+	if (amountColumn.isEmpty()) {
+		return BigDecimal.ZERO.toString();
+	} else {
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		for (final String amount : amountColumn) {
+			if(!Utility.isNullOrWhitespaces(amount)){
+				totalAmount =totalAmount.add(new BigDecimal(amount.replace("$", "").replaceAll(",", "")));
+			}
+		}
+	return NumberFormat.getCurrencyInstance(getLocaleFromCurrency("USD")).format(totalAmount.floatValue());
+	}
+ }
+ 
+ private static Locale getLocaleFromCurrency(String strCode) {
+    for (final Locale locale : NumberFormat.getAvailableLocales()) {
+	final String code = NumberFormat.getCurrencyInstance(locale).getCurrency().getCurrencyCode();
+	if (strCode.equals(code)) {
+	    return locale;
+	}
+    }  
+    return null;
+}
+
+public List<String> getTableColumnData(final String tableHtmlId, final String columnName) {
+		final List<String> editableCell = new ArrayList<>();
+		final List<String> nonEditableCell = new ArrayList<>();
+		List<WebElement> columns = editableColumn( tableHtmlId,  columnName);
+
+		if (!columns.isEmpty()) {
+			columns.forEach(cell -> {
+				if (cell.getAttribute(ATTRIBUTE_VALUE).equals("")) { 
+					editableCell.add("''");
+				} else {
+					editableCell.add(cell.getAttribute(ATTRIBUTE_VALUE));					
+				}
+			});	
+		} else {
+			nonEditableColumn( tableHtmlId,  columnName).forEach(cell -> {
+						if (cell.getText().equals("")) {
+							nonEditableCell.add("''");
+						} else {
+							nonEditableCell.add(cell.getText());
+						}
+					});
+		}
+		return CollectionUtils.isEmpty(nonEditableCell) ? editableCell : nonEditableCell;
+	}
+
+
+public class Listeners extends TestListenerAdapter {
+
+	public ExtentHtmlReporter htmlReporter;
+	public ExtentReports extent;
+	public ExtentTest test;
+//	public ITestResult result;
+
+	/*
+	 * @AfterMethod() public void captureStatus(ITestResult result) { if
+	 * (ITestResult.SUCCESS == result.getStatus()) { test.pass(result.getName() +
+	 * " Passed"); test.log(Status.PASS, result.getName() + " test passed"); }
+	 * 
+	 * else if (ITestResult.STARTED == result.getStatus()) { test.log(Status.INFO,
+	 * result.getName() + " test started"); }
+	 * 
+	 * else if (ITestResult.SKIP == result.getStatus()) { test.log(Status.SKIP,
+	 * result.getName() + " test is skipped and the reason is:- " +
+	 * result.getThrowable()); }
+	 * 
+	 * else if (ITestResult.FAILURE == result.getStatus()) { test.log(Status.ERROR,
+	 * result.getName() + " test failed! And the reason is: " +
+	 * result.getThrowable()); } }
+	 */
+
+	/**
+	 * @param method
+	 */
+	public  void getTestMethodsInformation(Method method) {
+		test = extent.createTest(method.getName(), "is being executed").assignAuthor("Oludare M Eniola").createNode(method.getName() + " Test Result Status");
+	//	test = extent.createTest(method.getName(), "is being executed").createNode(method.getName() + " Test Result Status");
+}
+	
+	public void onStart(ITestContext testContext) {
+		htmlReporter = new ExtentHtmlReporter(System.getProperty("user.dir") + "/Reports/myReport.html");
+		// htmlReporter.loadXMLConfig(new File(useFileData("extent_config_xml")));
+		htmlReporter.config().setDocumentTitle("Test Execution - ExtentReports");
+		htmlReporter.config().setReportName("API RestAssured Automation Test Report");
+		htmlReporter.config().setTheme(Theme.DARK); // Theme background - dark, standard
+		htmlReporter.config().setTimeStampFormat("mm/dd/yyyy hh:mm:ss a"); // set timeStamp format
+		htmlReporter.loadXMLConfig("C:\\Users\\Da Novenos\\eclipse-workspace\\RestAssuredAPITestingFramework\\src\\main\\java\\com\\apitest\\utility\\extent-config.xml");
+		// htmlReporter.config().setTestViewChartLocation(ChartLocation.TOP); // BOTTOM
+
+		// Additional information that makes our report looks nice
+		 if (extent == null) {
+		extent = new ExtentReports();
+		 }
+		extent.setSystemInfo("Host Name", "Novenos IT Solutions Inc.");
+		extent.setSystemInfo("Project Name", "Employee Database API project");
+		extent.setSystemInfo("Environment", "QA/Automation Testing");
+		extent.setSystemInfo("Version", "V-1.0.0");
+		extent.setSystemInfo("OS", "Windows-10");
+		extent.attachReporter(htmlReporter);
+	}
+
+	public void onTestSuccess(ITestResult result) {
+		test = extent.createTest(result.getName());
+		test.log(Status.PASS, result.getName() + " test passed");
+	}
+
+	public void onTestFailure(ITestResult result) {
+		test = extent.createTest(result.getName());
+		test.log(Status.FAIL, result.getName() + " test failed! ---> " + result.getThrowable());
+	}
+
+	public void onTestSkip(ITestResult result) {
+		test = extent.createTest(result.getName());
+		test.log(Status.SKIP, result.getName() + " was skipped.");
+	}
+
+	public void onFinish() {
+		extent.flush();
+	}
+
+}
+
+
+public class PageLinksFunction {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PageLinksFunction.class);
+
+    public static WebDriver myDriver;
+
+    public PageLinksFunction(final WebDriver driver) {
+        myDriver = driver;
+    }
+
+    public void getAllPageLinks() {
+        final List<WebElement> links = myDriver.findElements(By.tagName("a"));
+        LOGGER.info("The total number of links on this web page is: " + links.size());
+        for (final WebElement ele : links) {
+            final String url = ele.getAttribute("href");
+            verifyActiveLink(url);
+        }
+    }
+
+    private static void verifyActiveLink(final String urlLink) {
+        try {
+            final URL url = new URL(urlLink);
+            final HttpURLConnection httpConnectUrl = (HttpURLConnection) url.openConnection();
+            httpConnectUrl.setConnectTimeout(3000);
+            httpConnectUrl.connect();
+            if (httpConnectUrl.getResponseCode() == 200) {
+                LOGGER.info(urlLink + " - " + httpConnectUrl.getResponseMessage());
+            }
+            if (httpConnectUrl.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+                LOGGER.info(urlLink + " - " + httpConnectUrl.getResponseMessage() + " - "
+                                + HttpURLConnection.HTTP_NOT_FOUND);
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Error Occured", e);
+        }
+    }
+}
+
+    
+    
+    BrowserType getBrowserEnum(final String browser) { // BrowserType is an enum
+        final String msg = "Get browser enum for: {}";
+        logger.trace("Get browser enum for: {}", msg);
+        switch (browser.toUpperCase()) {
+            case "CHROME":
+                logger.trace(msg, BrowserType.CHROME);
+                return BrowserType.CHROME;
+            case "EDGE":
+                logger.trace(msg, BrowserType.EDGE);
+                return BrowserType.EDGE;
+            case "FIREFOX":
+                logger.trace(msg, BrowserType.FIREFOX);
+                return BrowserType.FIREFOX;
+            case "IE":
+                logger.trace(msg, BrowserType.IE);
+                return BrowserType.IE;
+            case "CHROME_HEADLESS":
+                logger.trace(msg, BrowserType.CHROME_HEADLESS);
+                return BrowserType.CHROME_HEADLESS;
+            case "FIREFOX_HEADLESS":
+                logger.trace(msg, BrowserType.FIREFOX_HEADLESS);
+                return BrowserType.FIREFOX_HEADLESS;
+            default:
+                logger.trace(msg, BrowserType.IE);
+                return BrowserType.IE;
+        }
+    }
+    
+    String propertiesFileData(final String configFileData) {
+        return FrameworkConfig.properties.getProperty(configFileData);
+    }
+    
+    //Data provider
+    protected String setWorkBook(final String workName) {
+        final StringBuilder sb = new StringBuilder();
+        // sb.append(System.getProperty("user.dir")).append(FrameworkConfig.propertiesFileData(TESTDATAPATH))
+        sb.append(FrameworkConfig.propertiesFileData(TESTDATAPATH)).append(workName);
+        return sb.toString();
+    }
+    
+    @DataProvider(name = "providerName")
+    public Object[][] MethodName() {
+        return new SpreadSheetHandler(setWorkBook("WorkBookName"), "SheetName", false).getTestData();
+    }
+    
+    //Variable declaration
+    public FileInputStream file = null;
+    public XSSFWorkbook workbook = null;
+    public XSSFSheet sheet = null;
+    protected String pathToWorkbookLocation = null;
+    protected XSSFRow row = null;
+    protected XSSFCell cell = null;
+    protected Row rows = null;
+    protected Cell cells = null;
+    
+    //Constructor
+    SpreadSheetHandler(final String workBook, final String excelSheet, final boolean isSheetTypeIndex) {
+        this.pathToWorkbookLocation = workBook;
+        try {
+            file = new FileInputStream(new File(workBook));
+            workbook = new XSSFWorkbook(file);
+            if (isSheetTypeIndex) {
+                final int index = Integer.parseInt(excelSheet);
+                sheet = workbook.getSheetAt(index);
+            } else {
+                sheet = workbook.getSheet(excelSheet);
+            }
+            file.close();
+        } catch (final Exception e) {
+            logger.error("Error Occured", e);
+        }
+    }
+    
+    //Data retrieval
+     public Object[][] getTestData() {
+
+        final int totalRow = sheet.getLastRowNum();
+        final int totalColumn = sheet.getRow(0).getLastCellNum();
+        final Object[][] dataSets = new Object[totalRow][1];
+        HashMap<Object, Object> tableData = null;
+        boolean rowIsNotEmpty = false;
+        int nonEmptyRows = 0;
+
+        for (int i = 0; i < totalRow; i++) {
+            tableData = new HashMap<>();
+          
+            for (int j = 0; j < totalColumn; j++) {
+                final XSSFRow currentRow = sheet.getRow(i + 1);
+                XSSFCell xssfcell = null;
+                if (currentRow != null) {
+                    xssfcell = sheet.getRow(i + 1).getCell(j);
+                    if (xssfcell != null && xssfcell.toString().trim().length() > 0) {
+                        rowIsNotEmpty = true;
+                        tableData.put(sheet.getRow(0).getCell(j).toString(), xssfcell.toString());
+                    } else {
+                        tableData.put(sheet.getRow(0).getCell(j).toString(), "");
+                    }
+                }
+            }
+
+            if (rowIsNotEmpty) {
+                nonEmptyRows++;
+                dataSets[i][0] = tableData;
+            }
+        }
+
+        final Object[][] validDataSets = new Object[nonEmptyRows][1];
+        if (nonEmptyRows > 0) {
+            for (int r = 0; r < nonEmptyRows; r++) {
+                validDataSets[r][0] = dataSets[r][0];
+            }
+        }
+        return validDataSets;
+    }
+    
+  //Regulare expression for number validation
+  Integer checkIfNumeric(final String strData) {
+        if (strData.matches("[0-9]+")) {
+            return Integer.parseInt(strData);
+        }
+        return null;
+    }
+    
+    
+    /**  Initializing and insert config.properties file with its value(s) at run time. */
+	public static String propertiesFileData(String configFileData) {
+	return ConfigurationDataSource.getProperties().getProperty(configFileData);
+	}
+    
+    //String to array conversion
+    List<String> stringToArray(final String stringValue) {
+        return new ArrayList<>(Arrays.asList((stringValue.equals("") ? "''" : stringValue).split(",")));
+    }
+    
+    //Lambda expression (loop)
+    arrayData.stream().filter(element -> element.getText().equals(value)).findFirst().get(); (search an array and pick first match)
+    arrayData.stream().anyMatch(element -> (element.substring(0).contains("character")) (search an array list and pick any match)
+    arrayData.forEach(variable -> verifyVariablePresence(arrayData)); (loop through an array list one by one to the end)
+    
+    =============================================================================================================================
+// https://github.com/dequelabs/axe-selenium-java/blob/develop/src/test/java/com/deque/axe/ExampleTest.java    
+import com.deque.axe.AXE;
+import io.github.bonigarcia.wdm.DriverManagerType;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.extern.slf4j.Slf4j;
+import enums.userRole;
+import interfaces.interfaceName;
+import package.class1;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.testng.annotations.*;
+import java.net.URL;
+
+import static enumsPackage.EnumName.EnumMethodOrVariable;
+import static org.testng.AssertJUnit.assertTrue;
+
+@Slf4j
+public class axe508cTests {
+    private static final String FIREFOX_PATH = "pathToFirefox .exe file\\firefox.exe";
+    private static WebDriver driver;
+    private Test test;
+
+    private static final URL scriptUrl = ClassNameStartingWithPackageFullPath.class.getResource("/axe.min.js");
+
+    @BeforeTest
+    static void setupAll() {
+        final FirefoxOptions options = new FirefoxOptions();
+        options.setBinary(FIREFOX_PATH);
+        options.setAcceptInsecureCerts(true);
+        options.setLogLevel(FirefoxDriverLogLevel.INFO);
+        WebDriverManager.getInstance(DriverManagerType.FIREFOX)
+                .browserPath(FIREFOX_PATH)
+                .version("0.24.0")
+                .proxy("h1proxy.frb.org:8080")
+                .setup();
+        driver = new FirefoxDriver(options);
+    }
+
+    @BeforeMethod
+    void setUpEach() {
+        driver.get("url");
+        driver.manage().window().fullScreen();//.maximize();
+        atmPo = new AtmPOv2(driver, userRole);
+    }
+
+    @Test
+    void homePage508c() {
+        JSONObject responseJSON = new AXE.Builder(driver, scriptUrl).analyze();
+        JSONArray violations = responseJSON.getJSONArray("violations");
+
+        if (violations.length() == 0) {
+            assertTrue("No violations found", true);
+        } else {
+            AXE.writeResults("tryAxeCore", responseJSON);
+            assertTrue(AXE.report(violations), false);
+        }
+    }
+
+    @Test
+    void createPage508c() {
+        test.methodName(Class page title);
+        JSONObject responseJSON = new AXE.Builder(driver, scriptUrl).analyze();
+        JSONArray violations = responseJSON.getJSONArray("violations");
+        if (violations.length() == 0) {
+            assertTrue("No violations found", true);
+        } else {
+            AXE.writeResults("tryAxeCore", responseJSON);
+            assertTrue(AXE.report(violations), false);
+        }
+    }
+
+    @Test
+    void ConfirmationPage508c() {
+        driver.get("entered data detail page url/view;id= uniqueID");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException ie) {
+
+        }
+        JSONObject responseJSON = new AXE.Builder(driver, scriptUrl).analyze();
+        JSONArray violations = responseJSON.getJSONArray("violations");
+        if (violations.length() == 0) {
+            assertTrue("No violations found", true);
+        } else {
+            AXE.writeResults("tryAxeCore", responseJSON);
+            assertTrue(AXE.report(violations), false);
+        }
+    }
+
+    @AfterMethod
+    void tearDownEach() {
+        testBase.logOff();
+    }
+
+    @AfterTest
+    void tearDownAll() {
+        driver.quit();
+    }
+}
+
+========================================================================================
+    
+    //Extent Report
+<?xml version="1.0" encoding="UTF-8"?>
+<extentreports>
+    <configuration>
+        <!-- report theme -->
+        <!-- standard, dark -->
+        <theme>standard</theme>
+    
+        <!-- document encoding -->
+        <!-- defaults to UTF-8 -->
+        <encoding>UTF-8</encoding>
+        
+        <!-- protocol for script and stylesheets -->
+        <!-- defaults to https -->
+        <protocol>https</protocol>
+        
+        <!-- title of the document -->
+        <documentTitle>Extent</documentTitle>
+        
+        <!-- report name - displayed at top-nav -->
+        <reportName>Automation Report By CARS Automation Team</reportName>
+        
+        <!-- location of charts in the test view -->
+        <!-- top, bottom -->
+        <testViewChartLocation>bottom</testViewChartLocation>
+		
+        <!-- custom javascript -->
+        <scripts>
+            <![CDATA[
+                $(document).ready(function() {
+                    
+                });
+            ]]>
+        </scripts>
+        
+        <!-- custom styles -->
+        <styles>
+            <![CDATA[
+                
+            ]]>
+        </styles>
+    </configuration>
+</extentreports>
+
+
+# fileName.properties
+key : value
+key = value # another alternative
+
+
+<!-- logback.xml comment -->
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+       <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>test-output/logs/test.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover monthly -->
+            <fileNamePattern>system-%d{yyyy-MM}.log.zip</fileNamePattern>
+            <maxHistory>12</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%-26(%d [%-5level]) %logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <root level="info">
+        <appender-ref ref="ROLLING" />
+    </root>
+     <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
+----------------------------------------------------------------------------------------
+
+<!-- Log Back  dependency -->
+ <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+
+  <!--  configure slf4j binding -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+<!--  Driver manager -->
+	<dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>3.4.0</version>
+            <scope>test</scope>
+        </dependency>
+
+<!-- 508 compliance -->
+	<dependency>
+            <groupId>com.deque</groupId>
+            <artifactId>axe-selenium</artifactId>
+            <version>3.0</version>
+            <scope>test</scope>
+        </dependency>
+        
+  <!-- https://mvnrepository.com/artifact/org.testng/testng -->
+	<dependency>
+		<groupId>org.testng</groupId>
+		<artifactId>testng</artifactId>
+		<version>6.14.3</version>
+		<scope>test</scope>
+	</dependency>
+
+<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi</artifactId>
+		<version>4.1.0</version>
+	</dependency>
+
+
+	<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi-ooxml</artifactId>
+		<version>4.1.0</version>
+	</dependency>
+
+
+	<!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
+	<dependency>
+		<groupId>com.aventstack</groupId>
+		<artifactId>extentreports</artifactId>
+		<version>4.0.9</version>
+	</dependency>
+  
+  
