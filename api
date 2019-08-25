@@ -54,13 +54,13 @@ private static BigDecimal convertStringToBigDecimal(final String strValue) {
 public String cellRowData(final String tableDomId, final int rowNumber) {
 	return new StringBuilder()
 			.append(getCellData(tableDomId, columnName, rowNumber).equals("") ? "-- "
-				: getTasCellData(tableDomId, columnName, rowNumber) + " ").toString();
+				: getCellData(tableDomId, columnName, rowNumber) + " ").toString();
 }
 
 public String getCellData((final String tableId, final String columnName, final int rowNumber) {
-		return (!nonEditableTasCell(tableId, columnName, rowNumber).getAttribute("class").contains("input"))
-				? nonEditableTasCell(tableId, columnName, rowNumber).getText() 
-						: editableTasCell(tableId, columnName, rowNumber).getAttribute("value");
+		return (!nonEditableCell(tableId, columnName, rowNumber).getAttribute("class").contains("input"))
+				? nonEditableCell(tableId, columnName, rowNumber).getText() 
+						: editableCell(tableId, columnName, rowNumber).getAttribute("value");
 	}
 
 
