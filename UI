@@ -41,6 +41,11 @@ public enum ENUMname{
         }
         return this;
     }
+    
+    private Wait<WebDriver> wait(int waitTimeInSecond){
+    	return new FluentWait<>(driver).withTimeout(Duration.ofSeconds(waitTimeInSecond))
+    					.pollingEvery(Duration.ofSeconds(1)).ignoring(NoSuchElementException.class);
+    }
 
 //LambDa Expression for String to Object
 private static BigDecimal convertStringToBigDecimal(final String strValue) {
