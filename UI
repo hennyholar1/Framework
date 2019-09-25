@@ -351,6 +351,61 @@ public class PageLinksFunction {
         return validDataSets;
     }
     
+    /*  Initializing and insert config.properties file with its value(s) at run time. */
+	public static String propertiesFileData(String configFileData) {
+	return ConfigurationDataSource.getProperties().getProperty(configFileData);
+	} 
+    
+    private By button(String displayedButtonText){
+    	return By.cssSelector("input.button[value='" + displayedButtonText + "']");
+    }
+    
+    //CSV file manipulation
+    private static String withCode(final CSVRecord record) {
+		  return String.format("%s%s.%s", record.get(File.SP_HEADER.value), record.get(File.AID_HEADER.value).replaceFirst("0", ""), 
+						record.get(File.MAIN_HEADER.value), record.get(File.SUB_HEADER.value).replaceFirst("^0+(?!$)", ""));
+	 }
+	
+	 private static String withoutCode(final CSVRecord record) {
+		 return String.format("%s%s%s", record.get(File.SP_HEADER.value), record.get(File.AID_HEADER.value).replaceFirst("0", ""), 
+						record.get(File.AVAIL_TYP_CD_HEADER.value), record.get(File.MAIN_HEADER.value));
+	 }
+	 
+	 public static String constructString(final CSVRecord record) {
+		/*if(record.get(File.ENUM_HEADER.value).equals("integerValue")) {
+			return record.get(File.ENUM_HEADER.value) == null ? withoutCode(record) : withoutCode1(record);
+		}
+		return record.get(File.ENUM_HEADER.value) == null ? withCode(record) : withCode1(record) ;*/
+		if(record.get(File.ENUM_HEADER.value).equals("000")) {
+			return withoutCode(record);
+		}
+		return withCode(record);
+	 }  
+	 
+	 public static String constructDetailFieldNames(final int index, final String attribute) {
+		return String.format("detail[%d].%s", index, attribute);
+	}
+	
+	private Wait<WebDriver> wait(int waitTimeInSecond){
+    	return new FluentWait<>(driver).withTimeout(Duration.ofSeconds(waitTimeInSecond))
+    					.pollingEvery(Duration.ofSeconds(1)).ignoring(NoSuchElementException.class);
+    }
+    
+    private className selectDropdownMenu(final String stringValue){
+        dropdownMenu(driver.findElement(By.name("domeName1"))).selectByVisibleText(stringValue.split("/")[0]);
+        dropdownMenu(driver.findElement(By.name("domeName2"))).selectByVisibleText(stringValue.split("/")[1]);
+	dropdownMenu(driver.findElement(By.name("domeName3"))).selectByVisibleText(new StringBuilder()
+   	   		.append(stringValue.split("0")[0]).append(stringValue.substring(stringValue.length()-3)).toString());
+		return this;
+	}
+    
+    public static String constructString(final CSVRecord record) {
+		if(record.get(File.ENUM_HEADER.value).equals("000")) {
+			return withoutCode(record);
+		}
+		return withCode(record);
+	}
+    
   //Regulare expression for number validation
   Integer checkIfNumeric(final String strData) {
         if (strData.matches("[0-9]+")) {
@@ -359,11 +414,111 @@ public class PageLinksFunction {
         return null;
     }
     
-    
-    /**  Initializing and insert config.properties file with its value(s) at run time. */
-	public static String propertiesFileData(String configFileData) {
-	return ConfigurationDataSource.getProperties().getProperty(configFileData);
+	private className populateTable(final String filePath) throws IOException {
+		
+		int index = 0;
+		for(CSVRecord record : readCSV(filePath)) {
+			int maxIndex = index + 1;
+			for(int i = index; i <= maxIndex; i++) {
+				enterValue(element(i, "elementDomString"), record.get(ENUM.VALUE.value));
+				// for even row number (i)
+				if(i % 2 == 0) { 
+					enterValue(element(i, "elementDomString")), inputValue);
+				} else {
+				// for odd row number (i)
+					enterValue(element(i, "elementDomString")), inputValue);
+				}
+			}
+			index = maxIndex + 1;
+		}
+		return this;
 	}
+	
+	private className populate_String_Table(final String filePath) throws IOException {
+		//Modify to use lombok and pass the value at run time
+		int index = 0;
+		for (CSVRecord record : readCSV(filePath)) {
+			String csvString = constructString(record);
+			int maxIndex = index + 1;
+			
+			for(int i = index; i <= maxIndex; i++) {
+			if(i % 2 == 0) {
+				enterValue(element(i, "elementDomString")), csvString);
+				enterAmount((maxIndex == (i + 1)) ? true : false, i, ENUM.VALUE2.value);
+			} else {
+				enterValue(betcTable(i, ENUM.VALUE2.value), csvString);
+				enterAmount((maxIndex == (i + 1)) ? true : false, i, String
+								.valueOf(Double.parseDouble(ENUM.VALUE1.value)+Double.parseDouble(ENUM.VALUE2.value)));
+			    }
+		    }
+		index = maxIndex + 1;
+		}
+		return this;
+	}
+	
+   private className inputField(final boolean true, final int index, final String value) {
+		if (true) {
+			enterValue(betcTable(index, ENUM.VALUE1.field), value);
+		} else {
+			enterValue(betcTable(index, ENUM.VALUE2.field), value);
+		}
+		return this;
+	}
+	
+    public static CSVParser readCSV(final String path) throws IOException {
+	//For csv file with column labels/headers
+		return new CSVParser(new FileReader(path), CSVFormat.DEFAULT.withHeader());
+	}
+	
+     // ternary	
+     private WebElement stmtLocator(String value, int row, int cell){
+        return	value.equalsIgnoreCase("expectedValue") ?
+    	driver.findElement(By.cssSelector("cssSeleoctor:nth-child(" + ( x + row) + ") > td:nth-child(y)")) : 
+    	driver.findElement(By.cssSelector("cssSeleoctor:nth-child(" +( z + row) + ") td:nth-child(" + cell + ")"));
+    }
+    
+    private WebElement tableName(final int rowNumber, final String cellDomName){
+    	return driver.findElement(By.name(constructDetailFieldNames(rowNumber, cellDomName)));
+    }
+    
+    private CSVRecord getRecord(final String csvFile, final int recordIndex) throws IOException{
+    	return readCSV(ENUM.CSV_FILENAME.value).getRecords().get(recordIndex);
+    }
+	
+	private className enterValue(final WebElement element, final String value){
+    	waitUntilElementIsVisible(5, element).sendKeys(Keys.chord(Keys.CONTROL, "a"));
+    	element.sendKeys(Keys.BACK_SPACE);
+    	element.sendKeys(value);
+    	new Actions(driver).sendKeys(Keys.TAB).perform();
+    	return this;
+    }
+    
+     private className csvValueAssertion(String transactionType) throws IOException{    	
+    	if(transactionType.equalsIgnoreCase("condition1")){
+    		for(int i = 0; i < readCSV(ENUM.CSV_FILENAME.value).getHeaderMap().size(); i++){
+    			int x = 0;
+    			for(int j = 3; j < 11 ; j++){
+				   if(i < readCSV(ENUM.CSV_FILENAME.value).getRecords().size()){
+					    Assert.assertEquals(stmtLocator("conditon1", i , j).getText(), 
+					    	    getRecord (ENUM.CSV_FILENAME.value, i).get(x));			    
+					    LOGGER.info("Account statement table column " + readCSV(ENUM.CSV_FILENAME.value).
+					    	    getHeaderNames().get(x)+ " value: '" + stmtLocator("cgac", i , j).getText() + 
+					    	    "' <===> CSV file value: '" + getRecord(ENUM.CSV_FILENAME.value, i).get(x) + "'");
+				    }	
+				    x = x+1;			   
+			    }
+    		}
+    	} else if(transactionType.equalsIgnoreCase("string")){
+    		Assert.assertEquals(stmtLocator("String", 1, 0).getText(), 
+    						constructString(getRecord(ENUM.CSV_FILENAME.value, 0)));
+    		LOGGER.info("csv file row 1 string value: "+ constructString(getRecord(ENUM.CSV_FILENAME.value, 0)));
+    		Assert.assertEquals(stmtLocator("string", 2, 0).getText(), 
+    						constructString(getRecord(ENUM.CSV_FILENAME.value, 1)));
+    		LOGGER.info("csv file row 2 string value: "+ constructString(getRecord(ENUM.CSV_FILENAME.value, 1)));
+    	}
+    	return this;
+	}
+	
     
     //String to array conversion
     List<String> stringToArray(final String stringValue) {
