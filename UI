@@ -15,9 +15,29 @@ private WebElement editableTableCell(final String tableId, final String columnNa
 		}
 		return -10;
 	}
+	
+ public List<String> getColumnData(final List<WebElement> columnWebElement) {
+ final List<String> cellData = new ArrayList<>();
+ if (columnWebElement.size() > 0) {
+    for (final WebElement cell : columnWebElement) {
+	if (cell != null) { 
+	    new MouseFunctions(myDriver).tabKey();
+	    String data = getAttribute(cell, ATTRIBUTE_VALUE) == null ? cell.getText() : cell.getAttribute(ATTRIBUTE_VALUE);
+	    if (!data.equals("")) {
+		cellData.add(data);
+	    } else {
+		cellData.add("''");  
+	    }
+	}
+    }
+ } else if (columnWebElement.size() < 1) {
+    Utility.logWarning("Get Column Data", "The specified column seems not to have an active cell to verify");
+ }
+ return cellData;
+ }
     
     //Enum returning String
-public enum ENUMname{
+ public enum ENUMname{
 
     VALUE1 {
         @Override
