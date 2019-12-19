@@ -33,6 +33,13 @@ public enum ENUMname{
     }
 }
 
+ private boolean isReadOnly(final @NotNull WebElement webElement){
+     return commonFunctions.waitForElementToAppear(webElement).getAttribute("class").contains("readOnlyInfo") ? true : false;
+ }
+    
+ String getElementDisplayedText(WebElement webElement) {
+     return isReadOnly(webElement) ? webElement.getText() : webElement.getAttribute(ATTRIBUTE_VALUE);
+
  public JavaScriptFunctions waitForPageToReady() {
         for (int i = 0; i < 25; i++) {
             if (getJsExecutor().executeScript("return document.readyState").toString().equals("complete")) {
