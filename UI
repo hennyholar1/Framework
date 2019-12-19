@@ -40,6 +40,11 @@ public enum ENUMname{
  String getElementDisplayedText(WebElement webElement) {
      return isReadOnly(webElement) ? webElement.getText() : webElement.getAttribute(ATTRIBUTE_VALUE);
 
+// Convert HashMap<String, Object> to HashMap<String, String>
+// Map<String,Object> map = new HashMap<>();
+        Map<String,String> newMap = new HashMap<String,Object>().entrySet().stream()
+             .collect(Collectors.toMap(Map.Entry::getKey, e -> (String)e.getValue()));
+
  public JavaScriptFunctions waitForPageToReady() {
         for (int i = 0; i < 25; i++) {
             if (getJsExecutor().executeScript("return document.readyState").toString().equals("complete")) {
