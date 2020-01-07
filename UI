@@ -809,4 +809,170 @@ key = value # another alternative
 		<version>4.0.9</version>
 	</dependency>
   
-  
+  ------------------------------------- TEST DATA HANDLER ----------------------------------------
+  ------------------Java Annotation Creation ------------------
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+// TestDataRowNumber.java is the interface name
+public @interface TestDataRowNumber {
+
+    @SuppressWarnings("javadoc")
+    int rowNumber() default 0;
+}
+================================== SPREADSHEET DATA PROVIDER STYLE =====================
+-------------------------- DATA PROVIDER CLASS CONSTRUCTOR --------------------------------
+    private static String WORKBOOK_NAME = "Book1.xlsx";
+    private static final String TEST_DATA_PATH = "testDataFilePath"; // key/name in property/configuration file
+    private static final String TEST_ENV = "testenv"; // key/name  in property/configuration file
+
+    public DataProviderConstructor() { // name of the data provider class 
+        final String testEnv = System.getProperty(TEST_ENV);
+        if (!isNullOrWhitespaces(testEnv) && testEnv.equalsIgnoreCase("AlternativeTestEnvironmentName")) {
+            WORKBOOK_NAME = "Alternative_Book1.xlsx";
+        }
+    }
+    
+  private String setWorkBook(final String workName) {
+        return new StringBuilder().append(FrameworkConfig.propertiesFileData(TESTDATAPATH)).append(workName).toString();
+    }
+    
+   public static boolean isNullOrWhitespaces(final String str) {
+        if (str == null || str.trim().length() == 0) {
+            return true;
+        }
+        return false;
+    }
+      
+----------------------- TRADITIONAL (ALL TEST DATA AS GROUP TO LOOP THROUGH) -------------------------------
+   @DataProvider(name = "dataProviderChoiceName")
+    public Object[][] methodName() {
+        return new SpreadSheetHandler(setWorkBook("WorkBookName"), "SheetName", false) // if sheet name is not integer
+                        .getTestData();
+    }
+
+----------------------- INDIVIDUAL ROW (FLEXIBLE TO COMMENT OUT TEST METHOD(S)) ------------------------------
+  @DataProvider(name = "dataProviderChoiceName")
+    public Object[] methodName(final Method method) {
+        final TestDataRowNumber row = method.getAnnotation(RowNumber.class); // TestDataRowNumber: is the annotation Name
+        if (row == null) {
+            return null;
+        }
+        //final int rowNum = Integer.parseInt(row.rowNumber()); // if annotation constant return type is a String
+        return new SpreadSheetHandler(setWorkBook("WorkBookName"), "SheetName", false).getSingleRow(rowNum);
+    }
+    
+    ------------------------ SPREADSHEET HANDLER ---------------------------
+    public class SpreadSheetHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(SpreadSheetHandler.class);
+    public FileInputStream file = null;
+    public XSSFWorkbook workbook = null;
+    public XSSFSheet sheet = null;
+    protected String pathToWorkbookLocation = null;
+    protected XSSFRow row = null;
+    protected XSSFCell cell = null;
+    protected Row rows = null;
+    protected Cell cells = null;
+    private APPLICATION_SUB_MODULE subModule = null;
+    private final String TEST_GROUP = "test_group";
+    
+     public SpreadSheetHandler(final String workBook, final String excelSheet, final boolean isSheetTypeIndex) {
+        this.pathToWorkbookLocation = workBook;
+        try {
+            file = new FileInputStream(new File(workBook));
+            workbook = new XSSFWorkbook(file);
+            if(isSheetTypeIndex) {
+                final int index = Integer.parseInt(excelSheet);
+                sheet = workbook.getSheetAt(index);
+            } else {
+                sheet = workbook.getSheet(excelSheet);
+            }
+            file.close();
+        } catch(IOException ioe) {
+            logger.error("Error opening Spreadsheet file", ioe);
+            throw new RuntimeIOException(ioe);
+        }
+
+    // APPLICATION_SUB_MODULE : is a ENUM or CLASS that will hold constants
+        if (workBook.contains(TEST_GROUP)) {
+            subModule = APPLICATION_SUB_MODULE.SUB_MODULE_CONSTANT_NAME;
+        }
+    
+  ------------------------ GET SINGLE ROW METHOD ----------------------------
+  public Object[] getSingleRow(final int rowNum) {
+        final int lastCellNum = this.sheet.getRow(0).getLastCellNum();
+        final Object[] dataSets = new Object[1];
+        final HashMap<String, String> dataMap = new HashMap<String, String>();
+
+        for (int j = 0; j < lastCellNum; j++) {
+            // add the header row as keys, the value starts from data row
+            final XSSFCell cellValue = sheet.getRow(rowNum).getCell(j);
+           
+            if (cellValue != null) {
+                    myMap.put(sheet.getRow(0).getCell(j).toString(), sheet.getRow(rowNum).getCell(j).toString());
+                } else {
+                    myMap.put(sheet.getRow(0).getCell(j).toString(), "");
+                }
+            }
+        }
+
+        dataSets[0] = dataMap;
+        return dataSets;
+    }  
+    
+   -------------------------------- GET TEST DATA AS A GROUP --------------------------   
+   public Object[][] getTestData() {
+
+        final int totalRow = sheet.getLastRowNum();
+        final int totalColumn = sheet.getRow(0).getLastCellNum();
+        XSSFCell xssfcell = null;
+        int nonEmptyRows = 0;
+        String userName = "";
+
+        final Object[][] dataSets = new Object[totalRow][1];
+        HashMap<Object, Object> tableData = null;        
+
+        for (int i = 0; i < totalRow; i++) {
+            tableData = new HashMap<>();            
+            // set flag to check if row has data in any cell
+            boolean rowIsNotEmpty = false;
+            for (int j = 0; j < totalColumn; j++) {
+                // This function throw NPE because some cell may be empty
+                final XSSFRow currentRow = sheet.getRow(i + 1);
+                
+                if (currentRow != null) {
+                  //  xssfcell = sheet.getRow(i + 1).getCell(j);
+                  // if (xssfcell != null && !xssfcell.toString().trim().isEmpty()) {
+                  //      rowIsNotEmpty = true;                       
+                   // } else {
+                   
+                        tableData.put(sheet.getRow(0).getCell(j).toString(), xssfcell.toString());
+                    } else {
+                        tableData.put(sheet.getRow(0).getCell(j).toString(), "");
+                    }
+                }
+            }
+            // To handle rows with spaces only, save tableData only if there is real data
+            if (rowIsNotEmpty) {
+                nonEmptyRows++;
+                dataSets[i][0] = tableData;
+            }
+        }
+
+        // Copy and return object array only if data exists
+        final Object[][] validDataSets = new Object[nonEmptyRows][1];
+        if (nonEmptyRows > 0) {
+            for (int r = 0; r < nonEmptyRows; r++) {
+                validDataSets[r][0] = dataSets[r][0];
+            }
+        }
+        return validDataSets;
+    }
+
+   -------------------------------------------------------------------------------------------
+   
