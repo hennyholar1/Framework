@@ -928,52 +928,39 @@ public @interface TestDataRowNumber {
     
    -------------------------------- GET TEST DATA AS A GROUP --------------------------   
    public Object[][] getTestData() {
+         int nonEmptyRows = 0;
+         HashMap<Object, Object> tableData = null;
+         final int totalRow = sheet.getLastRowNum();
+         final int totalColumn = sheet.getRow(0).getLastCellNum();
+         final Object[][] dataSets = new Object[totalRow][1];
 
-        final int totalRow = sheet.getLastRowNum();
-        final int totalColumn = sheet.getRow(0).getLastCellNum();
-        XSSFCell xssfcell = null;
-        int nonEmptyRows = 0;
-        String userName = "";
-
-        final Object[][] dataSets = new Object[totalRow][1];
-        HashMap<Object, Object> tableData = null;        
-
-        for (int i = 0; i < totalRow; i++) {
-            tableData = new HashMap<>();            
-            // set flag to check if row has data in any cell
-            boolean rowIsNotEmpty = false;
-            for (int j = 0; j < totalColumn; j++) {
-                // This function throw NPE because some cell may be empty
-                final XSSFRow currentRow = sheet.getRow(i + 1);
-                
-                if (currentRow != null) {
-                  //  xssfcell = sheet.getRow(i + 1).getCell(j);
-                  // if (xssfcell != null && !xssfcell.toString().trim().isEmpty()) {
-                  //      rowIsNotEmpty = true;                       
-                   // } else {
-                   
-                        tableData.put(sheet.getRow(0).getCell(j).toString(), xssfcell.toString());
-                    } else {
-                        tableData.put(sheet.getRow(0).getCell(j).toString(), "");
-                    }
-                }
-            }
-            // To handle rows with spaces only, save tableData only if there is real data
-            if (rowIsNotEmpty) {
-                nonEmptyRows++;
-                dataSets[i][0] = tableData;
-            }
-        }
-
-        // Copy and return object array only if data exists
-        final Object[][] validDataSets = new Object[nonEmptyRows][1];
-        if (nonEmptyRows > 0) {
-            for (int r = 0; r < nonEmptyRows; r++) {
-                validDataSets[r][0] = dataSets[r][0];
-            }
-        }
-        return validDataSets;
+         for (int i = 0; i < totalRow; i++) {
+             tableData = new HashMap<>();
+             boolean rowIsNotEmpty = false;
+             for (int j = 0; j < totalColumn; j++) {
+                 row = sheet.getRow(i + 1);
+                 if (row != null) {
+                     cell = sheet.getRow(i + 1).getCell(j);
+                     if (cell != null && !cell.toString().trim().isEmpty()) {
+                         rowIsNotEmpty = true;
+                         tableData.put(sheet.getRow(0).getCell(j).toString(), cell.toString());
+                     } else {
+                         tableData.put(sheet.getRow(0).getCell(j).toString(), "");
+                     }
+                 }
+             }
+             if (rowIsNotEmpty) {
+                 nonEmptyRows++;
+                 dataSets[i][0] = tableData;
+             }
+         }
+         final Object[][] validDataSets = new Object[nonEmptyRows][1];
+         if (nonEmptyRows > 0) {
+             for (int r = 0; r < nonEmptyRows; r++) {
+                 validDataSets[r][0] = dataSets[r][0];
+             }
+         }
+         return validDataSets;
     }
-
    -------------------------------------------------------------------------------------------
    
