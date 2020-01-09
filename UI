@@ -904,26 +904,27 @@ public @interface TestDataRowNumber {
         }
     
   ------------------------ GET SINGLE ROW METHOD ----------------------------
-  public Object[] getSingleRow(final int rowNum) {
-        final int lastCellNum = this.sheet.getRow(0).getLastCellNum();
+/**
+     * @param rowNum
+     */
+    public Object[] getDataSetBaseOnRowNumber(final int rowNum) { // Single Row Of data at a time based on row number
         final Object[] dataSets = new Object[1];
-        final HashMap<String, String> dataMap = new HashMap<String, String>();
+        final HashMap<String, String> myMap = new HashMap<String, String>();
 
-        for (int j = 0; j < lastCellNum; j++) {
-            // add the header row as keys, the value starts from data row
+        for (int j = 0; j < this.sheet.getRow(0).getLastCellNum(); j++) {
             final XSSFCell cellValue = sheet.getRow(rowNum).getCell(j);
+
            
-            if (cellValue != null) {
+                if (cellValue != null) {
                     myMap.put(sheet.getRow(0).getCell(j).toString(), sheet.getRow(rowNum).getCell(j).toString());
                 } else {
                     myMap.put(sheet.getRow(0).getCell(j).toString(), "");
                 }
-            }
-        }
+            }        
 
-        dataSets[0] = dataMap;
+        dataSets[0] = myMap;
         return dataSets;
-    }  
+    }
     
    -------------------------------- GET TEST DATA AS A GROUP --------------------------   
    public Object[][] getTestData() {
