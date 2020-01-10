@@ -1102,7 +1102,7 @@ public @interface TestDataRowNumber {
 	}
    
    =========================== JSON Test Data handler ===========================
-    // Add the dependency or download and add the googlecode.json-simple jar file
+    // Add this dependency or download and add the googlecode.json-simple jar file
     <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
     <dependency>
         <groupId>com.googlecode.json-simple</groupId>
@@ -1111,7 +1111,7 @@ public @interface TestDataRowNumber {
     </dependency>
   
     @DataProvider(name = "jsonArrayStringDataReturner")
-    private String[]  getArrayOfTestData(final Method method) {
+    private String[]  getStringArrayOfTestDataInGroup(final Method method) {
         String array[] = null;
         try {
             String filePath =  "jsonFilePath/fileName.json";
@@ -1132,13 +1132,27 @@ public @interface TestDataRowNumber {
             ioe.getMessage();
         } catch (ParseException pe) {
             pe.getMessage();
-        }        
-        
+        } 
         return  array; 
+    }    
+    
+    // Sample test with the array string test data.
+    @Test(priority = 1, dataProvider = "jsonArrayStringDataReturner", dataProviderClass = nameOfDataProviderClass.class)
+    private void usingJsonArrayStringDataReturned(final String testData) {
+        // Use below split variable to populate respective fields if testData is a strip but not a hash map
+        String inputData[] = testData.split(",");        // pass the split data as input value using the index
+        launchBrowserAndGoToApplicationPage() // url is configuration class or file
+                    .clickSignUpLink().enterUserName(inputData[0])
+                    .enterPassword(inputData[1])
+                    .confirmPassword(inputData[2])
+                    .clickSubmitButton()
+                    .verifyApplicationSubmission(inputData[3]) // expected message is stored in the test data
+                    .logOut();
+        assertAll(); // inherited softAssert method from test base class. 
     }
     
     @DataProvider(name = "jsonGroupHashMapDataReturner")
-    private Object[]  getGroupOfTestData(final Method method)   {
+    private Object[]  getHashMapGroupOfTestData(final Method method)   {
         JSONArray arrayObject = null;
         try {
             String filePath =  "jsonFilePath/fileName.json";
@@ -1155,7 +1169,57 @@ public @interface TestDataRowNumber {
         } 
         return  arrayObject.toArray(); 
     }
+
+    @Test(priority = 1, dataProvider = "jsonGroupHashMapDataReturner", dataProviderClass = nameOfDataProviderClass.class)
+    private void usingGroupedJsonHashMapDataReturned(final Map<String, String> testData) {
+        launchBrowserAndGoToApplicationPage() // url is configuration class or file
+                 .clickSignUpLink().enterUserName(testData)
+                 .enterPassword(testData)
+                 .confirmPassword(testData)
+                 .clickSubmitButton()
+                 .verifyApplicationSubmission(testData) // expected message is stored in the test data
+                .logOut();
+        assertAll(); // inherited softAssert method from test base class
+    }
     
+    @DataProvider(name = "jsonGroupHashMapWithTestDataIndexReturner")
+    private Object[] getHashMapGroupOfTestDataByRowIndex(final Method method)   {
+        JSONArray arrayObject = null;
+        try {
+            String filePath =  "jsonFilePath/fileName.json";
+            JSONParser jsonParser = new JSONParser();        
+            FileReader reader = new FileReader(filePath);
+            Object readData = jsonParser.parse(reader);
+            JSONObject testData = (JSONObject) readData;            
+          // To handle JSON Array --- >
+             arrayObject = (JSONArray) testData.get("wjvTestData"); // "JSON Array key"             
+        } catch (IOException ioe) {
+            ioe.getMessage();
+        } catch (ParseException pe) {
+            pe.getMessage();
+        } 
+        
+        Object[] testData= new Object[1];
+        int rowNumber = method.getAnnotation(RowNumber.class).testDataRowNumber()-1;
+        if(rowNumber < 0 || rowNumber > arrayObject.size()) {
+            LOGGER.info("Invalid test data row number entered, please enter valid test (Array Object position) number."); 
+        }
+        testData[0]=arrayObject.toArray()[rowNumber];
+        return   testData;  
+    }
+    
+    @RowNumber(testDataRowNumber = 1)
+    @Test(priority = 1, dataProvider = "jsonGroupHashMapWithTestDataIndexReturner", dataProviderClass = nameOfDataProviderClass.class)
+    private void usingTestDataReturnedIndexOfGroupHashMapData(final Map<String, String> testData) {
+        launchBrowserAndGoToApplicationPage() // url is configuration class or file
+                 .clickSignUpLink().enterUserName(testData)
+                 .enterPassword(testData)
+                 .confirmPassword(testData)
+                 .clickSubmitButton()
+                 .verifyApplicationSubmission(testData) // expected message is stored in the test data
+                .logOut();
+        assertAll(); // inherited softAssert method from test base class
+    }
     
    -----------------------------------------------------------------------------------
    // generate random character base on specidfied size/count
