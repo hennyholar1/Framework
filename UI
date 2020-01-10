@@ -478,7 +478,7 @@ public class PageLinksFunction {
 				enterValue(element(i, "elementDomString")), csvString);
 				enterAmount((maxIndex == (i + 1)) ? true : false, i, ENUM.VALUE2.value);
 			} else {
-				enterValue(betcTable(i, ENUM.VALUE2.value), csvString);
+				enterValue(tableMethodName(i, ENUM.VALUE2.value), csvString);
 				enterAmount((maxIndex == (i + 1)) ? true : false, i, String
 								.valueOf(Double.parseDouble(ENUM.VALUE1.value)+Double.parseDouble(ENUM.VALUE2.value)));
 			    }
@@ -490,9 +490,9 @@ public class PageLinksFunction {
 	
    private className inputField(final boolean true, final int index, final String value) {
 		if (true) {
-			enterValue(betcTable(index, ENUM.VALUE1.field), value);
+			enterValue(tableMethodName(index, ENUM.VALUE1.field), value);
 		} else {
-			enterValue(betcTable(index, ENUM.VALUE2.field), value);
+			enterValue(tableMethodName(index, ENUM.VALUE2.field), value);
 		}
 		return this;
 	}
@@ -963,4 +963,7 @@ public @interface TestDataRowNumber {
          return validDataSets;
     }
    -------------------------------------------------------------------------------------------
-   
+   // generate random character base on specidfied size/count
+    private String randomAlphabets(final int stringCharacterSize) {
+        return RandomStringUtils.randomAlphabetic(stringCharacterSize);
+    }
