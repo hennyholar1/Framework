@@ -1109,6 +1109,27 @@ public @interface TestDataRowNumber {
         <artifactId>json-simple</artifactId>
         <version>1.1.1</version>
     </dependency>
+    
+    // JSON Test Data (testData.json)
+    {
+    "wjvTestData" :[
+        {
+            "key1": "value 1",
+            "key2": "value 2",
+            "key3": "value 3"
+        },
+        {
+            "key1": "value A",
+            "key2": "value B",
+            "key3": "value C"
+        },
+        {
+            "key1": "value X",
+            "key2": "value Y",
+            "key3": "value Z"
+        }
+    ]
+}
   
     @DataProvider(name = "jsonArrayStringDataReturner")
     private String[]  getStringArrayOfTestDataInGroup(final Method method) {
