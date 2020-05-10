@@ -54,7 +54,7 @@ private WebElement editableTableCell(final String tableId, final String columnNa
 }
 
  private boolean isReadOnly(final @NotNull WebElement webElement){
-     return commonFunctions.waitForElementToAppear(webElement).getAttribute("class").contains("readOnlyInfo") ? true : false;
+     return waitForElementToAppear(webElement).getAttribute("class").contains("readOnlyInfo") ? true : false;
  }
     
  String getElementDisplayedText(WebElement webElement) {
@@ -81,7 +81,7 @@ private WebElement editableTableCell(final String tableId, final String columnNa
 
 //LambDa Expression for String to Object
 private static BigDecimal convertStringToBigDecimal(final String strValue) {
-        if (!Utility.isNullOrWhitespaces(strValue)) {
+        if (StringUtils.isNotBlank(strValue)) {
             final String tmp = strValue.replaceAll("[^0-9.]", "");
             return new BigDecimal(tmp);
         }
