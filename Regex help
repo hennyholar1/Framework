@@ -1,0 +1,8 @@
+		RegExr: Learn, Build, & Test RegEx
+    -------------------------------------
+		
+    final String nonNumericValue = "^[\\D]*$"; 
+    final String numericValue = "(^[\\d]$)"; (preferred) to -->   //"[0-9]";
+	  alphaNumeric with underscore = [\w]
+	  pure alphanumeric = ^[\dA-Za-z]*$
+	  global matcher for all character except line breaks = .
