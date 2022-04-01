@@ -1,3 +1,11 @@
+
+----------------- API test page (free API) ---------------------------
+https://api.github.com/
+https://jsonplaceholder.typicode.com/
+https://reqres.in/
+
+
+
 //To read test data from spreadsheet:
   @DataProvider(name = "providerName")
     public Object[][] MethodName() {
